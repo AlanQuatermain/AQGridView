@@ -1,0 +1,69 @@
+h1=. AQGridView
+
+p=. Version 1.0 -- 17 April 2010
+
+p=. By "Jim Dovey":mailto:jimdovey@mac.com <br />
+Originally written for the "Kobo iPad Application":http://itunes.apple.com/ca/app/ebooks-by-kobo-hd/id364742849?mt=8
+
+h2. Introduction
+
+*AQGridView* is an attempt to create something similar to *NSCollectionView* on the iPhone. If *CALayoutManager* were available on the iPhone, specifically the *CAConstraintLayoutManager*, then this would be relatively easy to put together. However, since none of those exist, there's a lot of work to be done.
+
+AQGridView is based around the programming model of *UITableView* and its associated classes. To create this class I looked long and hard at how UITableView does what it does, and attempted to replicate it as closely as possible. This means that if you are familiar with table view programming on the iPhone or iPad, you will find AQGridView simple to pick up.
+
+h3. Similarities with UITableView
+
+* A subclass of *UIScrollView*.
+* Reusable grid cells, similar to *UITableViewCell*.
+* Data source and delegate very similar to those used with UITableView.
+* Immediate and batched changes to the content list (insert, remove, reorder, reload).
+* Similar change animations (top, bottom, left, right, fade).
+* Simple *AQGridViewController* provided which performs grid view setup for you, similar to *UITableViewController*.
+* Support for custom header and footer views.
+
+h3. Differences from UITableView
+
+* No sections-- uses NSUInteger as its index location rather than NSIndexPath.
+* Data source can specify a desired minimum size for all grid cells.
+* Cells are not automatically resized to fit in layout grid-- this can be changed via a property.
+* The delegate gets an opportunity to adjust the layout frame for each cell as it is displayed.
+* The grid layout is adjusted to fit the contentSize width. You can specify left and/or right padding to reach a size which can be divided into three, five, etc. cells per row.
+* A customizable 'glow' selection style, which places a glow around a cell's layer (or a specified sublayer) using the *shadowRadius* property of *CALayer*. Note that this is only available in iPhone OS 3.2 or later.
+
+h3. Requirements
+
+* The iPhone OS 3.2 SDK is needed to build. It can however run on iPhones running OS 3.0 (iPhone/iPad universal app compatible).
+
+h3. How to get it
+
+Download or clone it "from GitHub":http://github.com/AlanQuatermain/AQGridView
+
+h3. How to use it in your project
+
+This project compiles to a static library which you can include, or you can just reference the source files directly. Note that there are some resources to copy into your project for the tableview-style selection backgrounds.
+
+h2. Overview
+
+AQGridView has a number of supporting internal classes. The ones you'll interact with directly are:
+
+* AQGridView
+* AQGridViewCell
+* AQGridViewController
+
+h3. Basic setup
+
+Create a subclass of *AQGridViewController*. In <code>-viewDidLoad</code> you can change any properties you desire, add background, header, or footer views, and so on.
+
+Unless you want a grid cell size of 96x128 (the default) you should implement the *AQGridViewDataSource* method <code>-portraitGridCellSizeForGridView:</code>, from which you can return a suitable _minimum_ size for your cells. This is used as the basis of the layout grid; the grid view will expand the width of this size until it reaches a factor of the current content size, then uses that for its layout.
+
+Cells will be placed in the center of each layout grid rectangle. By default, the cells are not resized to fill this grid rectangle, but you can change this using the <code>resizesCellWidthToFit</code> property of AQGridView. If your cell should not be positioned dead center (for example, if your cell contains an image with a shadow on one side, and the _image_ should be centered, not the whole thing) then you can implement the *AQGridViewDelegate* method <code>-gridView:adjustCellFrame:withinGridCellFrame:</code> to tweak the auto-centered cell frame calculated by the grid view's layout code. For instance, the "Kobo iPad App":http://itunes.apple.com/ca/app/ebooks-by-kobo-hd/id364742849?mt=8 does this for its shelf view, and uses <code>resizesCellWidthToFit</code> for its two-column list view.
+
+h2. Future Directions
+
+* *Section support*. This will need a large amount of refactoring to support moves between sections, and will need a new way of keeping track of visible cell indices (it currently uses an NSRange).
+* *High-performance rendering*. If cells don't need to update their content after being drawn, each row could be composited into a single view for reduced load on the CoreAnimation renderer. This would need support in the grid view for displaying these composited rows, and would also need special support in KBGridViewCell to mark individual cells as needing dynamic updates, so they could be skipped when compositing and displayed normally on top of the composited row. KVO would be used to keep track of this. NB: This would also need special handling for the 'glow' selection style (or possibly the tracking cell would always be placed on screen, regardless of its dynamism requirements).
+* *Content adjustments*. There are possibly still a couple of deeply-buried bugs in the cell movement code inside *KBGridViewUpdateInfo*. These are a pain to track down, and the code in that class could possibly use some cleanup. This is also something which whould need to change a lot for section support (it makes heavy use of *NSIndexSet* right now).
+
+h2. Examples
+
+p=. *Coming Soon*
