@@ -146,7 +146,7 @@
 	NSUInteger skipCols = index % numPerRow;
 	
 	CGRect result = CGRectZero;
-	result.origin.x = _actualCellSize.width * (CGFloat)skipCols;
+	result.origin.x = _actualCellSize.width * (CGFloat)skipCols + _leftPadding;
 	result.origin.y = (_actualCellSize.height  * (CGFloat)skipRows) + _topPadding;
 	result.size = _actualCellSize;
 	

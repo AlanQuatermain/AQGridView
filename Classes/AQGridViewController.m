@@ -45,15 +45,26 @@
 
 @synthesize clearsSelectionOnViewWillAppear=_clearsSelectionOnViewWillAppear;
 
+- (void) _sharedGridViewDefaultSetup
+{
+	self.gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	self.gridView.autoresizesSubviews = YES;
+	self.gridView.delegate = self;
+	self.gridView.dataSource = self;
+}
+
 - (void) loadView
 {
 	AQGridView * aView = [[AQGridView alloc] initWithFrame: CGRectZero];
-	aView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-	aView.autoresizesSubviews = YES;
-	aView.delegate = self;
-	aView.dataSource = self;
 	self.gridView = aView;
 	[aView release];
+    
+    [self _sharedGridViewDefaultSetup];
+}
+
+- (void) awakeFromNib
+{
+    [self _sharedGridViewDefaultSetup];
 }
 
 - (void) viewDidLoad
