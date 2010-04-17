@@ -12,7 +12,6 @@
 		389782BA117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h in Headers */ = {isa = PBXBuildFile; fileRef = 389782A8117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h */; };
 		389782BB117A311B00D5CC8F /* AQGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = 389782A9117A311B00D5CC8F /* AQGridView.h */; };
 		389782BC117A311B00D5CC8F /* AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 389782AA117A311B00D5CC8F /* AQGridView.m */; };
-		389782BD117A311B00D5CC8F /* AQGridView_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 389782AB117A311B00D5CC8F /* AQGridView_Prefix.pch */; };
 		389782BE117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 389782AC117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h */; };
 		389782BF117A311B00D5CC8F /* AQGridViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 389782AD117A311B00D5CC8F /* AQGridViewCell.h */; };
 		389782C0117A311B00D5CC8F /* AQGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 389782AE117A311B00D5CC8F /* AQGridViewCell.m */; };
@@ -36,7 +35,6 @@
 		389782A8117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridView+CellLocationDelegation.h"; sourceTree = "<group>"; };
 		389782A9117A311B00D5CC8F /* AQGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AQGridView.h; sourceTree = "<group>"; };
 		389782AA117A311B00D5CC8F /* AQGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AQGridView.m; sourceTree = "<group>"; };
-		389782AB117A311B00D5CC8F /* AQGridView_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AQGridView_Prefix.pch; sourceTree = "<group>"; };
 		389782AC117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridViewCell+AQGridViewCellPrivate.h"; sourceTree = "<group>"; };
 		389782AD117A311B00D5CC8F /* AQGridViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AQGridViewCell.h; sourceTree = "<group>"; };
 		389782AE117A311B00D5CC8F /* AQGridViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AQGridViewCell.m; sourceTree = "<group>"; };
@@ -117,7 +115,6 @@
 				389782A8117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h */,
 				389782A9117A311B00D5CC8F /* AQGridView.h */,
 				389782AA117A311B00D5CC8F /* AQGridView.m */,
-				389782AB117A311B00D5CC8F /* AQGridView_Prefix.pch */,
 				389782AC117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h */,
 				389782AD117A311B00D5CC8F /* AQGridViewCell.h */,
 				389782AE117A311B00D5CC8F /* AQGridViewCell.m */,
@@ -158,7 +155,6 @@
 				389782B9117A311B00D5CC8F /* AQGridView+CellLayout.h in Headers */,
 				389782BA117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h in Headers */,
 				389782BB117A311B00D5CC8F /* AQGridView.h in Headers */,
-				389782BD117A311B00D5CC8F /* AQGridView_Prefix.pch in Headers */,
 				389782BE117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h in Headers */,
 				389782BF117A311B00D5CC8F /* AQGridViewCell.h in Headers */,
 				389782C1117A311B00D5CC8F /* AQGridViewController.h in Headers */,
