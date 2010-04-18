@@ -79,7 +79,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_visibleCells = [[NSMutableArray alloc] init];
 	_reusableGridCells = [[NSMutableDictionary alloc] init];
 	_highlightedIndices = [[NSMutableIndexSet alloc] init];
-	
+
+	self.clipsToBounds = YES;
 	self.separatorColor = [UIColor colorWithWhite: 0.85 alpha: 1.0];
 	
 	_selectedIndex = NSNotFound;
