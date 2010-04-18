@@ -592,12 +592,6 @@
 
 - (NSArray *) animateCellUpdatesUsingVisibleContentRect: (CGRect) contentRect
 {
-	[UIView beginAnimations: @"CellUpdates" context: nil];
-	[UIView setAnimationDelegate: _gridView];
-	[UIView setAnimationDidStopSelector: @selector(cellUpdateAnimationStopped:finished:context:)];
-	[UIView setAnimationCurve: UIViewAnimationCurveEaseOut];
-	[UIView setAnimationDuration: 0.3];
-	
 	// we might need to change the new visible indices and content rect, if we're looking at the last row and it's going to disappear
 	CGFloat maxY = CGRectGetMaxY(contentRect);
 	if ( maxY > [_newGridData heightForEntireGrid] )
@@ -629,9 +623,13 @@
 		if ( oldIndex != NSNotFound )
 			[oldIndicesOfAllVisibleCells addIndex: oldIndex];
 	}
+    
+    NSMutableIndexSet * movingSet = [[NSMutableIndexSet alloc] initWithIndexSet: oldVisibleIndices];
+    [movingSet addIndexes: oldIndicesOfAllVisibleCells];
+    [oldIndicesOfAllVisibleCells release];
 	
 	// most items were just moved from one location to another
-	for ( NSUInteger oldIndex = [oldIndicesOfAllVisibleCells firstIndex]; oldIndex != NSNotFound; oldIndex = [oldIndicesOfAllVisibleCells indexGreaterThanIndex: oldIndex] )
+	for ( NSUInteger oldIndex = [movingSet firstIndex]; oldIndex != NSNotFound; oldIndex = [movingSet indexGreaterThanIndex: oldIndex] )
 	{
 		NSUInteger newIndex = _oldToNewIndexMap[oldIndex];
 		AQGridViewCell * cell = [_gridView cellForItemAtIndex: oldIndex];
@@ -643,7 +641,10 @@
 		}
 		
 		if ( newIndex == NSNotFound )
+        {
+            NSLog( @"index %u is going away" );
 			continue;
+        }
 		
 		if ( cell == nil )
 		{
@@ -666,7 +667,7 @@
 		[_gridView delegateWillDisplayCell: cell atIndex: newIndex];
 	}
 	
-	[oldIndicesOfAllVisibleCells release];
+	[movingSet release];
 	
 	// delete old items first
 	if ( _deleteItems.count != 0 )
@@ -717,7 +718,6 @@
 		[newVisibleCells addObject: newCell];
 	}
 	
-	[UIView commitAnimations];
 	return ( [newVisibleCells autorelease] );
 }
 

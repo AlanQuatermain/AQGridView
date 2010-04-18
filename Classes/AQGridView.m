@@ -40,6 +40,7 @@
 #import "AQGridViewUpdateInfo.h"
 #import "AQGridViewCell+AQGridViewCellPrivate.h"
 #import "AQGridView+CellLocationDelegation.h"
+#import "NSIndexSet+AQIsSetContiguous.h"
 
 // see _basicHitTest:withEvent: below
 #import <objc/objc.h>
@@ -697,7 +698,16 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	}
 	
 	[_updateInfo cleanupUpdateItems];
+    
+    [UIView beginAnimations: @"CellUpdates" context: nil];
+	[UIView setAnimationDelegate: self];
+	[UIView setAnimationDidStopSelector: @selector(cellUpdateAnimationStopped:finished:context:)];
+	[UIView setAnimationCurve: UIViewAnimationCurveEaseInOut];
+	[UIView setAnimationDuration: 0.3];
+    
 	self.animatingCells = [_updateInfo animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
+    
+	[UIView commitAnimations];
 	
 	_flags.updating = 0;
 	[_gridData release];
@@ -706,10 +716,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		_selectedIndex = [_updateInfo newIndexForOldIndex: _selectedIndex];
 	[_updateInfo release];
 	_updateInfo = nil;
-	
-	// if no animation occurred, this has already been done
-	if ( _reloadingSuspendedCount == 0 )
-		[self fixCellsFromAnimation];
 }
 
 - (void) cellUpdateAnimationStopped: (NSString *) animationID finished: (BOOL) finished context: (void *) context
@@ -1157,38 +1163,18 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	// do we need to remove anything?
 	if ( [newVisibleIndices countOfIndexesInRange: _visibleIndices] < _visibleIndices.length )
 	{
-		// remove the last few items
-		NSUInteger numToRemove = 0;
-		BOOL removeFromFront = NO;
-		NSUInteger idx = (_visibleIndices.location + _visibleIndices.length) - 1;
-		do
-		{
-			if ( [newVisibleIndices containsIndex: idx] )
-				break;
-			
-			numToRemove++;
-			idx--;
-			
-		} while ( idx != NSUIntegerMax );
-		
-		if ( numToRemove == 0 )
-		{
-			removeFromFront = YES;
-			idx = _visibleIndices.location;
-			while ( NSLocationInRange(idx, _visibleIndices) )
-			{
-				if ( [newVisibleIndices containsIndex: idx] )
-					break;
-				
-				numToRemove++;
-				idx++;
-			}
-		}
-		
-		if ( numToRemove == [_gridData numberOfItemsPerRow] )
-		{
-			// optimized version is possible
-			NSRange arrayRange = {0, 0};
+        NSMutableIndexSet * indicesToRemove = [[NSMutableIndexSet alloc] initWithIndexesInRange: _visibleIndices];
+        [indicesToRemove removeIndexes: newVisibleIndices];
+        if ( [indicesToRemove aq_isSetContiguous] )
+        {
+            // nice simple optimized version
+            // front or back?
+            BOOL removeFromFront = NO;
+            if ( [indicesToRemove containsIndex: _visibleIndices.location] )
+                removeFromFront = YES;
+            
+            NSUInteger numToRemove = [indicesToRemove count];
+            NSRange arrayRange = {0, 0};
 			if ( removeFromFront )
 				arrayRange = NSMakeRange(0, numToRemove);
 			else
@@ -1223,7 +1209,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			[self enqueueReusableCells: removedCells];
 			
 			// done removing cells
-		}
+        }
 		else
 		{
 			// we need to be much more thorough-- a large number of items have been removed from all over
