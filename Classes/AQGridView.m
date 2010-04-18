@@ -384,7 +384,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) handleGridViewBoundsChanged: (CGRect) oldBounds toNewBounds: (CGRect) bounds
 {
-	//[_gridData gridViewDidChangeToWidth: bounds.size.width];
+	[_gridData gridViewDidChangeToWidth: bounds.size.width];
 	[self updateContentRectWithOldMaxY: CGRectGetMaxY(oldBounds) gridHeight: [_gridData heightForEntireGrid]];
 	[self updateVisibleGridCellsNow];
 	_flags.allCellsNeedLayout = 1;
