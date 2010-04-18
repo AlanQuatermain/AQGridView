@@ -39,12 +39,6 @@ static const int kImageViewTag = 'imgv';
         [allImageNames addObject: [path lastPathComponent]];
     }
     
-    paths = [NSBundle pathsForResourcesOfType: @"jpg" inDirectory: [[NSBundle mainBundle] bundlePath]];
-    for ( NSString * path in paths )
-    {
-        [allImageNames addObject: [path lastPathComponent]];
-    }
-    
     // sort alphabetically
     _orderedImageNames = [[allImageNames sortedArrayUsingSelector: @selector(caseInsensitiveCompare:)] copy];
     _imageNames = [_orderedImageNames copy];
