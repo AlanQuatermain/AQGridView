@@ -64,6 +64,7 @@
 		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGlow;
 	else
 		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGray;
+    _cellFlags.setShadowPath = 0;
 	_selectionColorInfo = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,  &kCFTypeDictionaryValueCallBacks );
 	self.backgroundColor = [UIColor whiteColor];
 	
@@ -436,22 +437,16 @@
 		case AQGridViewCellSelectionStyleGlow:
 		{
 			CALayer * theLayer = self.glowSelectionLayer;
-			if ( theLayer.shadowPath == NULL )
-			{
-				CGMutablePathRef path = CGPathCreateMutable();
-				CGPathAddRect( path, NULL, theLayer.bounds );
-				theLayer.shadowPath = path;
-				CGPathRelease( path );
-			}
 			
 			if ([theLayer respondsToSelector: @selector(setShadowPath:)] && [theLayer respondsToSelector: @selector(shadowPath)])
 			{
-				if ( theLayer.shadowPath == NULL )
+				if ( _cellFlags.setShadowPath == 0 )
 				{
 					CGMutablePathRef path = CGPathCreateMutable();
 					CGPathAddRect( path, NULL, theLayer.bounds );
-					
 					theLayer.shadowPath = path;
+                    CGPathRelease( path );
+                    _cellFlags.setShadowPath = 1;
 				}
 			
 				theLayer.shadowOffset = CGSizeZero;
@@ -509,6 +504,8 @@
 - (void) layoutSubviews
 {
 	[super layoutSubviews];
+    
+    _cellFlags.setShadowPath = 0;
 	
 	CGRect cFrame = self.bounds;
 	if ( _cellFlags.separatorStyle == AQGridViewCellSeparatorStyleSingleLine )
@@ -598,7 +595,7 @@
 
 - (void) prepareForReuse
 {
-	// superclass does nothing
+    _cellFlags.setShadowPath = 0;
 }
 
 @end

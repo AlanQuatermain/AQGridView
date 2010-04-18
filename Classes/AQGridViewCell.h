@@ -80,7 +80,8 @@ typedef enum {
 		unsigned int selected:1;
 		unsigned int highlighted:1;
 		unsigned int becomingHighlighted:1;
-		unsigned int __RESERVED__:17;
+        unsigned int setShadowPath:1;
+		unsigned int __RESERVED__:16;
 	} _cellFlags;
 }
 
