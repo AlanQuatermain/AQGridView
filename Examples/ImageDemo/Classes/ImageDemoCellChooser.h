@@ -1,8 +1,8 @@
 /*
- * ImageDemoAppDelegate.m
+ * ImageDemoCellChooser.h
  * Classes
  * 
- * Created by Jim Dovey on 17/4/2010.
+ * Created by Jim Dovey on 18/4/2010.
  * 
  * Copyright (c) 2010 Jim Dovey
  * All rights reserved.
@@ -36,30 +36,22 @@
  *
  */
 
-#import "ImageDemoAppDelegate.h"
-#import "ImageDemoViewController.h"
+#import <UIKit/UIKit.h>
 
-@implementation ImageDemoAppDelegate
+@protocol ImageDemoCellChooserDelegate;
 
-@synthesize window;
-@synthesize viewController;
-
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
-    
-    // Override point for customization after app launch    
-    [window addSubview:viewController.view];
-    [window makeKeyAndVisible];
-
-	return YES;
+@interface ImageDemoCellChooser : UITableViewController
+{
+    NSArray * _itemTitles;
+    id<ImageDemoCellChooserDelegate> __weak _delegate;
 }
 
+- (id) initWithItemTitles: (NSArray *) titles;
 
-- (void)dealloc {
-    [viewController release];
-    [window release];
-    [super dealloc];
-}
+@property (nonatomic, assign) id<ImageDemoCellChooserDelegate> __weak delegate;
 
+@end
 
+@protocol ImageDemoCellChooserDelegate
+- (void) cellChooser: (ImageDemoCellChooser *) chooser selectedItemAtIndex: (NSUInteger) index;
 @end

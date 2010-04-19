@@ -1,8 +1,8 @@
 /*
- * ImageDemoAppDelegate.m
+ * ImageDemoFilledCell.h
  * Classes
  * 
- * Created by Jim Dovey on 17/4/2010.
+ * Created by Jim Dovey on 18/4/2010.
  * 
  * Copyright (c) 2010 Jim Dovey
  * All rights reserved.
@@ -36,30 +36,16 @@
  *
  */
 
-#import "ImageDemoAppDelegate.h"
-#import "ImageDemoViewController.h"
+#import <UIKit/UIKit.h>
+#import "AQGridViewCell.h"
 
-@implementation ImageDemoAppDelegate
-
-@synthesize window;
-@synthesize viewController;
-
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
-    
-    // Override point for customization after app launch    
-    [window addSubview:viewController.view];
-    [window makeKeyAndVisible];
-
-	return YES;
+@interface ImageDemoFilledCell : AQGridViewCell
+{
+    UIImageView * _imageView;
+    UILabel * _title;
 }
 
-
-- (void)dealloc {
-    [viewController release];
-    [window release];
-    [super dealloc];
-}
-
+@property (nonatomic, retain) UIImage * image;
+@property (nonatomic, copy) NSString * title;
 
 @end

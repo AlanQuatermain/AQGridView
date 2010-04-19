@@ -1,15 +1,51 @@
-//
-//  ImageDemoViewController.m
-//  ImageDemo
-//
-//  Created by Jim Dovey on 10-04-17.
-//  Copyright Kobo Inc 2010. All rights reserved.
-//
+/*
+ * ImageDemoViewController.m
+ * Classes
+ * 
+ * Created by Jim Dovey on 17/4/2010.
+ * 
+ * Copyright (c) 2010 Jim Dovey
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 
+ * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * 
+ * Neither the name of the project's author nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
 
 #import "ImageDemoViewController.h"
 #import "ImageDemoGridViewCell.h"
+#import "ImageDemoFilledCell.h"
 
-static const int kImageViewTag = 'imgv';
+enum
+{
+    ImageDemoCellTypePlain,
+    ImageDemoCellTypeFill,
+    ImageDemoCellTypeOffset
+};
 
 @implementation ImageDemoViewController
 
@@ -24,6 +60,11 @@ static const int kImageViewTag = 'imgv';
 	self.gridView.autoresizesSubviews = YES;
 	self.gridView.delegate = self;
 	self.gridView.dataSource = self;
+    
+    ImageDemoCellChooser * chooser = [[ImageDemoCellChooser alloc] initWithItemTitles: [NSArray arrayWithObjects: NSLocalizedString(@"Plain", @""), NSLocalizedString(@"Filled", @""), nil]];
+    chooser.delegate = self;
+    _menuPopoverController = [[UIPopoverController alloc] initWithContentViewController: chooser];
+    [chooser release];
     
     if ( _orderedImageNames != nil )
         return;
@@ -59,6 +100,7 @@ static const int kImageViewTag = 'imgv';
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
     self.gridView = nil;
+    [_menuPopoverController release]; _menuPopoverController = nil;
 }
 
 - (void) dealloc
@@ -66,6 +108,7 @@ static const int kImageViewTag = 'imgv';
     [_gridView release];
     [_imageNames release];
     [_orderedImageNames release];
+    [_menuPopoverController release];
     [super dealloc];
 }
 
@@ -121,6 +164,45 @@ static const int kImageViewTag = 'imgv';
     _imageNames = [_orderedImageNames copy];
 }
 
+- (IBAction) displayCellTypeMenu: (UIBarButtonItem *) sender
+{
+    if ( [_menuPopoverController isPopoverVisible] )
+        [_menuPopoverController dismissPopoverAnimated: YES];
+    
+    [_menuPopoverController presentPopoverFromBarButtonItem: sender
+                                   permittedArrowDirections: UIPopoverArrowDirectionUp
+                                                   animated: YES];
+}
+
+- (void) cellChooser: (ImageDemoCellChooser *) chooser selectedItemAtIndex: (NSUInteger) index
+{
+    if ( index != _cellType )
+    {
+        _cellType = index;
+        switch ( _cellType )
+        {
+            case ImageDemoCellTypePlain:
+                self.gridView.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
+                self.gridView.resizesCellWidthToFit = NO;
+                self.gridView.separatorColor = nil;
+                break;
+                
+            case ImageDemoCellTypeFill:
+                self.gridView.separatorStyle = AQGridViewCellSeparatorStyleSingleLine;
+                self.gridView.resizesCellWidthToFit = YES;
+                self.gridView.separatorColor = [UIColor colorWithWhite: 0.85 alpha: 1.0];
+                break;
+                
+            default:
+                break;
+        }
+        
+        [self.gridView reloadData];
+    }
+    
+    [_menuPopoverController dismissPopoverAnimated: YES];
+}
+
 #pragma mark -
 #pragma mark Grid View Data Source
 
@@ -131,17 +213,50 @@ static const int kImageViewTag = 'imgv';
 
 - (AQGridViewCell *) gridView: (AQGridView *) aGridView cellForItemAtIndex: (NSUInteger) index
 {
-    static NSString * CellIdentifier = @"CellIdentifier";
+    static NSString * PlainCellIdentifier = @"PlainCellIdentifier";
+    static NSString * FilledCellIdentifier = @"FilledCellIdentifier";
+    //static NSString * OffsetCellIdentifier = @"OffsetCellIdentifier";
     
-    ImageDemoGridViewCell * cell = (ImageDemoGridViewCell *)[aGridView dequeueReusableCellWithIdentifier: CellIdentifier];
-    if ( cell == nil )
+    AQGridViewCell * cell = nil;
+    
+    switch ( _cellType )
     {
-        cell = [[[ImageDemoGridViewCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 200.0, 150.0)
-                                             reuseIdentifier: CellIdentifier] autorelease];
-        cell.selectionGlowColor = [UIColor blueColor];
+        case ImageDemoCellTypePlain:
+        {
+            ImageDemoGridViewCell * plainCell = (ImageDemoGridViewCell *)[aGridView dequeueReusableCellWithIdentifier: PlainCellIdentifier];
+            if ( plainCell == nil )
+            {
+                plainCell = [[[ImageDemoGridViewCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 200.0, 150.0)
+                                                     reuseIdentifier: PlainCellIdentifier] autorelease];
+                plainCell.selectionGlowColor = [UIColor blueColor];
+            }
+            
+            plainCell.image = [UIImage imageNamed: [_imageNames objectAtIndex: index]];
+            
+            cell = plainCell;
+            break;
+        }
+            
+        case ImageDemoCellTypeFill:
+        {
+            ImageDemoFilledCell * filledCell = (ImageDemoFilledCell *)[aGridView dequeueReusableCellWithIdentifier: FilledCellIdentifier];
+            if ( filledCell == nil )
+            {
+                filledCell = [[[ImageDemoFilledCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 200.0, 150.0)
+                                                         reuseIdentifier: FilledCellIdentifier] autorelease];
+                filledCell.selectionStyle = AQGridViewCellSelectionStyleBlueGray;
+            }
+            
+            filledCell.image = [UIImage imageNamed: [_imageNames objectAtIndex: index]];
+            filledCell.title = [[_imageNames objectAtIndex: index] stringByDeletingPathExtension];
+            
+            cell = filledCell;
+            break;
+        }
+            
+        default:
+            break;
     }
-    
-    cell.image = [UIImage imageNamed: [_imageNames objectAtIndex: index]];
     
     return ( cell );
 }

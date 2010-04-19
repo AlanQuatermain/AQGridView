@@ -54,6 +54,8 @@
 		38978545117A8FC800D5CC8F /* tiamat.png in Resources */ = {isa = PBXBuildFile; fileRef = 3897852D117A8FC800D5CC8F /* tiamat.png */; };
 		38978546117A8FC800D5CC8F /* WTF.png in Resources */ = {isa = PBXBuildFile; fileRef = 3897852E117A8FC800D5CC8F /* WTF.png */; };
 		389785C3117AB50300D5CC8F /* NSIndexSet+AQIsSetContiguous.m in Sources */ = {isa = PBXBuildFile; fileRef = 389785C2117AB50300D5CC8F /* NSIndexSet+AQIsSetContiguous.m */; };
+		38978617117B8D5200D5CC8F /* ImageDemoFilledCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 38978616117B8D5200D5CC8F /* ImageDemoFilledCell.m */; };
+		3897861B117B986600D5CC8F /* ImageDemoCellChooser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3897861A117B986600D5CC8F /* ImageDemoCellChooser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -120,6 +122,10 @@
 		3897852E117A8FC800D5CC8F /* WTF.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WTF.png; sourceTree = "<group>"; };
 		389785C1117AB50300D5CC8F /* NSIndexSet+AQIsSetContiguous.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+AQIsSetContiguous.h"; sourceTree = "<group>"; };
 		389785C2117AB50300D5CC8F /* NSIndexSet+AQIsSetContiguous.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+AQIsSetContiguous.m"; sourceTree = "<group>"; };
+		38978615117B8D5200D5CC8F /* ImageDemoFilledCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDemoFilledCell.h; sourceTree = "<group>"; };
+		38978616117B8D5200D5CC8F /* ImageDemoFilledCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageDemoFilledCell.m; sourceTree = "<group>"; };
+		38978619117B986600D5CC8F /* ImageDemoCellChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDemoCellChooser.h; sourceTree = "<group>"; };
+		3897861A117B986600D5CC8F /* ImageDemoCellChooser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageDemoCellChooser.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* ImageDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ImageDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -147,6 +153,10 @@
 				28D7ACF70DDB3853001CB0EB /* ImageDemoViewController.m */,
 				38978392117A712900D5CC8F /* ImageDemoGridViewCell.h */,
 				38978393117A712900D5CC8F /* ImageDemoGridViewCell.m */,
+				38978615117B8D5200D5CC8F /* ImageDemoFilledCell.h */,
+				38978616117B8D5200D5CC8F /* ImageDemoFilledCell.m */,
+				38978619117B986600D5CC8F /* ImageDemoCellChooser.h */,
+				3897861A117B986600D5CC8F /* ImageDemoCellChooser.m */,
 				389782F9117A678C00D5CC8F /* GridView */,
 			);
 			path = Classes;
@@ -369,6 +379,8 @@
 				38978312117A678C00D5CC8F /* UIColor+AQGridView.m in Sources */,
 				38978394117A712900D5CC8F /* ImageDemoGridViewCell.m in Sources */,
 				389785C3117AB50300D5CC8F /* NSIndexSet+AQIsSetContiguous.m in Sources */,
+				38978617117B8D5200D5CC8F /* ImageDemoFilledCell.m in Sources */,
+				3897861B117B986600D5CC8F /* ImageDemoCellChooser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
