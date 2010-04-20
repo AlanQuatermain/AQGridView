@@ -1,5 +1,7 @@
 h1=. AQGridView
 
+h2=. Winner of the _Best Developer Tool/Helper_ award at iPadDevCamp 2010 in San Jose
+
 p=. Version 1.0 -- 17 April 2010
 
 p=. By "Jim Dovey":mailto:jimdovey@mac.com <br />
