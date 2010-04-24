@@ -215,6 +215,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 @property (nonatomic, assign) BOOL contentSizeGrowsToFillBounds;	// default is YES. Prior to iPhone OS 3.2, pattern colors tile from the bottom-left, necessitating that this be set to NO to avoid specially-constructed background patterns falling 'out of sync' with the cells displayed on top of it.
 
+@property (nonatomic, readonly) BOOL isAnimatingUpdates;
+
 @end
 
 @protocol AQGridViewDataSource <NSObject>

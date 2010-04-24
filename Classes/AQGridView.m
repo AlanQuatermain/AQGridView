@@ -363,6 +363,11 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.contentSizeFillsBounds = (value ? 1 : 0);
 }
 
+- (BOOL) isAnimatingUpdates
+{
+    return ( _flags.isAnimatingUpdates == 1 );
+}
+
 - (void) updateContentRectWithOldMaxY: (CGFloat) oldMaxY gridHeight: (CGFloat) gridHeight
 {
 	// update content size
