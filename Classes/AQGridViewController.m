@@ -126,13 +126,14 @@
     return YES;
 }
 
-- (void) willRotateToInterfaceOrientation: (UIInterfaceOrientation) toInterfaceOrientation
-								 duration: (NSTimeInterval) duration
+- (void) willAnimateRotationToInterfaceOrientation: (UIInterfaceOrientation) toInterfaceOrientation
+                                          duration: (NSTimeInterval) duration
 {
 	[self.gridView viewWillRotateToInterfaceOrientation: toInterfaceOrientation];
+    [NSTimer scheduledTimerWithTimeInterval: duration target: self selector: @selector(endRotation) userInfo: nil repeats: NO];
 }
 
-- (void) didRotateFromInterfaceOrientation: (UIInterfaceOrientation) fromInterfaceOrientation
+- (void) endRotation
 {
 	[self.gridView viewDidRotate];
 }
