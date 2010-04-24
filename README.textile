@@ -66,6 +66,24 @@ h2. Future Directions
 * *High-performance rendering*. If cells don't need to update their content after being drawn, each row could be composited into a single view for reduced load on the CoreAnimation renderer. This would need support in the grid view for displaying these composited rows, and would also need special support in KBGridViewCell to mark individual cells as needing dynamic updates, so they could be skipped when compositing and displayed normally on top of the composited row. KVO would be used to keep track of this. NB: This would also need special handling for the 'glow' selection style (or possibly the tracking cell would always be placed on screen, regardless of its dynamism requirements).
 * *Content adjustments*. There are possibly still a couple of deeply-buried bugs in the cell movement code inside *KBGridViewUpdateInfo*. These are a pain to track down, and the code in that class could possibly use some cleanup. This is also something which whould need to change a lot for section support (it makes heavy use of *NSIndexSet* right now).
 
+h2. Known Bugs
+
+* Don't try to pile multiple animations on top of one another. i.e. don't call -beginUpdates on a grid view whose -isAnimatingUpdates method returns YES. Bad things will happen, cells will end up in the wrong places, stacked on top of one another.
+
 h2. Examples
 
-p=. *Coming Soon*
+All examples are located in the *Examples* folder.
+
+h3. ImageDemo
+
+This is the demo which was presented at iPad Dev Camp in San Jose. It is primarily a showcase for automatic content reordering and animation, but also includes examples of the two main cell types: centered empty-space bordered cells, and filled line-separated cells.
+
+Rotating the display will change the number of columns in the grid, with the associated animation. In addition, there are two buttons which cause items to be reordered. The top left button will shuffle the image order randomly, and the top right button will return everything to its original position.
+
+The second button at the top right of the screen will pop up a menu which changes from the default empty-space grid style to a UITableView-like 'filled cell' grid style. In this version, the cells are automatically resized to fit their grid slots, and the selection style (and the cells' behavior when selected) will match UITableView more closely.
+
+h3. SpringBoard
+
+This is a new demo which shows how to use gesture recognizers to implement a manual reordering interface similar to that used by the iPad springboard. If you tap and hold on a cell for half a second, it will pop out of the grid, whereupon you can drag it around and drop it in a new position by letting go. The rest of the cells move out of the way as you drag your chosen cell around.
+
+Additionally, it shows how to use the left and right insets to force the grid view to create the desired number of columns. In portrait mode, we want four columns, and the default width of 768 divides by four nicely, so we leave the insets at zero. In landscape mode we want five columns, and so we inset left & right by two pixels each to reduce the grid's _layout_ width to 1020 pixels, which is cleanly divisible by 5. As a result, rotating to landscape mode results in five columns being visible.
