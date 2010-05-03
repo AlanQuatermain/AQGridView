@@ -1247,6 +1247,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			
 			// all done
 		}
+		
+		[indicesToRemove release];
 	}
 	
 	// no animations on automatic cell layout
