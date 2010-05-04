@@ -36,23 +36,23 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
-@class AQGridView;
+#import "AQGridView.h"
 
 @interface AQGridViewData : NSObject <NSCopying, NSMutableCopying>
 {
-	AQGridView *		_gridView;				// weak reference
-	CGFloat				_currentWidth;
-	CGSize				_desiredCellSize;		// NB: 'cell' here means a grid cell -- i.e. constant size, tessellating
-	CGSize				_actualCellSize;
+	AQGridView *				_gridView;				// weak reference
+	CGSize						_boundsSize;
+	AQGridViewLayoutDirection	_layoutDirection;
+	CGSize						_desiredCellSize;		// NB: 'cell' here means a grid cell -- i.e. constant size, tessellating
+	CGSize						_actualCellSize;
 	
-	CGFloat				_topPadding;
-	CGFloat				_bottomPadding;
-	CGFloat				_leftPadding;
-	CGFloat				_rightPadding;
+	CGFloat						_topPadding;
+	CGFloat						_bottomPadding;
+	CGFloat						_leftPadding;
+	CGFloat						_rightPadding;
 	
-	NSUInteger			_numberOfItems;
-	NSUInteger			_reorderedIndex;
+	NSUInteger					_numberOfItems;
+	NSUInteger					_reorderedIndex;
 }
 
 - (id) initWithGridView: (AQGridView *) gridView;
@@ -60,9 +60,10 @@
 @property (nonatomic) NSUInteger numberOfItems;
 
 @property (nonatomic) CGFloat topPadding, bottomPadding, leftPadding, rightPadding;
+@property (nonatomic) AQGridViewLayoutDirection layoutDirection;
 
 // notify this object of changes to the layout parameters
-- (void) gridViewDidChangeToWidth: (CGFloat) newWidth;
+- (void) gridViewDidChangeBoundsSize: (CGSize) boundsSize;
 
 // nabbed from UITableViewRowData-- will we need something like this?
 @property (nonatomic) NSUInteger reorderedIndex;
@@ -76,7 +77,7 @@
 
 // metrics used within the scroll view
 - (CGRect) rectForEntireGrid;
-- (CGFloat) heightForEntireGrid;
+- (CGSize) sizeForEntireGrid;
 - (NSUInteger) numberOfItemsPerRow;
 
 - (CGRect) cellRectAtIndex: (NSUInteger) index;
