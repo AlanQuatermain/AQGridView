@@ -145,8 +145,11 @@
 	if ( _numberOfItems % numPerRow != 0 )
 		numRows++;
 	
-	return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding,
-						((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding) );
+	CGFloat height = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
+	if (height < _gridView.bounds.size.height)
+		height = _gridView.bounds.size.height + 1;
+	
+	return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding, height) );
 }
 
 - (NSUInteger) numberOfItemsPerRow
