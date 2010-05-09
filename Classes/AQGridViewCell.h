@@ -65,6 +65,7 @@ typedef enum {
 	UIColor *				_backgroundColor;
 	UIColor *				_separatorColor;
 	UIColor *				_selectionGlowColor;
+	CGFloat					_selectionGlowShadowRadius;
 	UIView *				_bottomSeparatorView;
 	UIView *				_rightSeparatorView;
 	NSTimer *				_fadeTimer;
@@ -103,6 +104,7 @@ typedef enum {
 @property (nonatomic, getter=isSelected) BOOL selected;					// default is NO
 @property (nonatomic, getter=isHighlighted) BOOL highlighted;			// default is NO
 @property (nonatomic, retain) UIColor * selectionGlowColor;				// default is dark grey, ignored if selectionStyle != AQGridViewCellSelectionStyleGlow
+@property (nonatomic) CGFloat selectionGlowShadowRadius;				// default is 12.0, ignored if selectionStyle != AQGridViewCellSelectionStyleGlow
 
 // this can be overridden by subclasses to return a subview's layer to which to add the glow
 // the default implementation returns the contentView's layer

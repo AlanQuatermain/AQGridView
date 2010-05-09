@@ -49,6 +49,7 @@
 
 @synthesize contentView=_contentView, backgroundView=_backgroundView, selectedBackgroundView=_selectedBackgroundView;
 @synthesize reuseIdentifier=_reuseIdentifier, selectionGlowColor=_selectionGlowColor;
+@synthesize selectionGlowShadowRadius=_selectionGlowShadowRadius;
 
 - (id) initWithFrame: (CGRect) frame reuseIdentifier: (NSString *) reuseIdentifier
 {
@@ -67,6 +68,8 @@
     _cellFlags.setShadowPath = 0;
 	_selectionColorInfo = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,  &kCFTypeDictionaryValueCallBacks );
 	self.backgroundColor = [UIColor whiteColor];
+	
+	_selectionGlowShadowRadius = 12.0f;
 	
 	return ( self );
 }
@@ -457,7 +460,7 @@
 				else
 					theLayer.shadowColor = [[UIColor darkGrayColor] CGColor];
 				
-				theLayer.shadowRadius = 12.0;
+				theLayer.shadowRadius = self.selectionGlowShadowRadius;
 				
 				// add or remove the 'shadow' as appropriate
 				if ( value )
