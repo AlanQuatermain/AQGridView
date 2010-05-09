@@ -507,21 +507,23 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	}
 	
 	_gridData.numberOfItems = [_dataSource numberOfItemsInGridView: self];
-	if ( _gridData.numberOfItems == 0 )
-		return;
 	
 	// update our content size as appropriate
 	self.contentSize = [_gridData sizeForEntireGrid];
 	
-	// remove all existing cells
+    // fix up the visible index list
+    NSUInteger cutoff = MAX(0, _gridData.numberOfItems-_visibleIndices.length);
+    _visibleIndices.location = MIN(_visibleIndices.location, cutoff);
 	_visibleIndices.length = 0;
 	
+	// remove all existing cells
 	[_visibleCells makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	[self enqueueReusableCells: _visibleCells];
 	[_visibleCells removeAllObjects];
 	
-	// reload the cell list
-	[self updateVisibleGridCellsNow];
+	// reload the cell list, except when there are no cells to reload
+    if ( _gridData.numberOfItems != 0 )
+        [self updateVisibleGridCellsNow];
 	
 	// layout -- no animation
 	[self setNeedsLayout];
