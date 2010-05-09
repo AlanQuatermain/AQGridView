@@ -91,7 +91,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
 	_flags.allowsSelection = 1;
 	_flags.usesPagedHorizontalScrolling = NO;
-	_flags.clipsContentWidthToBounds = 1;
 	_flags.contentSizeFillsBounds = 1;
 }
 
@@ -177,6 +176,16 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.dataSourceGridCellSize = [obj respondsToSelector: @selector(portraitGridCellSizeForGridView:)];
 }
 
+- (AQGridViewLayoutDirection) layoutDirection
+{
+	return ( _gridData.layoutDirection );
+}
+
+- (void) setLayoutDirection: (AQGridViewLayoutDirection) direction
+{
+	_gridData.layoutDirection = direction;
+}
+
 - (NSUInteger) numberOfItems
 {
 	return ( _gridData.numberOfItems );
@@ -231,12 +240,12 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (BOOL) clipsContentWidthToBounds
 {
-	return ( _flags.clipsContentWidthToBounds );
+	return ( self.layoutDirection == AQGridViewLayoutDirectionVertical );
 }
 
 - (void) setClipsContentWidthToBounds: (BOOL) value
 {
-	_flags.clipsContentWidthToBounds = value;
+	self.layoutDirection = (value ? AQGridViewLayoutDirectionVertical : AQGridViewLayoutDirectionHorizontal);
 }
 
 - (BOOL) usesPagedHorizontalScrolling
@@ -368,32 +377,40 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
     return ( _flags.isAnimatingUpdates == 1 );
 }
 
-- (void) updateContentRectWithOldMaxY: (CGFloat) oldMaxY gridHeight: (CGFloat) gridHeight
+- (void) updateContentRectWithOldMaxLocation: (CGPoint) oldMaxLocation gridSize: (CGSize) gridSize
 {
 	// update content size
-	CGFloat contentWidth = _flags.clipsContentWidthToBounds ? self.bounds.size.width : MAX(self.contentSize.width, self.bounds.size.width);
-	self.contentSize = CGSizeMake(contentWidth, gridHeight);
+	self.contentSize = gridSize;
 	
 	// fix content offset if applicable
 	CGPoint offset = self.contentOffset;
 	if ( offset.y + self.bounds.size.height > self.contentSize.height )
 	{
 		offset.y = MAX(0.0, self.contentSize.height - self.bounds.size.height);
-		self.contentOffset = offset;
 	}
-	else if ( oldMaxY == self.contentSize.height )
+	else
 	{
-		// we were scrolled to the bottom-- stay there as our height decreases
-		offset.y = MAX(0.0, self.contentSize.height - self.bounds.size.height);
-		self.contentOffset = offset;
+		if ( oldMaxLocation.y >= self.contentSize.height )
+		{
+			// we were scrolled to the bottom-- stay there as our height decreases
+			offset.y = MAX(0.0, self.contentSize.height - self.bounds.size.height);
+		}
+		if ( oldMaxLocation.x >= self.contentSize.width )
+		{
+			offset.x = MAX(0.0, self.contentSize.width - self.bounds.size.width);
+		}
 	}
+	
+	self.contentOffset = offset;
 }
 
 - (void) handleGridViewBoundsChanged: (CGRect) oldBounds toNewBounds: (CGRect) bounds
 {
-	[_gridData gridViewDidChangeToWidth: bounds.size.width];
+	[_gridData gridViewDidChangeBoundsSize: bounds.size];
     _flags.numColumns = [_gridData numberOfItemsPerRow];
-	[self updateContentRectWithOldMaxY: CGRectGetMaxY(oldBounds) gridHeight: [_gridData heightForEntireGrid]];
+	
+	CGPoint oldMaxLocation = CGPointMake(CGRectGetMaxX(oldBounds), CGRectGetMaxY(oldBounds));
+	[self updateContentRectWithOldMaxLocation: oldMaxLocation gridSize: [_gridData sizeForEntireGrid]];
 	[self updateVisibleGridCellsNow];
 	_flags.allCellsNeedLayout = 1;
 }
@@ -407,7 +424,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[super setContentSize: newSize];
 	
 	if ( oldSize.width != newSize.width )
-		[_gridData gridViewDidChangeToWidth: newSize.width];
+		[_gridData gridViewDidChangeBoundsSize: newSize];
 	
 	if ( CGRectGetMaxY(self.bounds) > newSize.height )
 	{
@@ -434,7 +451,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[super setBounds: bounds];
 	bounds = self.bounds;		// in case it was modified
 	
-	if ( bounds.size.width != oldBounds.size.width )
+	if ( !CGSizeEqualToSize(bounds.size, oldBounds.size) )
 		[self handleGridViewBoundsChanged: oldBounds toNewBounds: bounds];
 }
 
@@ -490,23 +507,23 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	}
 	
 	_gridData.numberOfItems = [_dataSource numberOfItemsInGridView: self];
-	if ( _gridData.numberOfItems == 0 )
-		return;
 	
 	// update our content size as appropriate
-	CGSize size = self.contentSize;
-	size.height = [_gridData heightForEntireGrid];
-	self.contentSize = size;
+	self.contentSize = [_gridData sizeForEntireGrid];
 	
-	// remove all existing cells
+    // fix up the visible index list
+    NSUInteger cutoff = MAX(0, _gridData.numberOfItems-_visibleIndices.length);
+    _visibleIndices.location = MIN(_visibleIndices.location, cutoff);
 	_visibleIndices.length = 0;
 	
+	// remove all existing cells
 	[_visibleCells makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	[self enqueueReusableCells: _visibleCells];
 	[_visibleCells removeAllObjects];
 	
-	// reload the cell list
-	[self updateVisibleGridCellsNow];
+	// reload the cell list, except when there are no cells to reload
+    if ( _gridData.numberOfItems != 0 )
+        [self updateVisibleGridCellsNow];
 	
 	// layout -- no animation
 	[self setNeedsLayout];
@@ -645,7 +662,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		_visibleIndices.length = 0;
 		
 		// update the content size/offset based on the new grid data
-		[self updateContentRectWithOldMaxY: CGRectGetMaxY(self.bounds) gridHeight: [_gridData heightForEntireGrid]];
+		CGPoint oldMaxLocation = CGPointMake(CGRectGetMaxX(self.bounds), CGRectGetMaxY(self.bounds));
+		[self updateContentRectWithOldMaxLocation: oldMaxLocation gridSize: [_gridData sizeForEntireGrid]];
 		return;
 	}
 	
@@ -679,7 +697,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_revealingIndices.length = _revealingIndices.location = 0;
 	
 	// update the content size/offset based on the new grid data
-	[self updateContentRectWithOldMaxY: CGRectGetMaxY(self.bounds) gridHeight: [_gridData heightForEntireGrid]];
+	CGPoint oldMaxLocation = CGPointMake(CGRectGetMaxX(self.bounds), CGRectGetMaxY(self.bounds));
+	[self updateContentRectWithOldMaxLocation: oldMaxLocation gridSize: [_gridData sizeForEntireGrid]];
 }
 
 - (void) setupUpdateAnimations
@@ -1151,7 +1170,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) updateGridViewBoundsForNewGridData: (AQGridViewData *) newGridData
 {
-	[self updateContentRectWithOldMaxY: CGRectGetMaxY(self.bounds) gridHeight: [newGridData heightForEntireGrid]];
+	CGPoint oldMaxLocation = CGPointMake(CGRectGetMaxX(self.bounds), CGRectGetMaxY(self.bounds));
+	[self updateContentRectWithOldMaxLocation: oldMaxLocation gridSize: [_gridData sizeForEntireGrid]];
 }
 
 - (void) updateVisibleGridCellsNow
@@ -1247,6 +1267,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			
 			// all done
 		}
+		
+		[indicesToRemove release];
 	}
 	
 	// no animations on automatic cell layout

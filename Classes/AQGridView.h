@@ -53,6 +53,11 @@ typedef enum {
 	AQGridViewItemAnimationNone
 } AQGridViewItemAnimation;
 
+typedef enum {
+	AQGridViewLayoutDirectionVertical,
+	AQGridViewLayoutDirectionHorizontal
+} AQGridViewLayoutDirection;
+
 @protocol AQGridViewDataSource;
 @class AQGridView, AQGridViewData, AQGridViewUpdateInfo;
 
@@ -147,8 +152,10 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	} _flags;
 }
 
-@property (nonatomic, assign)	IBOutlet id<AQGridViewDataSource>	dataSource;
-@property (nonatomic, assign)	IBOutlet id<AQGridViewDelegate>		delegate;
+@property (nonatomic, assign) IBOutlet id<AQGridViewDataSource> dataSource;
+@property (nonatomic, assign) IBOutlet id<AQGridViewDelegate> delegate;
+
+@property (nonatomic, assign) AQGridViewLayoutDirection layoutDirection;
 
 // Data
 
@@ -195,7 +202,10 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 // Appearance
 
 @property (nonatomic, assign) BOOL resizesCellWidthToFit;	// default is NO. Set to YES if the view should resize cells to fill all available space in their grid square. Ignored if separatorStyle == AQGridViewCellSeparatorStyleEmptySpace.
-@property (nonatomic, assign) BOOL clipsContentWidthToBounds;	// default is YES. If you want to enable horizontal scrolling, set this to NO.
+
+// this property is now officially deprecated -- it will instead set the layout direction to horizontal if
+//  this property is set to YES, or to vertical otherwise.
+@property (nonatomic, assign) BOOL clipsContentWidthToBounds __attribute__((deprecated));	// default is YES. If you want to enable horizontal scrolling, set this to NO.
 
 @property (nonatomic, retain) UIView * backgroundView;		// specifies a view to place behind the cells
 @property (nonatomic) BOOL usesPagedHorizontalScrolling;	// default is NO, and scrolls verticalls only. Set to YES to have horizontal-only scrolling by page.

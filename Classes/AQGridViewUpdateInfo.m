@@ -593,10 +593,14 @@
 - (NSArray *) animateCellUpdatesUsingVisibleContentRect: (CGRect) contentRect
 {
 	// we might need to change the new visible indices and content rect, if we're looking at the last row and it's going to disappear
+	CGSize gridSize = [_newGridData sizeForEntireGrid];
+	CGFloat maxX = CGRectGetMaxX(contentRect);
 	CGFloat maxY = CGRectGetMaxY(contentRect);
-	if ( maxY > [_newGridData heightForEntireGrid] )
+	BOOL isVertical = (_newGridData.layoutDirection == AQGridViewLayoutDirectionVertical);
+	
+	if ( (isVertical) && (maxY > gridSize.height) )
 	{
-		CGFloat diff = maxY - [_newGridData heightForEntireGrid];
+		CGFloat diff = maxY - gridSize.height;
 		
 		// we'll move the rect downwards to encompass the older items, but keep its height
 		//  so we still animated items which might disappear
@@ -604,7 +608,19 @@
 		contentRect.size.height += diff;
 		
 		// this will set the bounds for us, and it'll animate thanks to our animation block
-		_gridView.contentSize = CGSizeMake(contentRect.size.width, [_newGridData heightForEntireGrid]);
+		_gridView.contentSize = CGSizeMake(contentRect.size.width, gridSize.height);
+	}
+	else if ( (!isVertical) && (maxX > gridSize.width) )
+	{
+		CGFloat diff = maxX - gridSize.width;
+		
+		// we'll move the rect rightwards to encompass the older items, but keep its width
+		//  so we still animate items which might disappear
+		contentRect.origin.x = MAX(0.0, contentRect.origin.x - diff);
+		contentRect.size.width += diff;
+		
+		// this will set the bounds for us, and it'll animate thanks to our animation block
+		_gridView.contentSize = CGSizeMake(gridSize.width, contentRect.size.height);
 	}
 	
 	[_gridView updateGridViewBoundsForNewGridData: _newGridData];
