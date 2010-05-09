@@ -129,7 +129,10 @@
 	if ( _numberOfItems % numPerRow != 0 )
 		numRows++;
 	
-	return ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
+	CGFloat rtn = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
+	if (rtn < _gridView.bounds.size.height)
+		rtn = _gridView.bounds.size.height + 1;
+	return rtn;
 }
 
 - (NSUInteger) numberOfItemsPerRow
