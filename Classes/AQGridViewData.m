@@ -96,7 +96,11 @@
 	NSUInteger x = (NSUInteger)floorf(point.x);
 	NSUInteger col = x / (NSUInteger)_actualCellSize.width;
 	
-	return ( (row * [self numberOfItemsPerRow]) + col );
+	NSUInteger result = (row * [self numberOfItemsPerRow]) + col;
+	if ( result >= self.numberOfItems )
+		return ( NSNotFound );
+	
+	return ( result );
 }
 
 - (CGRect) cellRectForPoint: (CGPoint) point
