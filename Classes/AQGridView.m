@@ -615,6 +615,15 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	return ( [_gridData itemIndexForPoint: point] );
 }
 
+- (NSUInteger) indexForCell: (AQGridViewCell *) cell
+{
+	NSUInteger index = [_visibleCells indexOfObject:cell];
+	if (index == NSNotFound)
+		return NSNotFound;
+	
+	return _visibleIndices.location + index;
+}
+
 - (AQGridViewCell *) cellForItemAtPoint: (CGPoint) point
 {
 	return ( [self cellForItemAtIndex: [_gridData itemIndexForPoint: point]] );

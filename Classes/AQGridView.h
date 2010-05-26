@@ -172,6 +172,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 - (CGRect) rectForItemAtIndex: (NSUInteger) index;
 - (AQGridViewCell *) cellForItemAtIndex: (NSUInteger) index;
 - (NSUInteger) indexForItemAtPoint: (CGPoint) point;
+- (NSUInteger) indexForCell: (AQGridViewCell *) cell;
 - (AQGridViewCell *) cellForItemAtPoint: (CGPoint) point;
 
 - (NSArray *) visibleCells;
