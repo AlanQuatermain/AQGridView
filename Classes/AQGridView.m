@@ -406,11 +406,26 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) handleGridViewBoundsChanged: (CGRect) oldBounds toNewBounds: (CGRect) bounds
 {
+	CGSize oldGridSize = [_gridData sizeForEntireGrid];
+	BOOL wasAtBottom = CGRectGetMaxY(oldBounds) == oldGridSize.height;
+	
 	[_gridData gridViewDidChangeBoundsSize: bounds.size];
     _flags.numColumns = [_gridData numberOfItemsPerRow];
+	CGSize newGridSize = [_gridData sizeForEntireGrid];
 	
 	CGPoint oldMaxLocation = CGPointMake(CGRectGetMaxX(oldBounds), CGRectGetMaxY(oldBounds));
-	[self updateContentRectWithOldMaxLocation: oldMaxLocation gridSize: [_gridData sizeForEntireGrid]];
+	[self updateContentRectWithOldMaxLocation: oldMaxLocation gridSize: newGridSize];
+	
+	if ( (wasAtBottom) && (newGridSize.height > oldGridSize.height) )
+	{
+		CGRect contentRect = self.bounds;
+		if ( CGRectGetMaxY(contentRect) < newGridSize.height )
+		{
+			contentRect.origin.y += (newGridSize.height - oldGridSize.height);
+			self.contentOffset = contentRect.origin;
+		}
+	}
+	
 	[self updateVisibleGridCellsNow];
 	_flags.allCellsNeedLayout = 1;
 }
@@ -696,6 +711,19 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	self.animatingCells = nil;
 	_revealingIndices.length = _revealingIndices.location = 0;
 	
+	NSMutableSet * removals = [[NSMutableSet alloc] init];
+	for ( UIView * view in self.subviews )
+	{
+		if ( [view isKindOfClass: [KBGridViewCell class]] == NO )
+			continue;
+		
+		if ( [_visibleCells containsObject: view] == NO )
+			[removals addObject: view];
+	}
+	
+	[removals makeObjectsPerformSelector: @selector(removeFromSuperview)];
+	[removals release];
+	
 	// update the content size/offset based on the new grid data
 	CGPoint oldMaxLocation = CGPointMake(CGRectGetMaxX(self.bounds), CGRectGetMaxY(self.bounds));
 	[self updateContentRectWithOldMaxLocation: oldMaxLocation gridSize: [_gridData sizeForEntireGrid]];
@@ -718,6 +746,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	if ( _updateInfo.numberOfUpdates == 0 )
 	{
 		//_reloadingSuspendedCount--;
+		_flags.isAnimatingUpdates = 0;
+		_flags.updating = 0;
 		[_updateInfo release];
 		_updateInfo = nil;
 		return;
@@ -818,26 +848,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	return ( _selectedIndex );
 }
 
-- (void) selectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
-			scrollPosition: (AQGridViewScrollPosition) scrollPosition
-{
-	if ( _selectedIndex != NSNotFound )
-		[self deselectItemAtIndex: _selectedIndex animated: NO];
-	
-	_selectedIndex = index;
-	[self scrollToItemAtIndex: index atScrollPosition: AQGridViewScrollPositionNone animated: animated];
-}
-
-- (void) deselectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
-{
-	AQGridViewCell * cell = [self cellForItemAtIndex: index];
-	if ( cell != nil )
-		[cell setSelected: NO animated: animated];
-	
-	if ( _selectedIndex == index )
-		_selectedIndex = NSNotFound;
-}
-
 - (void) highlightItemAtIndex: (NSUInteger) index animated: (BOOL) animated scrollPosition: (AQGridViewScrollPosition) position
 {
 	if ( [_highlightedIndices containsIndex: index] )
@@ -875,6 +885,11 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		return;
 	
 	[_highlightedIndices removeIndex: index];
+	
+	// don't remove highlighting if the cell is actually the selected cell
+	if ( index == _selectedIndex )
+		return;
+	
 	AQGridViewCell * cell = [self cellForItemAtIndex: index];
 	if ( cell != nil )
 		[cell setHighlighted: NO animated: animated];
@@ -908,7 +923,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		return;		// already selected this item
 	
 	if ( _selectedIndex != NSNotFound )
-		[self _deselectItemAtIndex: _selectedIndex animated: animated notifyDelegate: NO];
+		[self _deselectItemAtIndex: _selectedIndex animated: animated notifyDelegate: notifyDelegate];
 	
 	if ( _flags.allowsSelection == 0 )
 		return;
@@ -930,6 +945,20 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	if ( notifyDelegate && _flags.delegateDidSelectItem )
 		[self.delegate gridView: self didSelectItemAtIndex: index];
+	
+	// ensure that the selected item is no longer marked as just 'highlighted' (that's an intermediary state)
+	[_highlightedIndices removeIndex: index];
+}
+
+- (void) selectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
+			scrollPosition: (AQGridViewScrollPosition) scrollPosition
+{
+	[self _selectItemAtIndex: index animated: animated scrollPosition: scrollPosition notifyDelegate: NO];
+}
+
+- (void) deselectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
+{
+	[self _deselectItemAtIndex: index animated: animated notifyDelegate: NO];
 }
 
 #pragma mark -
@@ -1028,6 +1057,43 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_pendingSelectionIndex = NSNotFound;
 }
 
+- (BOOL) _gestureRecognizerIsHandlingTouches: (NSSet *) touches
+{
+	// see if the touch is (possibly) being tracked by a gesture recognizer
+	for ( id recognizer in self.gestureRecognizers )
+	{
+		switch ( [recognizer state] )
+		{
+			case UIGestureRecognizerStateEnded:
+			case UIGestureRecognizerStateCancelled:
+			case UIGestureRecognizerStateFailed:
+				continue;
+				
+			default:
+				break;
+		}
+		
+		if ( [recognizer numberOfTouches] == [touches count] )
+		{
+			// simple version:
+			// pick a touch from our event's set, and see if it's in the recognizer's set
+			UITouch * touch = [touches anyObject];
+			CGPoint touchLocation = [touch locationInView: self];
+			
+			for ( NSUInteger i = 0; i < [recognizer numberOfTouches]; i++ )
+			{
+				CGPoint test = [recognizer locationOfTouch: i inView: self];
+				if ( CGPointEqualToPoint(test, touchLocation) )
+				{
+					return ( YES );
+				}
+			}
+		}
+	}
+	
+	return ( NO );
+}
+
 - (void) touchesBegan: (NSSet *) touches withEvent: (UIEvent *) event
 {
 	_flags.ignoreTouchSelect = ([self isDragging] ? 1 : 0);
@@ -1079,12 +1145,20 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 {
 	if ( _flags.ignoreTouchSelect == 0 )
 	{
+		Class cls = NSClassFromString(@"UILongPressGestureRecognizer");
+		if ( (cls != Nil) && ([cls instancesRespondToSelector: @selector(setNumberOfTouchesRequired:)]) )
+		{
+			if ( [self _gestureRecognizerIsHandlingTouches: touches] )
+				goto passToSuper;			// I feel all icky now
+		}
+		
 		[self _cancelContentTouchUsingEvent: event forced: NO];
 		[self highlightItemAtIndex: NSNotFound animated: NO scrollPosition: AQGridViewScrollPositionNone];
 		_flags.ignoreTouchSelect = 1;
 		_touchedContentView = nil;
 	}
 	
+passToSuper:
 	[super touchesMoved: touches withEvent: event];
 }
 
@@ -1177,6 +1251,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 - (void) updateVisibleGridCellsNow
 {
 	if ( _reloadingSuspendedCount > 0 )
+		return;
+	
+	if ( _flags.isAnimatingUpdates || _flags.updating )
 		return;
 	
 	_reloadingSuspendedCount++;
@@ -1455,8 +1532,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	// to avoid cell pop-in or pop-out:
 	// if we're switching to landscape, don't update cells until after the transition.
 	// if we're switching to portrait, update cells first.
-	if ( UIInterfaceOrientationIsLandscape(orientation) )
-		_reloadingSuspendedCount++;
+	//if ( UIInterfaceOrientationIsLandscape(orientation) )
+	//	_reloadingSuspendedCount++;
 }
 
 - (void) viewDidRotate
