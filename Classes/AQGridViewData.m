@@ -65,6 +65,8 @@
 	theCopy->_layoutDirection = _layoutDirection;
 	theCopy->_topPadding = _topPadding;
 	theCopy->_bottomPadding = _bottomPadding;
+	theCopy->_leftPadding = _leftPadding;
+	theCopy->_rightPadding = _rightPadding;
 	theCopy->_numberOfItems = _numberOfItems;
 	theCopy->_reorderedIndex = _reorderedIndex;
 	return ( theCopy );
