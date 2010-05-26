@@ -239,7 +239,7 @@
 }
 
 - (void) cleanupUpdateItems
-{	
+{
 	// sort the lists in ascending order
 	[_insertItems sortUsingSelector: @selector(inverseCompare:)];
 	[_deleteItems sortUsingSelector: @selector(inverseCompare:)];
@@ -347,6 +347,11 @@
 - (AQGridViewData *) newGridViewData
 {
 	return ( [[_newGridData retain] autorelease] );
+}
+
+- (NSUInteger) numberOfItemsAfterUpdates
+{
+	return ( _newGridData.numberOfItems + [_insertItems count] - [_deleteItems count] );
 }
 
 - (UIImageView *) _imageViewForView: (UIView *) view

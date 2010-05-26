@@ -714,7 +714,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	NSMutableSet * removals = [[NSMutableSet alloc] init];
 	for ( UIView * view in self.subviews )
 	{
-		if ( [view isKindOfClass: [KBGridViewCell class]] == NO )
+		if ( [view isKindOfClass: [AQGridViewCell class]] == NO )
 			continue;
 		
 		if ( [_visibleCells containsObject: view] == NO )
@@ -751,6 +751,22 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		[_updateInfo release];
 		_updateInfo = nil;
 		return;
+	}
+	
+	NSUInteger expectedItemCount = [_updateInfo numberOfItemsAfterUpdates];
+	NSUInteger actualItemCount = [_dataSource numberOfItemsInGridView: self];
+	if ( expectedItemCount != actualItemCount )
+	{
+		NSUInteger numAdded = [[_updateInfo sortedInsertItems] count];
+		NSUInteger numDeleted = [[_updateInfo sortedDeleteItems] count];
+		
+		//_reloadingSuspendedCount--;
+		_flags.isAnimatingUpdates = 0;
+		_flags.updating = 0;
+		[_updateInfo release];
+		_updateInfo = nil;
+		
+		[NSException raise: NSInternalInconsistencyException format: @"Invalid number of items in AQGridView: Started with %u, added %u, deleted %u. Expected %u items after changes, but got %u", (unsigned)_gridData.numberOfItems, (unsigned)numAdded, (unsigned)numDeleted, (unsigned)expectedItemCount, (unsigned)actualItemCount];
 	}
 	
 	[_updateInfo cleanupUpdateItems];
