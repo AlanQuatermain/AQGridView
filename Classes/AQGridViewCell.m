@@ -259,10 +259,16 @@
 				CFDictionarySetValue( _selectionColorInfo, view, info );
 			}
 			
-			id value = [view valueForKey: @"highlighted"];
-			if ( value == nil )
-				value = [NSNumber numberWithBool: NO];
-			[info setObject: value forKey: @"highlighted"];
+			// don't overwrite any prior cache of a view's original highlighted state.
+			// this is because 'highlighted' will be set, then 'selected', which can perform 'highlight' again before the animation completes
+			if ( [info objectForKey: @"highlighted"] == nil )
+			{
+				id value = [view valueForKey: @"highlighted"];
+				if ( value == nil )
+					value = [NSNumber numberWithBool: NO];
+				[info setObject: value forKey: @"highlighted"];
+			}
+			
 			[view setValue: [NSNumber numberWithBool: YES]
 					forKey: @"highlighted"];
 		}
@@ -343,12 +349,6 @@
 	}
 	else
 	{
-		[UIView setAnimationsEnabled: NO];
-		// find all non-opaque subviews and make opaque again, with original background colors
-		[self makeSubviewsOfViewOpaqueAgain: self];
-		[UIView setAnimationsEnabled: YES];
-		
-		// now we're animating once more
 		_selectedBackgroundView.alpha = 0.0;
 	}
 	
@@ -395,6 +395,11 @@
 	}
 	else
 	{
+		[UIView setAnimationsEnabled: NO];
+		// find all non-opaque subviews and make opaque again, with original background colors
+		[self makeSubviewsOfViewOpaqueAgain: self];
+		[UIView setAnimationsEnabled: YES];
+		
 		_cellFlags.highlighted = 0;
 		[_selectedBackgroundView removeFromSuperview];
 		CFDictionaryRemoveAllValues( _selectionColorInfo );

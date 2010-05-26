@@ -100,7 +100,7 @@
 	
 	NSUInteger result = (row * [self numberOfItemsPerRow]) + col;
 	if ( result >= self.numberOfItems )
-		return ( NSNotFound );
+		result = NSNotFound;
 	
 	return ( result );
 }
