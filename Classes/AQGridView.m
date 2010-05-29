@@ -61,6 +61,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 - (void) layoutAllCells;
 - (CGRect) fixCellFrame: (CGRect) cellFrame forGridRect: (CGRect) gridRect;
 - (void) updateVisibleGridCellsNow;
+- (void) updateForwardCellsForVisibleIndices: (NSIndexSet *) newVisibleIndices;
 - (AQGridViewCell *) createPreparedCellForIndex: (NSUInteger) index;
 - (void) insertVisibleCell: (AQGridViewCell *) cell atIndex: (NSUInteger) visibleCellListIndex;
 - (void) deleteVisibleCell: (AQGridViewCell *) cell atIndex: (NSUInteger) visibleCellListIndex appendingNewCell: (AQGridViewCell *) newLastCell;
@@ -667,6 +668,15 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	}
 	
 	[self scrollRectToVisible: targetRect animated: animated];
+
+	// for long grids, ensure there are visible cells when scrolled to
+	if (!animated) {
+		[self updateVisibleGridCellsNow];
+		if (![_visibleCells count]) {
+			NSIndexSet * newIndices = [_gridData indicesOfCellsInRect: [self gridViewVisibleBounds]];
+			[self updateForwardCellsForVisibleIndices: newIndices];
+		}
+	}
 }
 
 #pragma mark -
@@ -1412,39 +1422,44 @@ passToSuper:
 	}
 	else if ( (NSLocationInRange(afterTest, _visibleIndices) == NO) && ([newVisibleIndices containsIndex: afterTest]) )
 	{
-		// moving forwards
-		NSMutableIndexSet * newIndices = [[newVisibleIndices mutableCopy] autorelease];
-		
-		// prune the ones we know about already, so we have a list of only the new ones
-		[newIndices removeIndexesInRange: _visibleIndices];
-		
-		// insert any new cells in growing order, so we can always append
-		NSUInteger idx = [newIndices firstIndex];
-		while ( idx != NSNotFound )
-		{
-			AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
-			[self delegateWillDisplayCell: cell atIndex: idx];
-			[_visibleCells addObject: cell];
-			
-			idx = [newIndices indexGreaterThanIndex: idx];
-		}
-		
-		// update the visibleCell index range
-		_visibleIndices.length += [newIndices count];
-		_visibleIndices.location = [newVisibleIndices firstIndex];
-		
-		// get the range of the new items
-		NSRange newCellRange = NSMakeRange([newIndices firstIndex], [newIndices lastIndex] - [newIndices firstIndex] + 1);
-		
-		// map this range onto the current visible cell array
-		newCellRange.location -= _visibleIndices.location;
-		
-		// now update their locations
-		[self layoutCellsInVisibleCellRange: newCellRange];
+		[self updateForwardCellsForVisibleIndices: newVisibleIndices];
 	}
 	
 	[UIView setAnimationsEnabled: YES];
 	_reloadingSuspendedCount--;
+}
+
+- (void) updateForwardCellsForVisibleIndices: (NSIndexSet *) newVisibleIndices
+{
+	// moving forwards
+	NSMutableIndexSet * newIndices = [[newVisibleIndices mutableCopy] autorelease];
+
+	// prune the ones we know about already, so we have a list of only the new ones
+	[newIndices removeIndexesInRange: _visibleIndices];
+
+	// insert any new cells in growing order, so we can always append
+	NSUInteger idx = [newIndices firstIndex];
+	while ( idx != NSNotFound )
+	{
+		AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
+		[self delegateWillDisplayCell: cell atIndex: idx];
+		[_visibleCells addObject: cell];
+
+		idx = [newIndices indexGreaterThanIndex: idx];
+	}
+
+	// update the visibleCell index range
+	_visibleIndices.length += [newIndices count];
+	_visibleIndices.location = [newVisibleIndices firstIndex];
+
+	// get the range of the new items
+	NSRange newCellRange = NSMakeRange([newIndices firstIndex], [newIndices lastIndex] - [newIndices firstIndex] + 1);
+
+	// map this range onto the current visible cell array
+	newCellRange.location -= _visibleIndices.location;
+
+	// now update their locations
+	[self layoutCellsInVisibleCellRange: newCellRange];
 }
 
 - (void) layoutCellsInVisibleCellRange: (NSRange) range
