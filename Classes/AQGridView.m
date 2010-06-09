@@ -82,6 +82,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 	self.clipsToBounds = YES;
 	self.separatorColor = [UIColor colorWithWhite: 0.85 alpha: 1.0];
+    self.canCancelContentTouches = YES;
 	
 	_selectedIndex = NSNotFound;
 	_pendingSelectionIndex = NSNotFound;
@@ -1065,7 +1066,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	[super touchesBegan: touches withEvent: event];
 }
-
+/*
 - (void) _cancelContentTouchUsingEvent: (UIEvent *) event forced: (BOOL) forced
 {
 	static char * name = "_cancelContentTouchWithEvent:forced:";
@@ -1074,12 +1075,12 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	SEL selector = sel_getUid( name );
 	objc_msgSend( self, selector, event, forced );
 }
-
+*/
 - (void) touchesMoved: (NSSet *) touches withEvent: (UIEvent *) event
 {
 	if ( _flags.ignoreTouchSelect == 0 )
 	{
-		[self _cancelContentTouchUsingEvent: event forced: NO];
+		//[self _cancelContentTouchUsingEvent: event forced: NO];
 		[self highlightItemAtIndex: NSNotFound animated: NO scrollPosition: AQGridViewScrollPositionNone];
 		_flags.ignoreTouchSelect = 1;
 		_touchedContentView = nil;
