@@ -199,6 +199,11 @@
         {
             CGPoint p = [recognizer locationInView: _gridView];
             NSUInteger index = [_gridView indexForItemAtPoint: p];
+			if ( index == NSNotFound )
+			{
+				// index is the last available location
+				index = [_icons count] - 1;
+			}
             
             // update the data store
             id obj = [[_icons objectAtIndex: _dragOriginIndex] retain];
@@ -282,6 +287,14 @@
             
             // update empty cell to follow, if necessary
             NSUInteger index = [_gridView indexForItemAtPoint: [recognizer locationInView: _gridView]];
+			
+			// don't do anything if it's over an unused grid cell
+			if ( index == NSNotFound )
+			{
+				// snap back to the last possible index
+				index = [_icons count] - 1;
+			}
+			
             if ( index != _emptyCellIndex )
             {
                 NSLog( @"Moving empty cell from %u to %u", _emptyCellIndex, index );

@@ -1,8 +1,8 @@
 h1=. AQGridView
 
-h2=. Winner of the _Best Developer Tool/Helper_ award at iPadDevCamp 2010 in San Jose
+h3=. Winner of the _Best Developer Tool/Helper_ award at iPadDevCamp 2010 in San Jose
 
-p=. Version 1.0 -- 17 April 2010
+p=. Version 1.1 -- 26 May 2010
 
 p=. By "Jim Dovey":mailto:jimdovey@mac.com <br />
 Originally written for the "Kobo iPad Application":http://itunes.apple.com/ca/app/ebooks-by-kobo-hd/id364742849?mt=8
@@ -64,7 +64,7 @@ h2. Future Directions
 
 * *Section support*. This will need a large amount of refactoring to support moves between sections, and will need a new way of keeping track of visible cell indices (it currently uses an NSRange).
 * *High-performance rendering*. If cells don't need to update their content after being drawn, each row could be composited into a single view for reduced load on the CoreAnimation renderer. This would need support in the grid view for displaying these composited rows, and would also need special support in KBGridViewCell to mark individual cells as needing dynamic updates, so they could be skipped when compositing and displayed normally on top of the composited row. KVO would be used to keep track of this. NB: This would also need special handling for the 'glow' selection style (or possibly the tracking cell would always be placed on screen, regardless of its dynamism requirements).
-* *Content adjustments*. There are possibly still a couple of deeply-buried bugs in the cell movement code inside *KBGridViewUpdateInfo*. These are a pain to track down, and the code in that class could possibly use some cleanup. This is also something which whould need to change a lot for section support (it makes heavy use of *NSIndexSet* right now).
+* *Content adjustments*. There are possibly still a couple of deeply-buried bugs in the cell movement code inside *KBGridViewUpdateInfo*. These are a pain to track down, and the code in that class could possibly use some cleanup. This is also something which would need to change a lot for section support (it makes heavy use of *NSIndexSet* right now).
 
 h2. Known Bugs
 

@@ -49,6 +49,7 @@
 
 @synthesize contentView=_contentView, backgroundView=_backgroundView, selectedBackgroundView=_selectedBackgroundView;
 @synthesize reuseIdentifier=_reuseIdentifier, selectionGlowColor=_selectionGlowColor;
+@synthesize selectionGlowShadowRadius=_selectionGlowShadowRadius;
 
 - (id) initWithFrame: (CGRect) frame reuseIdentifier: (NSString *) reuseIdentifier
 {
@@ -67,6 +68,8 @@
     _cellFlags.setShadowPath = 0;
 	_selectionColorInfo = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,  &kCFTypeDictionaryValueCallBacks );
 	self.backgroundColor = [UIColor whiteColor];
+	
+	_selectionGlowShadowRadius = 12.0f;
 	
 	return ( self );
 }
@@ -256,10 +259,16 @@
 				CFDictionarySetValue( _selectionColorInfo, view, info );
 			}
 			
-			id value = [view valueForKey: @"highlighted"];
-			if ( value == nil )
-				value = [NSNumber numberWithBool: NO];
-			[info setObject: value forKey: @"highlighted"];
+			// don't overwrite any prior cache of a view's original highlighted state.
+			// this is because 'highlighted' will be set, then 'selected', which can perform 'highlight' again before the animation completes
+			if ( [info objectForKey: @"highlighted"] == nil )
+			{
+				id value = [view valueForKey: @"highlighted"];
+				if ( value == nil )
+					value = [NSNumber numberWithBool: NO];
+				[info setObject: value forKey: @"highlighted"];
+			}
+			
 			[view setValue: [NSNumber numberWithBool: YES]
 					forKey: @"highlighted"];
 		}
@@ -340,12 +349,6 @@
 	}
 	else
 	{
-		[UIView setAnimationsEnabled: NO];
-		// find all non-opaque subviews and make opaque again, with original background colors
-		[self makeSubviewsOfViewOpaqueAgain: self];
-		[UIView setAnimationsEnabled: YES];
-		
-		// now we're animating once more
 		_selectedBackgroundView.alpha = 0.0;
 	}
 	
@@ -392,6 +395,11 @@
 	}
 	else
 	{
+		[UIView setAnimationsEnabled: NO];
+		// find all non-opaque subviews and make opaque again, with original background colors
+		[self makeSubviewsOfViewOpaqueAgain: self];
+		[UIView setAnimationsEnabled: YES];
+		
 		_cellFlags.highlighted = 0;
 		[_selectedBackgroundView removeFromSuperview];
 		CFDictionaryRemoveAllValues( _selectionColorInfo );
@@ -457,7 +465,7 @@
 				else
 					theLayer.shadowColor = [[UIColor darkGrayColor] CGColor];
 				
-				theLayer.shadowRadius = 12.0;
+				theLayer.shadowRadius = self.selectionGlowShadowRadius;
 				
 				// add or remove the 'shadow' as appropriate
 				if ( value )

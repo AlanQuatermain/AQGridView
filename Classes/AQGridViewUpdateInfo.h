@@ -98,6 +98,7 @@
 - (NSArray *) sortedReloadItems;
 
 - (AQGridViewData *) newGridViewData;
+- (NSUInteger) numberOfItemsAfterUpdates;
 
 - (NSUInteger) newIndexForOldIndex: (NSUInteger) oldIndex;
 

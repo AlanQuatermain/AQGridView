@@ -65,6 +65,8 @@
 	theCopy->_layoutDirection = _layoutDirection;
 	theCopy->_topPadding = _topPadding;
 	theCopy->_bottomPadding = _bottomPadding;
+	theCopy->_leftPadding = _leftPadding;
+	theCopy->_rightPadding = _rightPadding;
 	theCopy->_numberOfItems = _numberOfItems;
 	theCopy->_reorderedIndex = _reorderedIndex;
 	return ( theCopy );
@@ -96,7 +98,11 @@
 	NSUInteger x = (NSUInteger)floorf(point.x);
 	NSUInteger col = x / (NSUInteger)_actualCellSize.width;
 	
-	return ( (row * [self numberOfItemsPerRow]) + col );
+	NSUInteger result = (row * [self numberOfItemsPerRow]) + col;
+	if ( result >= self.numberOfItems )
+		result = NSNotFound;
+	
+	return ( result );
 }
 
 - (CGRect) cellRectForPoint: (CGPoint) point
@@ -145,8 +151,11 @@
 	if ( _numberOfItems % numPerRow != 0 )
 		numRows++;
 	
-	return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding,
-						((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding) );
+	CGFloat height = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
+	if (height < _gridView.bounds.size.height)
+		height = _gridView.bounds.size.height + 1;
+	
+	return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding, height) );
 }
 
 - (NSUInteger) numberOfItemsPerRow
