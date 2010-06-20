@@ -7,6 +7,12 @@ p=. Version 1.1 -- 26 May 2010
 p=. By "Jim Dovey":mailto:jimdovey@mac.com <br />
 Originally written for the "Kobo iPad Application":http://itunes.apple.com/ca/app/ebooks-by-kobo/id301259483?mt=8
 
+h3. Used In These Applications:
+
+* "eBooks by Kobo":http://itunes.apple.com/ca/app/ebooks-by-kobo/id301259483?mt=8 -- Bookshelf and multi-column table views, 'I'm Reading' overlay view. <br />
+* "Netflix Actors":http://github.com/adrianco/Actors-for-Netflix-on-iPad -- Movie and actor chooser views. <br />
+* "Stocks - The Finance App":http://itunes.apple.com/ca/app/stocks-the-finance-app/id373066200?mt=8 -- Portfolio view contents. <br />
+
 h2. Introduction
 
 *AQGridView* is an attempt to create something similar to *NSCollectionView* on the iPhone. If *CALayoutManager* were available on the iPhone, specifically the *CAConstraintLayoutManager*, then this would be relatively easy to put together. However, since none of those exist, there's a lot of work to be done.
