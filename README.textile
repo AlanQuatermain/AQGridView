@@ -5,7 +5,7 @@ h3=. Winner of the _Best Developer Tool/Helper_ award at iPadDevCamp 2010 in San
 p=. Version 1.1 -- 26 May 2010
 
 p=. By "Jim Dovey":mailto:jimdovey@mac.com <br />
-Originally written for the "Kobo iPad Application":http://itunes.apple.com/ca/app/ebooks-by-kobo-hd/id364742849?mt=8
+Originally written for the "Kobo iPad Application":http://itunes.apple.com/ca/app/ebooks-by-kobo/id301259483?mt=8
 
 h2. Introduction
 
