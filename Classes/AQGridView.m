@@ -432,6 +432,23 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.allCellsNeedLayout = 1;
 }
 
+- (void)setContentOffset: (CGPoint) contentOffset animated: (BOOL) animate
+{
+	// Call our super duper method
+	[super setContentOffset: contentOffset animated: animate];
+	
+	// for long grids, ensure there are visible cells when scrolled to
+	if (!animate)
+	{
+		[self updateVisibleGridCellsNow];
+		if (![_visibleCells count])
+		{
+			NSIndexSet * newIndices = [_gridData indicesOfCellsInRect: [self gridViewVisibleBounds]];
+			[self updateForwardCellsForVisibleIndices: newIndices];
+		}
+	}
+}
+
 - (void) setContentSize: (CGSize) newSize
 {
 	if ( (_flags.contentSizeFillsBounds == 1) && (newSize.height < self.bounds.size.height) )
