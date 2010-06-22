@@ -12,6 +12,7 @@ h3. Used In These Applications:
 * "eBooks by Kobo":http://itunes.apple.com/ca/app/ebooks-by-kobo/id301259483?mt=8 -- Bookshelf and multi-column table views, 'I'm Reading' overlay view. <br />
 * "Netflix Actors":http://github.com/adrianco/Actors-for-Netflix-on-iPad -- Movie and actor chooser views. <br />
 * "Stocks - The Finance App":http://itunes.apple.com/ca/app/stocks-the-finance-app/id373066200?mt=8 -- Portfolio view contents. <br />
+* "Rivet for iPad":http://itunes.apple.com/ca/app/rivet-for-ipad/id375055319?mt=8 -- Media shelves.
 
 h2. Introduction
 
