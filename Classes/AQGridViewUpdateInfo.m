@@ -603,12 +603,16 @@
 	CGFloat maxY = CGRectGetMaxY(contentRect);
 	BOOL isVertical = (_newGridData.layoutDirection == AQGridViewLayoutDirectionVertical);
 	
+	// indices of items visible from old grid
+	NSIndexSet * oldVisibleIndices = [_oldGridData indicesOfCellsInRect: contentRect];
+	
+	NSLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
+	
 	if ( (isVertical) && (maxY > gridSize.height) )
 	{
 		CGFloat diff = maxY - gridSize.height;
 		
-		// we'll move the rect downwards to encompass the older items, but keep its height
-		//  so we still animated items which might disappear
+		// grow its height so both incoming and outgoing items get animated
 		contentRect.origin.y = MAX(0.0, contentRect.origin.y - diff);
 		contentRect.size.height += diff;
 		
@@ -619,19 +623,19 @@
 	{
 		CGFloat diff = maxX - gridSize.width;
 		
-		// we'll move the rect rightwards to encompass the older items, but keep its width
-		//  so we still animate items which might disappear
+		// grow its width so both incoming and outgoing items get animated
 		contentRect.origin.x = MAX(0.0, contentRect.origin.x - diff);
 		contentRect.size.width += diff;
 		
 		// this will set the bounds for us, and it'll animate thanks to our animation block
 		_gridView.contentSize = CGSizeMake(gridSize.width, contentRect.size.height);
 	}
+	else
+	{
+		[_gridView updateGridViewBoundsForNewGridData: _newGridData];
+	}
 	
-	[_gridView updateGridViewBoundsForNewGridData: _newGridData];
-	
-	// indices of items visible from old grid
-	NSIndexSet * oldVisibleIndices = [_oldGridData indicesOfCellsInRect: contentRect];
+	NSLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
 	NSIndexSet * newVisibleIndices = [_newGridData indicesOfCellsInRect: contentRect];
 	
 	NSMutableArray * newVisibleCells = [[NSMutableArray alloc] initWithCapacity: [newVisibleIndices count]];
@@ -654,16 +658,18 @@
 	{
 		NSUInteger newIndex = _oldToNewIndexMap[oldIndex];
 		AQGridViewCell * cell = [_gridView cellForItemAtIndex: oldIndex];
+		
+		// don't do this -- we could be revealing things which weren't previously on screen
+		/*
         if ( newIndex == oldIndex )
 		{
 			if ( cell != nil )
 				[newVisibleCells addObject: cell];
             continue;
 		}
-		
+		*/
 		if ( newIndex == NSNotFound )
         {
-            NSLog( @"index %u is going away" );
 			continue;
         }
 		
@@ -682,6 +688,8 @@
 		
 		// animate it into its new location
 		CGRect frame = [_gridView fixCellFrame: cell.frame forGridRect: [_newGridData cellRectAtIndex: newIndex]];
+		if ( CGRectEqualToRect(frame, cell.frame) == NO )
+			NSLog( @"Moving frame from %@ to %@", NSStringFromCGRect(cell.frame), NSStringFromCGRect(frame) );
 		cell.frame = frame;
 		
 		// tell the grid view's delegate about it

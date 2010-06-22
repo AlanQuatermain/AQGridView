@@ -70,6 +70,7 @@
 
 // Turning view locations into item indices
 - (NSUInteger) itemIndexForPoint: (CGPoint) point;
+- (BOOL) pointIsInLastRow: (CGPoint) point;
 
 // grid cell sizes-- for the layout calculations
 - (void) setDesiredCellSize: (CGSize) desiredCellSize;

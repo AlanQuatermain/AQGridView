@@ -92,7 +92,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	id<AQGridViewDataSource>		_dataSource;
 	
 	AQGridViewData *				_gridData;
-	AQGridViewUpdateInfo *			_updateInfo;
+	NSMutableArray *				_updateInfoStack;
 	
 	CGRect							_visibleBounds;
 	NSRange							_visibleIndices;

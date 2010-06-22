@@ -105,6 +105,16 @@
 	return ( result );
 }
 
+- (BOOL) pointIsInLastRow: (CGPoint) point
+{
+	CGRect rect = [self rectForEntireGrid];
+	if ( _layoutDirection == AQGridViewLayoutDirectionVertical )
+		return ( point.y >= (rect.size.height - _actualCellSize.height) );
+	
+	// 'else'
+	return ( point.x >= (rect.size.width - _actualCellSize.width) );
+}
+
 - (CGRect) cellRectForPoint: (CGPoint) point
 {
 	return ( [self cellRectAtIndex: [self itemIndexForPoint: point]] );
