@@ -14,6 +14,7 @@
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
 		28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD733E0D9D9553002E5188 /* MainWindow.xib */; };
 		28D7ACF80DDB3853001CB0EB /* SpringBoardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D7ACF70DDB3853001CB0EB /* SpringBoardViewController.m */; };
+		38417CAF11D192AC00EFB0FB /* NSIndexSet+AQIndexesOutsideSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 38417CAE11D192AC00EFB0FB /* NSIndexSet+AQIndexesOutsideSet.m */; };
 		38A96E9E11826CDA00DDC861 /* AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 38A96E8C11826CDA00DDC861 /* AQGridView.m */; };
 		38A96E9F11826CDA00DDC861 /* AQGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 38A96E9011826CDA00DDC861 /* AQGridViewCell.m */; };
 		38A96EA011826CDA00DDC861 /* AQGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38A96E9311826CDA00DDC861 /* AQGridViewController.m */; };
@@ -39,6 +40,8 @@
 		28D7ACF70DDB3853001CB0EB /* SpringBoardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpringBoardViewController.m; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* SpringBoard_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringBoard_Prefix.pch; sourceTree = "<group>"; };
+		38417CAD11D192AC00EFB0FB /* NSIndexSet+AQIndexesOutsideSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSIndexSet+AQIndexesOutsideSet.h"; path = "../../Classes/NSIndexSet+AQIndexesOutsideSet.h"; sourceTree = SOURCE_ROOT; };
+		38417CAE11D192AC00EFB0FB /* NSIndexSet+AQIndexesOutsideSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSIndexSet+AQIndexesOutsideSet.m"; path = "../../Classes/NSIndexSet+AQIndexesOutsideSet.m"; sourceTree = SOURCE_ROOT; };
 		38A96E8B11826CDA00DDC861 /* AQGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AQGridView.h; path = ../../Classes/AQGridView.h; sourceTree = SOURCE_ROOT; };
 		38A96E8C11826CDA00DDC861 /* AQGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AQGridView.m; path = ../../Classes/AQGridView.m; sourceTree = SOURCE_ROOT; };
 		38A96E8D11826CDA00DDC861 /* AQGridView+CellLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AQGridView+CellLayout.h"; path = "../../Classes/AQGridView+CellLayout.h"; sourceTree = SOURCE_ROOT; };
@@ -164,6 +167,8 @@
 				38A96E9911826CDA00DDC861 /* AQGridViewUpdateItem.m */,
 				38A96E9A11826CDA00DDC861 /* NSIndexSet+AQIsSetContiguous.h */,
 				38A96E9B11826CDA00DDC861 /* NSIndexSet+AQIsSetContiguous.m */,
+				38417CAD11D192AC00EFB0FB /* NSIndexSet+AQIndexesOutsideSet.h */,
+				38417CAE11D192AC00EFB0FB /* NSIndexSet+AQIndexesOutsideSet.m */,
 				38A96E9C11826CDA00DDC861 /* UIColor+AQGridView.h */,
 				38A96E9D11826CDA00DDC861 /* UIColor+AQGridView.m */,
 			);
@@ -236,6 +241,7 @@
 				38A96EA411826CDA00DDC861 /* NSIndexSet+AQIsSetContiguous.m in Sources */,
 				38A96EA511826CDA00DDC861 /* UIColor+AQGridView.m in Sources */,
 				38A96EB9118272AC00DDC861 /* SpringBoardIconCell.m in Sources */,
+				38417CAF11D192AC00EFB0FB /* NSIndexSet+AQIndexesOutsideSet.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

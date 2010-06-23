@@ -36,7 +36,7 @@
 
 #import "AQGridViewCell.h"
 #import "AQGridViewCell+AQGridViewCellPrivate.h"
-#import "UIColor+Kobo.h"
+#import "UIColor+AQGridView.h"
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 

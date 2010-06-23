@@ -66,6 +66,7 @@
     _gridView.opaque = NO;
     _gridView.dataSource = self;
     _gridView.delegate = self;
+    _gridView.scrollEnabled = NO;
     
     if ( UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]) )
     {
