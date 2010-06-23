@@ -93,6 +93,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	
 	AQGridViewData *				_gridData;
 	NSMutableArray *				_updateInfoStack;
+	NSInteger						_animationCount;
 	
 	CGRect							_visibleBounds;
 	NSRange							_visibleIndices;
@@ -128,13 +129,13 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	separatorStyle:3;
 		unsigned	allowsSelection:1;
 		unsigned	usesPagedHorizontalScrolling:1;
-		unsigned	updating:1;
+		unsigned	updating:1;				// unused
 		unsigned	ignoreTouchSelect:1;
 		unsigned	needsReload:1;
 		unsigned	allCellsNeedLayout:1;
 		unsigned	isRotating:1;
 		unsigned	clipsContentWidthToBounds:1;
-		unsigned	isAnimatingUpdates:1;
+		unsigned	isAnimatingUpdates:1;	// unused, see _animationCount instead
 		unsigned	requiresSelection:1;
 		unsigned	contentSizeFillsBounds:1;
 		
