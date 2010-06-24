@@ -783,6 +783,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	AQGridViewUpdateInfo * info = [[AQGridViewUpdateInfo alloc] initWithOldGridData: _gridData forGridView: self];
 	[_updateInfoStack addObject: info];
+    [info release];
 }
 
 - (void) endUpdateAnimations
@@ -1595,7 +1596,7 @@ passToSuper:
 
 - (void) layoutCellsInVisibleCellRange: (NSRange) range
 {
-	NSParameterAssert((range.location >= 0) && (range.location + range.length <= [_visibleCells count]));
+	NSParameterAssert(range.location + range.length <= [_visibleCells count]);
 	
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	
