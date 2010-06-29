@@ -57,6 +57,7 @@
 		389785C3117AB50300D5CC8F /* NSIndexSet+AQIsSetContiguous.m in Sources */ = {isa = PBXBuildFile; fileRef = 389785C2117AB50300D5CC8F /* NSIndexSet+AQIsSetContiguous.m */; };
 		38978617117B8D5200D5CC8F /* ImageDemoFilledCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 38978616117B8D5200D5CC8F /* ImageDemoFilledCell.m */; };
 		3897861B117B986600D5CC8F /* ImageDemoCellChooser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3897861A117B986600D5CC8F /* ImageDemoCellChooser.m */; };
+		38A6A0CD11DA5EC7005A3A29 /* AQGridViewAnimatorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 38A6A0CC11DA5EC7005A3A29 /* AQGridViewAnimatorItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -129,6 +130,8 @@
 		38978616117B8D5200D5CC8F /* ImageDemoFilledCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageDemoFilledCell.m; sourceTree = "<group>"; };
 		38978619117B986600D5CC8F /* ImageDemoCellChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDemoCellChooser.h; sourceTree = "<group>"; };
 		3897861A117B986600D5CC8F /* ImageDemoCellChooser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageDemoCellChooser.m; sourceTree = "<group>"; };
+		38A6A0CB11DA5EC7005A3A29 /* AQGridViewAnimatorItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AQGridViewAnimatorItem.h; sourceTree = "<group>"; };
+		38A6A0CC11DA5EC7005A3A29 /* AQGridViewAnimatorItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AQGridViewAnimatorItem.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* ImageDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ImageDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -235,6 +238,8 @@
 				38978307117A678C00D5CC8F /* AQGridViewUpdateInfo.m */,
 				38978308117A678C00D5CC8F /* AQGridViewUpdateItem.h */,
 				38978309117A678C00D5CC8F /* AQGridViewUpdateItem.m */,
+				38A6A0CB11DA5EC7005A3A29 /* AQGridViewAnimatorItem.h */,
+				38A6A0CC11DA5EC7005A3A29 /* AQGridViewAnimatorItem.m */,
 				3897830A117A678C00D5CC8F /* UIColor+AQGridView.h */,
 				3897830B117A678C00D5CC8F /* UIColor+AQGridView.m */,
 				389785C1117AB50300D5CC8F /* NSIndexSet+AQIsSetContiguous.h */,
@@ -387,6 +392,7 @@
 				38978617117B8D5200D5CC8F /* ImageDemoFilledCell.m in Sources */,
 				3897861B117B986600D5CC8F /* ImageDemoCellChooser.m in Sources */,
 				38417CA011D1923400EFB0FB /* NSIndexSet+AQIndexesOutsideSet.m in Sources */,
+				38A6A0CD11DA5EC7005A3A29 /* AQGridViewAnimatorItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -36,6 +36,7 @@
 
 #import "AQGridView.h"
 #import "AQGridViewUpdateItem.h"
+#import "AQGridViewAnimatorItem.h"
 #import "AQGridViewData.h"
 #import "AQGridViewUpdateInfo.h"
 #import "AQGridViewCell+AQGridViewCellPrivate.h"
@@ -48,10 +49,6 @@
 #import <objc/runtime.h>
 
 NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectionDidChangeNotification";
-
-@interface AQGridView ()
-@property (nonatomic, copy) NSArray * animatingCells;
-@end
 
 @interface AQGridView (AQCellGridMath)
 - (NSUInteger) visibleCellListIndexForItemIndex: (NSUInteger) itemIndex;
@@ -732,21 +729,21 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_visibleIndices.length = [indices count];
 	
 	NSMutableArray * newVisibleCells = [[NSMutableArray alloc] initWithCapacity: _visibleIndices.length];
-	for ( UIView * potentialCellView in self.animatingCells )
+	for ( AQGridViewAnimatorItem * item in self.animatingCells )
 	{
-		if ( [potentialCellView isKindOfClass: [AQGridViewCell class]] == NO )
+		if ( [item.animatingView isKindOfClass: [AQGridViewCell class]] == NO )
 		{
-			[potentialCellView removeFromSuperview];
+			[item.animatingView removeFromSuperview];
 			continue;
 		}
 		
-		if ( [self isRectVisible: [_gridData cellRectForPoint: potentialCellView.center]] == NO )
+		if ( [self isRectVisible: [_gridData cellRectForPoint: item.animatingView.center]] == NO )
 		{
-			[potentialCellView removeFromSuperview];
+			[item.animatingView removeFromSuperview];
 			continue;
 		}
 		
-		[newVisibleCells addObject: potentialCellView];
+		[newVisibleCells addObject: item.animatingView];
 	}
 	
 	NSAssert([newVisibleCells count] == _visibleIndices.length, @"visible cell count after animation doesn't match visible indices");
@@ -795,7 +792,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_reloadingSuspendedCount--;
 	if ( info.numberOfUpdates == 0 )
 	{
-		[_updateInfoStack removeLastObject];
+		[_updateInfoStack removeObject: info];
 		return;
 	}
 	
@@ -806,13 +803,19 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		NSUInteger numAdded = [[info sortedInsertItems] count];
 		NSUInteger numDeleted = [[info sortedDeleteItems] count];
 		
-		[_updateInfoStack removeLastObject];
+		[_updateInfoStack removeObject: info];
 		
 		[NSException raise: NSInternalInconsistencyException format: @"Invalid number of items in AQGridView: Started with %u, added %u, deleted %u. Expected %u items after changes, but got %u", (unsigned)_gridData.numberOfItems, (unsigned)numAdded, (unsigned)numDeleted, (unsigned)expectedItemCount, (unsigned)actualItemCount];
 	}
 	
+	// there's a race condition with the info's removal from the stack if there are no animations taking place,
+	//  where -cellUpdateAnimationStopped:finished:context: is called immediately, before we've finished with the
+	//  object. Therefore we retain it while we want to use it, just in case
+	[info retain];
+	
 	[info cleanupUpdateItems];
 	_animationCount++;
+	//NSAssert(_animationCount == 1, @"Stacked animations occurring!!");
     
     [UIView beginAnimations: @"CellUpdates" context: info];
 	[UIView setAnimationDelegate: self];
@@ -828,6 +831,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_gridData = [[info newGridViewData] retain];
 	if ( _selectedIndex != NSNotFound )
 		_selectedIndex = [info newIndexForOldIndex: _selectedIndex];
+	
+	[info release];
 }
 
 - (void) cellUpdateAnimationStopped: (NSString *) animationID finished: (BOOL) finished context: (void *) context
@@ -859,7 +864,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) _updateItemsAtIndices: (NSIndexSet *) indices updateAction: (AQGridViewUpdateAction) action withAnimation: (AQGridViewItemAnimation) animation
 {
-	BOOL needsAnimationSetup = ([_updateInfoStack count] == 1);
+	BOOL needsAnimationSetup = ([_updateInfoStack count] <= _animationCount);
 	
 	// not in the middle of an update loop -- start animations here
 	if ( needsAnimationSetup )
@@ -889,7 +894,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) moveItemAtIndex: (NSUInteger) index toIndex: (NSUInteger) newIndex withAnimation: (AQGridViewItemAnimation) animation
 {
-	BOOL needsAnimationSetup = ([_updateInfoStack count] == 1);
+	BOOL needsAnimationSetup = ([_updateInfoStack count] <= _animationCount);
 	
 	if ( needsAnimationSetup )
 		[self setupUpdateAnimations];
@@ -1372,7 +1377,7 @@ passToSuper:
 		[shifted release]; shifted = nil;
 		
 		// remove cells from the view hierarchy -- but only if they're not being animated by something else
-		if ( [self.animatingCells firstObjectCommonWithArray: removedCells] != nil )
+		if ( [[self.animatingCells valueForKey: @"animatingView"] firstObjectCommonWithArray: removedCells] != nil )
 		{
 			NSMutableArray * mutable = [removedCells mutableCopy];
 			[mutable removeObjectsInArray: removedCells];

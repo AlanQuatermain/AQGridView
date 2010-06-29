@@ -100,7 +100,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	NSMutableArray *				_visibleCells;
 	NSMutableDictionary *			_reusableGridCells;
 	
-	NSArray *						_animatingCells;
+	NSSet *							_animatingCells;
 	NSRange							_revealingIndices;
 	
 	NSMutableIndexSet *				_highlightedIndices;
