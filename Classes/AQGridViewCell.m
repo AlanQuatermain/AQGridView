@@ -642,4 +642,33 @@
 	[self setNeedsLayout];
 }
 
+- (NSUInteger) displayIndex
+{
+	return ( _displayIndex );
+}
+
+- (void) setDisplayIndex: (NSUInteger) index
+{
+	_displayIndex = index;
+}
+
+- (BOOL) hiddenForAnimation
+{
+	return ( _cellFlags.hiddenForAnimation == 1 );
+}
+
+- (void) setHiddenForAnimation: (BOOL) value
+{
+	if ( value )
+	{
+		self.hidden = YES;
+		_cellFlags.hiddenForAnimation = 1;
+	}
+	else
+	{
+		// don't make visible here-- might still be hidden by something else. Caller should un-hide if appropriate
+		_cellFlags.hiddenForAnimation = 0;
+	}
+}
+
 @end

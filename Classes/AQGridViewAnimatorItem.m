@@ -20,4 +20,23 @@
 	return ( [result autorelease] );
 }
 
+- (void) dealloc
+{
+	self.animatingView = nil;
+	[super dealloc];
+}
+
+- (BOOL) isEqual: (AQGridViewAnimatorItem *) object
+{
+	if ( [object isKindOfClass: [self class]] == NO )
+		return ( NO );
+	
+	return ( object.index == self.index );
+}
+
+- (NSUInteger) hash
+{
+	return ( self.index );
+}
+
 @end

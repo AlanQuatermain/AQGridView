@@ -101,7 +101,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	NSMutableDictionary *			_reusableGridCells;
 	
 	NSSet *							_animatingCells;
-	NSRange							_revealingIndices;
+	NSIndexSet *					_animatingIndices;
 	
 	NSMutableIndexSet *				_highlightedIndices;
 	UIView *						_touchedContentView;		// weak reference
@@ -149,7 +149,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		
 		unsigned	dataSourceGridCellSize:1;
 		
-		unsigned	__RESERVED__:3;
+		unsigned	__RESERVED__:1;
 	} _flags;
 }
 

@@ -49,4 +49,8 @@ typedef NSUInteger AQGridViewCellSeparatorEdge;
 @property (nonatomic, assign) AQGridViewCellSeparatorStyle separatorStyle;
 @property (nonatomic, assign) AQGridViewCellSeparatorEdge separatorEdge;
 
+@property (nonatomic, assign) NSUInteger displayIndex;
+
+@property (nonatomic, assign) BOOL hiddenForAnimation;
+
 @end
