@@ -38,7 +38,7 @@
 #import "AQGridViewCell+AQGridViewCellPrivate.h"
 #import "UIColor+AQGridView.h"
 #import <QuartzCore/QuartzCore.h>
-#import <objc/runtime.h>
+#import "AQGridViewCell_png.h"
 
 @interface AQGridViewCell ()
 @property (nonatomic, retain) UIView * contentView;
@@ -297,7 +297,8 @@
 {
 	if ( (_cellFlags.usingDefaultSelectedBackgroundView == 1) && (_selectedBackgroundView == nil) )
 	{
-		NSString * imageName = @"AQGridSelection.png";
+		unsigned char * pngBytes = AQGridSelection_png;
+		NSUInteger pngLength = AQGridSelection_png_len;
 		switch ( _cellFlags.selectionStyle )
 		{
 			case AQGridViewCellSelectionStyleBlue:
@@ -305,23 +306,28 @@
 				break;
 				
 			case AQGridViewCellSelectionStyleGray:
-				imageName = @"AQGridSelectionGray.png";
+				pngBytes = AQGridSelectionGray_png;
+				pngLength = AQGridSelectionGray_png_len;
 				break;
 				
 			case AQGridViewCellSelectionStyleBlueGray:
-				imageName = @"AQGridSelectionGrayBlue.png";
+				pngBytes = AQGridSelectionGrayBlue_png;
+				pngLength = AQGridSelectionGrayBlue_png_len;
 				break;
 				
 			case AQGridViewCellSelectionStyleGreen:
-				imageName = @"AQGridSelectionGreen.png";
+				pngBytes = AQGridSelectionGreen_png;
+				pngLength = AQGridSelectionGreen_png_len;
 				break;
 				
 			case AQGridViewCellSelectionStyleRed:
-				imageName = @"AQGridSelectionRed.png";
+				pngBytes = AQGridSelectionRed_png;
+				pngLength = AQGridSelectionRed_png_len;
 				break;
 		}
 		
-		_selectedBackgroundView = [[UIImageView alloc] initWithImage: [UIImage imageNamed: imageName]];
+		NSData *pngData = [NSData dataWithBytesNoCopy: pngBytes length: pngLength freeWhenDone: NO];
+		_selectedBackgroundView = [[UIImageView alloc] initWithImage: [UIImage imageWithData: pngData]];
 		_selectedBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 		_selectedBackgroundView.contentMode = UIViewContentModeScaleToFill;
 	}
