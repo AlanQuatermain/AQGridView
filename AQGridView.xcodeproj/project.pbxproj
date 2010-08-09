@@ -193,6 +193,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB921E08733DC00010E9CD /* Build configuration list for PBXNativeTarget "AQGridView" */;
 			buildPhases = (
+				DA62444512102F6E007EC097 /* Embed PNGs */,
 				D2AAC07A0554694100DB518D /* Headers */,
 				D2AAC07B0554694100DB518D /* Sources */,
 				D2AAC07C0554694100DB518D /* Frameworks */,
@@ -223,6 +224,29 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DA62444512102F6E007EC097 /* Embed PNGs */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Resources/AQGridSelection.png",
+				"$(SRCROOT)/Resources/AQGridSelectionGray.png",
+				"$(SRCROOT)/Resources/AQGridSelectionGrayBlue.png",
+				"$(SRCROOT)/Resources/AQGridSelectionGreen.png",
+				"$(SRCROOT)/Resources/AQGridSelectionRed.png",
+			);
+			name = "Embed PNGs";
+			outputPaths = (
+				"$(DERIVED_FILES_DIR)/AQGridViewCell_png.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = ". \"${SRCROOT}/Scripts/embed_png.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D2AAC07B0554694100DB518D /* Sources */ = {
