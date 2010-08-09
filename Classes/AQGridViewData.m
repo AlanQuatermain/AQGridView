@@ -163,7 +163,7 @@
 	
 	CGFloat height = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
 	if (height < _gridView.bounds.size.height)
-		height = _gridView.bounds.size.height + 1;
+		height = _gridView.bounds.size.height;
 	
 	return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding, height) );
 }

@@ -383,7 +383,7 @@
 	CGSize cellSize = cell.frame.size;
 	[_animatingCells addObject: imageView];
 	
-	// swap 'em aroundAQGrid
+	// swap 'em around
 	// image view goes underneath all real cells
 	if ( _gridView.backgroundView != nil )
 		[_gridView insertSubview: imageView aboveSubview: _gridView.backgroundView];
@@ -608,7 +608,7 @@
 	// indices of items visible from old grid
 	NSIndexSet * oldVisibleIndices = [_oldGridData indicesOfCellsInRect: contentRect];
 	
-	//NSLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
+	NSLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
 	
 	if ( (isVertical) && (maxY > gridSize.height) )
 	{
@@ -637,7 +637,7 @@
 		[_gridView updateGridViewBoundsForNewGridData: _newGridData];
 	}
 	
-	//NSLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
+	NSLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
 	NSIndexSet * newVisibleIndices = [_newGridData indicesOfCellsInRect: contentRect];
 	
 	NSMutableSet * newVisibleCells = [[NSMutableSet alloc] initWithSet: _gridView.animatingCells];
@@ -705,17 +705,9 @@
 		
 		// keep the cell in our internal list
 		if ( animatingItem != nil )
-		{
 			animatingItem.index = newIndex;		// just update the index on the existing item
-		}
 		else
-		{
-			animatingItem = [AQGridViewAnimatorItem itemWithView: cell index: newIndex];
-			[newVisibleCells addObject: animatingItem];
-			
-			// put it into the lookup table so we can make other modifications later
-			//CFDictionarySetValue( animatingCellTable, (void *)newIndex, animatingItem );
-		}
+			[newVisibleCells addObject: [AQGridViewAnimatorItem itemWithView: cell index: newIndex]];
 		
 		// animate it into its new location
 		CGRect frame = [_gridView fixCellFrame: cell.frame forGridRect: [_newGridData cellRectAtIndex: newIndex]];
@@ -771,12 +763,7 @@
 			{
 				[self animateInsertionForCell: cell withAnimation: item.animation];
 				[_gridView delegateWillDisplayCell: cell atIndex: item.index];
-				
-				AQGridViewAnimatorItem * item = [AQGridViewAnimatorItem itemWithView: cell index: item.index];
-				[newVisibleCells addObject: item];
-				
-				// add to the lookup table
-				//CFDictionarySetValue( animatingCellTable, (void *)item.index, item );
+				[newVisibleCells addObject: [AQGridViewAnimatorItem itemWithView: cell index: item.index]];
 			}
 		}
 	}
@@ -784,13 +771,11 @@
 	// now reload items
 	for ( AQGridViewUpdateItem * item in _reloadItems )
 	{
-		// if it won't be visible after other insertions/deletions, ignore it
 		if ( [newVisibleIndices containsIndex: item.index] == NO )
 			continue;
 		
 		AQGridViewAnimatorItem * animatingItem = (AQGridViewAnimatorItem *)CFDictionaryGetValue( animatingCellTable, (void *)item.originalIndex );
 		
-		// 
 		AQGridViewCell * origCell = (AQGridViewCell *)animatingItem.animatingView;
 		if ( origCell == nil )
 			origCell = [_gridView cellForItemAtIndex: item.originalIndex];
@@ -803,18 +788,23 @@
 		if ( animatingItem != nil )
 		{
 			animatingItem.animatingView = newCell;
-			animatingItem.index = item.index;
+			animatingItem.index = item.originalIndex;
 		}
 		else
 		{
-			// we MUST replace any existing items with the reloaded versions
-			animatingItem = [AQGridViewAnimatorItem itemWithView: newCell index: item.index];
+			AQGridViewAnimatorItem * tmp = [AQGridViewAnimatorItem itemWithView: newCell index: item.index];
 			
-			// if anything in the set refers to the same item, this will remove it
-			[newVisibleCells removeObject: animatingItem];
-			[newVisibleCells addObject: animatingItem];
+			// newVisibleCells is a set, meaning that it will probably not actually insert the new item
+			// if there is something matching this index, let's just update that value
+			animatingItem = [newVisibleCells member: tmp];
+			if ( animatingItem == nil )
+				[newVisibleCells addObject: tmp];
+			else
+				animatingItem.animatingView = newCell;
 		}
 	}
+	
+	CFRelease( animatingCellTable );
 	
 	return ( [newVisibleCells autorelease] );
 }

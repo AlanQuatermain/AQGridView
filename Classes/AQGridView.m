@@ -523,14 +523,14 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (AQGridViewCell *) dequeueReusableCellWithIdentifier: (NSString *) reuseIdentifier
 {
-	NSMutableArray * cells = [_reusableGridCells objectForKey: reuseIdentifier];
-	AQGridViewCell * cell = [[cells lastObject] retain];
+	NSMutableSet * cells = [_reusableGridCells objectForKey: reuseIdentifier];
+	AQGridViewCell * cell = [[cells anyObject] retain];
 	if ( cell == nil )
 		return ( nil );
 	
 	[cell prepareForReuse];
 	
-	[cells removeLastObject];
+	[cells removeObject: cell];
 	return ( [cell autorelease] );
 }
 
@@ -538,15 +538,20 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 {
 	for ( AQGridViewCell * cell in reusableCells )
 	{
-		NSMutableArray * reuseArray = [_reusableGridCells objectForKey: cell.reuseIdentifier];
-		if ( reuseArray == nil )
+		if ( [_visibleCells containsObject: cell] )
 		{
-			reuseArray = [[NSMutableArray alloc] init];
-			[_reusableGridCells setObject: reuseArray forKey: cell.reuseIdentifier];
-			[reuseArray release];
+			NSLog( @"Warning: tried to add duplicate gridview cell" );
+			continue;
+		}
+		NSMutableSet * reuseSet = [_reusableGridCells objectForKey: cell.reuseIdentifier];
+		if ( reuseSet == nil )
+		{
+			reuseSet = [[NSMutableSet alloc] initWithCapacity: 32];
+			[_reusableGridCells setObject: reuseSet forKey: cell.reuseIdentifier];
+			[reuseSet release];
 		}
 		
-		[reuseArray addObject: cell];
+		[reuseSet addObject: cell];
 	}
 }
 
@@ -611,8 +616,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	}
 	
 	CGRect rect = CGRectZero;
-	rect.size = self.contentSize;
-	rect.size.height -= (_gridData.topPadding + _gridData.bottomPadding);
+	rect.size.width = self.bounds.size.width;
+	rect.size.height = self.contentSize.height -  (_gridData.topPadding + _gridData.bottomPadding);
 	rect.origin.y += _gridData.topPadding;
 	self.backgroundView.frame = rect;
 	
@@ -785,7 +790,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		[newVisibleCells addObject: item.animatingView];
 	}
 	
-	NSAssert2([newVisibleCells count] == _visibleIndices.length, @"visible cell count after animation (%lu) doesn't match visible indices (%lu)", (unsigned long)[newVisibleCells count], (unsigned long)_visibleIndices.length);
+	//NSAssert([newVisibleCells count] == _visibleIndices.length, @"visible cell count after animation doesn't match visible indices");
 	
 	[newVisibleCells sortUsingSelector: @selector(compareOriginAgainstCell:)];
 	[_visibleCells removeObjectsInArray: newVisibleCells];
@@ -794,7 +799,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[newVisibleCells release];
 	self.animatingCells = nil;
 	
-	// build a list of the grid view cells in our view tree which aren't in the visible list
 	NSMutableSet * removals = [[NSMutableSet alloc] init];
 	for ( UIView * view in self.subviews )
 	{
@@ -802,7 +806,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			continue;
 		
 		if ( [_visibleCells containsObject: view] == NO )
-			[removals addObject: view];		// it's not in the visible list, so it shouldn't be here
+			[removals addObject: view];
 	}
 	
 	[removals makeObjectsPerformSelector: @selector(removeFromSuperview)];
@@ -1087,7 +1091,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_backgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	CGRect frame = self.bounds;
 	frame.size = self.contentSize;
-	_backgroundView.frame = UIEdgeInsetsInsetRect( frame, self.contentInset );
+	_backgroundView.frame = self.bounds;//UIEdgeInsetsInsetRect( frame, self.contentInset );
 	
 	[self insertSubview: _backgroundView atIndex: 0];
 	
@@ -1331,6 +1335,21 @@ passToSuper:
     [super touchesCancelled: touches withEvent: event];
 }
 
+- (void)doAddVisibleCell: (UIView *)cell
+{
+	[_visibleCells addObject: cell];
+	// updated: if we're adding it to our visibleCells collection, really it should be in the gridview.
+	if ( cell.superview == nil )
+	{
+		NSLog( @"Visible cell not in gridview - adding" );
+		if ( _backgroundView.superview == self )
+			[self insertSubview: cell aboveSubview: _backgroundView];
+		else
+			[self insertSubview: cell atIndex: 0];
+	}
+}
+
+
 @end
 
 #pragma mark -
@@ -1419,7 +1438,7 @@ passToSuper:
 				NSMutableArray * removedCells = [[_visibleCells objectsAtIndexes: shifted] mutableCopy];
 				
 				// remove them from the visible list
-				[_visibleCells removeObjectsAtIndexes: shifted];
+				[_visibleCells removeObjectsInArray: removedCells];
 				//NSLog( @"After removals, visible cells count = %lu", (unsigned long)[_visibleCells count] );
 				
 				// don't need this any more
@@ -1466,14 +1485,16 @@ passToSuper:
 						{
 							// ensure this is in the visible cell list
 							if ( [_visibleCells containsObject: item.animatingView] == NO )
-								[_visibleCells addObject: item.animatingView];
+								//[_visibleCells addObject: item.animatingView];
+								[self doAddVisibleCell: item.animatingView];
 						}
 						else
 						{
 							// it's an image that's being moved, likely because it *was* going offscreen before
 							// the user scrolled. Create a real cell, but hide it until the animation is complete.
 							AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
-							[_visibleCells addObject: cell];
+							//[_visibleCells addObject: cell];
+							[self doAddVisibleCell: cell];
 							
 							// we don't tell the delegate yet, we just hide it
 							cell.hiddenForAnimation = YES;
@@ -1491,7 +1512,8 @@ passToSuper:
 				while ( idx != NSNotFound )
 				{
 					AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
-					[_visibleCells addObject: cell];
+					//[_visibleCells addObject: cell];
+					[self doAddVisibleCell: cell];
 					
 					// tell the delegate
 					[self delegateWillDisplayCell: cell atIndex: idx];
@@ -1506,9 +1528,10 @@ passToSuper:
 				
 				NSMutableIndexSet * toRemove = [[NSMutableIndexSet alloc] init];
 				NSMutableIndexSet * seen = [[NSMutableIndexSet alloc] init];
-				NSUInteger i = 0;
-				for ( AQGridViewCell * cell in _visibleCells )
+				NSUInteger i, count = [_visibleCells count];
+				for ( i = 0; i < count; i++ )
 				{
+					AQGridViewCell * cell = [_visibleCells objectAtIndex: i];
 					if ( [newVisibleIndices containsIndex: cell.displayIndex] == NO )
 					{
 						NSLog( @"Cell for index %lu is still in visible list, removing...", (unsigned long)cell.displayIndex );
@@ -1519,6 +1542,7 @@ passToSuper:
 					{
 						NSLog( @"Multiple cells with index %lu found-- removing duplicate...", (unsigned long)cell.displayIndex );
 						[cell removeFromSuperview];
+						[toRemove addIndex: i];
 					}
 					
 					[seen addIndex: cell.displayIndex];
@@ -1550,7 +1574,8 @@ passToSuper:
 				while ( idx != NSNotFound )
 				{
 					AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
-					[_visibleCells addObject: cell];
+					//[_visibleCells addObject: cell];
+					[self doAddVisibleCell: cell];
 					
 					// tell the delegate
 					[self delegateWillDisplayCell: cell atIndex: idx];
@@ -1955,6 +1980,7 @@ passToSuper:
 	else
 		[self insertSubview: cell atIndex: 0];
     [UIView setAnimationsEnabled: YES];
+	
 	return ( cell );
 }
 
@@ -1977,13 +2003,15 @@ passToSuper:
 		return;
 	
 	[_visibleCells removeObjectAtIndex: visibleCellListIndex];
-	[_visibleCells addObject: newCell];
+	//[_visibleCells addObject: newCell];
+	[self doAddVisibleCell: newCell];
 }
 
 - (void) ensureCellInVisibleList: (AQGridViewCell *) cell
 {
 	if ( [_visibleCells containsObject: cell] == NO )
-		[_visibleCells addObject: cell];
+		//[_visibleCells addObject: cell];
+		[self doAddVisibleCell: cell];
 	[_visibleCells sortUsingSelector: @selector(compareOriginAgainstCell:)];
 }
 
