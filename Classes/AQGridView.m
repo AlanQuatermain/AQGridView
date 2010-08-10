@@ -1214,7 +1214,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	{
 		CGPoint pt = [touch locationInView: self];
 		UIView * hitView = [self _basicHitTest: pt withEvent: event];
-		_touchedContentView = hitView;
+		_touchedContentView = [hitView retain];
 		
 		// unhighlight anything not here
 		if ( hitView != self )
@@ -1265,6 +1265,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		//[self _cancelContentTouchUsingEvent: event forced: NO];
 		[self highlightItemAtIndex: NSNotFound animated: NO scrollPosition: AQGridViewScrollPositionNone];
 		_flags.ignoreTouchSelect = 1;
+		[_touchedContentView release];
 		_touchedContentView = nil;
 	}
 	
