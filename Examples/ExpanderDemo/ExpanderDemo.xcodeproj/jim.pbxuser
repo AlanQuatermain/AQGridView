@@ -1,0 +1,170 @@
+// !$*UTF8*$!
+{
+	389A5BC212198FEB00B87185 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	38AE3FAF12198A9D00E7D3B5 /* ExpandingGridViewController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {958, 989}}";
+			sepNavSelRange = "{856, 0}";
+			sepNavVisRange = "{0, 2045}";
+			sepNavWindowFrame = "{{222, 122}, {1017, 1102}}";
+		};
+	};
+	38AE3FB012198A9D00E7D3B5 /* ExpandingGridViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {439, 2660}}";
+			sepNavSelRange = "{2378, 0}";
+			sepNavVisRange = "{2856, 421}";
+			sepNavWindowFrame = "{{465, 171}, {1017, 1102}}";
+		};
+	};
+	38D6F05C12197E62006909B6 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 38D6F06B12197E62006909B6 /* ExpanderDemo */;
+		activeTarget = 38D6F06812197E62006909B6 /* ExpanderDemo */;
+		addToTargets = (
+			38D6F06812197E62006909B6 /* ExpanderDemo */,
+		);
+		breakpoints = (
+		);
+		codeSenseManager = 38D6F06012197E62006909B6 /* Code sense */;
+		executables = (
+			38D6F06B12197E62006909B6 /* ExpanderDemo */,
+		);
+		ignoreBreakpointsInProjectsDict = {
+		};
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					241,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					201,
+					60,
+					20,
+					48.16259765625,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 303665122;
+			PBXWorkspaceStateSaveDate = 303665122;
+		};
+		sourceControlManager = 389A5BC212198FEB00B87185 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	38D6F06012197E62006909B6 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	38D6F06812197E62006909B6 /* ExpanderDemo */ = {
+		activeExec = 0;
+		executables = (
+			38D6F06B12197E62006909B6 /* ExpanderDemo */,
+		);
+	};
+	38D6F06B12197E62006909B6 /* ExpanderDemo */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = ExpanderDemo;
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+		variableFormatDictionary = {
+		};
+	};
+	38D6F07A12197E62006909B6 /* ExpanderDemoAppDelegate.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {958, 1050}}";
+			sepNavSelRange = "{1654, 0}";
+			sepNavVisRange = "{3, 2347}";
+			sepNavWindowFrame = "{{881, 247}, {1017, 1102}}";
+		};
+	};
+	38D6F08012197E62006909B6 /* ExpanderDemoViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {958, 1400}}";
+			sepNavSelRange = "{2544, 0}";
+			sepNavVisRange = "{1145, 2415}";
+			sepNavWindowFrame = "{{1199, 142}, {1017, 1102}}";
+		};
+	};
+	38D6F113121982CC006909B6 /* AQGridView.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {958, 3668}}";
+			sepNavSelRange = "{6002, 0}";
+			sepNavVisRange = "{4802, 3075}";
+			sepNavWindowFrame = "{{1050, 235}, {1017, 1102}}";
+		};
+	};
+	38D6F11D121982CC006909B6 /* AQGridViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {958, 2506}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{3267, 1563}";
+			sepNavWindowFrame = "{{619, 198}, {1017, 1102}}";
+		};
+	};
+}

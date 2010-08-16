@@ -4,9 +4,12 @@
       location = "self:AQGridView.xcodeproj">
    </FileRef>
    <FileRef
+      location = "container:../Examples/SpringBoard/SpringBoard.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "container:../Examples/ImageDemo/ImageDemo.xcodeproj">
    </FileRef>
    <FileRef
-      location = "container:../Examples/SpringBoard/SpringBoard.xcodeproj">
+      location = "absolute:/Users/jim/Documents/Development/Quatermain/AQGridView/Examples/ExpanderDemo/ExpanderDemo.xcodeproj">
    </FileRef>
 </Workspace>
