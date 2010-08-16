@@ -20,10 +20,10 @@
 	};
 	38AE3FB012198A9D00E7D3B5 /* ExpandingGridViewController.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {439, 2660}}";
-			sepNavSelRange = "{2378, 0}";
-			sepNavVisRange = "{2856, 421}";
-			sepNavWindowFrame = "{{465, 171}, {1017, 1102}}";
+			sepNavIntBoundsRect = "{{0, 0}, {958, 2534}}";
+			sepNavSelRange = "{3350, 0}";
+			sepNavVisRange = "{2781, 1759}";
+			sepNavWindowFrame = "{{1068, 201}, {1017, 1102}}";
 		};
 	};
 	38D6F05C12197E62006909B6 /* Project object */ = {
