@@ -90,7 +90,7 @@
 	// ensure these bits aren't animated
 	[UIView setAnimationsEnabled: NO];
 	
-	self.gridView.alpha = 0.0;
+	self.gridView.backgroundColor = [UIColor clearColor];
 	
 	// collect the visible cells' original locations in a new array
 	NSArray * cells = [self.gridView visibleCells];
@@ -131,7 +131,7 @@
 	[UIView beginAnimations: @"Expansion" context: NULL];
 	[UIView setAnimationDuration: 1.0];
 	
-	self.gridView.alpha = 1.0;
+	self.gridView.backgroundColor = [UIColor blackColor];
 	
 	for ( NSUInteger i = 0; i < [_expandedLocations count]; i++ )
 	{
