@@ -191,8 +191,8 @@
 				38AE3FCA12198E1300E7D3B5 /* WTF.png */,
 			);
 			name = Images;
-			path = /Users/jim/Documents/Development/Quatermain/AQGridView/Examples/ImageDemo/Images;
-			sourceTree = "<absolute>";
+			path = ../ImageDemo/Images;
+			sourceTree = "<group>";
 		};
 		38D6F05A12197E62006909B6 = {
 			isa = PBXGroup;
