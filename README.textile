@@ -13,6 +13,7 @@ h3. Used In These Applications:
 * "Netflix Actors":http://itunes.apple.com/us/app/actors-for-netflix/id377007136?mt=8 (Source code "here":http://github.com/adrianco/Actors-for-Netflix-on-iPad) -- Movie and actor chooser views. <br />
 * "Stocks - The Finance App":http://itunes.apple.com/ca/app/stocks-the-finance-app/id373066200?mt=8 -- Portfolio view contents. <br />
 * "Rivet for iPad":http://itunes.apple.com/ca/app/rivet-for-ipad/id375055319?mt=8 -- Media shelves.
+* "Slide By Slide":http://itunes.apple.com/us/app/slide-by-slide/id387580384?mt=8 -- Slideshow picker.
 
 h2. Introduction
 
