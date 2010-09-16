@@ -105,6 +105,16 @@
 	return ( result );
 }
 
+- (BOOL) pointIsInLastRow: (CGPoint) point
+{
+	CGRect rect = [self rectForEntireGrid];
+	if ( _layoutDirection == AQGridViewLayoutDirectionVertical )
+		return ( point.y >= (rect.size.height - _actualCellSize.height) );
+	
+	// 'else'
+	return ( point.x >= (rect.size.width - _actualCellSize.width) );
+}
+
 - (CGRect) cellRectForPoint: (CGPoint) point
 {
 	return ( [self cellRectAtIndex: [self itemIndexForPoint: point]] );
@@ -153,7 +163,7 @@
 	
 	CGFloat height = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
 	if (height < _gridView.bounds.size.height)
-		height = _gridView.bounds.size.height + 1;
+		height = _gridView.bounds.size.height;
 	
 	return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding, height) );
 }
@@ -225,21 +235,12 @@
 
 - (void) fixDesiredCellSizeForWidth: (CGFloat) width
 {
-	NSUInteger w = (NSUInteger)floorf(width - _leftPadding - _rightPadding);
-	NSUInteger dw = (NSUInteger)floorf(_desiredCellSize.width);
+    // Much thanks to Brandon Sneed (@bsneed) for the following new algorithm, reduced to two floating-point divisions -- that's O(1) folks!
+	CGFloat w = floorf(width - _leftPadding - _rightPadding);
+	CGFloat dw = floorf(_desiredCellSize.width);
+    CGFloat multiplier = floorf( w / dw );
 	
-	if ( dw > w )
-	{
-		dw = w;
-	}
-	else
-	{
-		// TODO: this could be optimized
-		while ( (w % dw) != 0 )
-			dw++;
-	}
-	
-	_actualCellSize.width = (CGFloat)dw;
+	_actualCellSize.width = floorf( w / multiplier );
 	_actualCellSize.height = _desiredCellSize.height;
 }
 

@@ -1,8 +1,8 @@
 /*
- * ImageDemoViewController.h
+ * ImageGridViewCell.h
  * Classes
  * 
- * Created by Jim Dovey on 17/4/2010.
+ * Created by Jim Dovey on 16/8/2010.
  * 
  * Copyright (c) 2010 Jim Dovey
  * All rights reserved.
@@ -36,26 +36,12 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "AQGridView.h"
-#import "ImageDemoCellChooser.h"
+#import <Foundation/Foundation.h>
+#import "AQGridViewCell.h"
 
-@interface ImageDemoViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource, ImageDemoCellChooserDelegate>
+@interface ImageGridViewCell : AQGridViewCell
 {
-    NSArray * _orderedImageNames;
-    NSArray * _imageNames;
-    AQGridView * _gridView;
-    
-    NSUInteger _cellType;
-    UIPopoverController * _menuPopoverController;
+	UIImageView * _imageView;
 }
-
-@property (nonatomic, retain) IBOutlet AQGridView * gridView;
-
-- (IBAction) shuffle;
-- (IBAction) resetOrder;
-- (IBAction) displayCellTypeMenu: (UIBarButtonItem *) sender;
-- (IBAction) toggleLayoutDirection: (UIBarButtonItem *) sender;
-
+@property (nonatomic, retain) UIImage * image;
 @end
-

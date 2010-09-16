@@ -95,15 +95,16 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	id<AQGridViewDataSource>		_dataSource;
 	
 	AQGridViewData *				_gridData;
-	AQGridViewUpdateInfo *			_updateInfo;
+	NSMutableArray *				_updateInfoStack;
+	NSInteger						_animationCount;
 	
 	CGRect							_visibleBounds;
 	NSRange							_visibleIndices;
 	NSMutableArray *				_visibleCells;
 	NSMutableDictionary *			_reusableGridCells;
 	
-	NSArray *						_animatingCells;
-	NSRange							_revealingIndices;
+	NSSet *							_animatingCells;
+	NSIndexSet *					_animatingIndices;
 	
 	NSMutableIndexSet *				_highlightedIndices;
 	UIView *						_touchedContentView;		// weak reference
@@ -131,13 +132,13 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	separatorStyle:3;
 		unsigned	allowsSelection:1;
 		unsigned	usesPagedHorizontalScrolling:1;
-		unsigned	updating:1;
+		unsigned	updating:1;				// unused
 		unsigned	ignoreTouchSelect:1;
 		unsigned	needsReload:1;
 		unsigned	allCellsNeedLayout:1;
 		unsigned	isRotating:1;
 		unsigned	clipsContentWidthToBounds:1;
-		unsigned	isAnimatingUpdates:1;
+		unsigned	isAnimatingUpdates:1;	// unused, see _animationCount instead
 		unsigned	requiresSelection:1;
 		unsigned	contentSizeFillsBounds:1;
 		
@@ -153,7 +154,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		
         unsigned int isEditing:1;
 		
-		unsigned	__RESERVED__:3;
+		unsigned	__RESERVED__:1;
 	} _flags;
 }
 
@@ -174,7 +175,10 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 @property (nonatomic, readonly) CGSize gridCellSize;
 
+- (void)doAddVisibleCell: (UIView *)cell;
+
 - (CGRect) rectForItemAtIndex: (NSUInteger) index;
+- (CGRect) gridViewVisibleBounds;
 - (AQGridViewCell *) cellForItemAtIndex: (NSUInteger) index;
 - (NSUInteger) indexForItemAtPoint: (CGPoint) point;
 - (NSUInteger) indexForCell: (AQGridViewCell *) cell;

@@ -38,6 +38,11 @@
 #import "AQGridViewUpdateItem.h"
 #import "AQGridView.h"
 
+// used internally by AQGridView and AQGridViewUpdateInfo
+@interface AQGridView ()
+@property (nonatomic, copy) NSSet * animatingCells;
+@end
+
 @interface AQGridViewUpdateInfo : NSObject
 {
 	// NB: These are never cleared, only sorted & modified.
@@ -103,6 +108,6 @@
 - (NSUInteger) newIndexForOldIndex: (NSUInteger) oldIndex;
 
 // returns a list of all the views being animated
-- (NSArray *) animateCellUpdatesUsingVisibleContentRect: (CGRect) contentRect;
+- (NSSet *) animateCellUpdatesUsingVisibleContentRect: (CGRect) contentRect;
 
 @end

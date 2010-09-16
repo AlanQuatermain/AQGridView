@@ -174,6 +174,29 @@ enum
                                                    animated: YES];
 }
 
+- (IBAction) toggleLayoutDirection: (UIBarButtonItem *) sender
+{
+	switch ( _gridView.layoutDirection )
+	{
+		default:
+		case AQGridViewLayoutDirectionVertical:
+			sender.title = NSLocalizedString(@"Horizontal Layout", @"");
+			_gridView.layoutDirection = AQGridViewLayoutDirectionHorizontal;
+			break;
+			
+		case AQGridViewLayoutDirectionHorizontal:
+			sender.title = NSLocalizedString(@"Vertical Layout", @"");
+			_gridView.layoutDirection = AQGridViewLayoutDirectionVertical;
+			break;
+	}
+	
+	// force the grid view to reflow
+	CGRect bounds = CGRectZero;
+	bounds.size = _gridView.frame.size;
+	_gridView.bounds = bounds;
+	[_gridView setNeedsLayout];
+}
+
 - (void) cellChooser: (ImageDemoCellChooser *) chooser selectedItemAtIndex: (NSUInteger) index
 {
     if ( index != _cellType )

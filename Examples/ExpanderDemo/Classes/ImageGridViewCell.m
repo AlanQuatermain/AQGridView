@@ -1,8 +1,8 @@
 /*
- * ImageDemoViewController.h
+ * ImageGridViewCell.m
  * Classes
  * 
- * Created by Jim Dovey on 17/4/2010.
+ * Created by Jim Dovey on 16/8/2010.
  * 
  * Copyright (c) 2010 Jim Dovey
  * All rights reserved.
@@ -36,26 +36,68 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "AQGridView.h"
-#import "ImageDemoCellChooser.h"
+#import "ImageGridViewCell.h"
 
-@interface ImageDemoViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource, ImageDemoCellChooserDelegate>
+@implementation ImageGridViewCell
+
+- (id) initWithFrame: (CGRect) frame reuseIdentifier: (NSString *) aReuseIdentifier
 {
-    NSArray * _orderedImageNames;
-    NSArray * _imageNames;
-    AQGridView * _gridView;
-    
-    NSUInteger _cellType;
-    UIPopoverController * _menuPopoverController;
+	self = [super initWithFrame: frame reuseIdentifier: aReuseIdentifier];
+	if ( self == nil )
+		return ( nil );
+	
+	_imageView = [[UIImageView alloc] initWithFrame: CGRectZero];
+	[self.contentView addSubview: _imageView];
+	
+	return ( self );
 }
 
-@property (nonatomic, retain) IBOutlet AQGridView * gridView;
+- (void) dealloc
+{
+	[_imageView release];
+	[super dealloc];
+}
 
-- (IBAction) shuffle;
-- (IBAction) resetOrder;
-- (IBAction) displayCellTypeMenu: (UIBarButtonItem *) sender;
-- (IBAction) toggleLayoutDirection: (UIBarButtonItem *) sender;
+- (CALayer *) glowSelectionLayer
+{
+    return ( _imageView.layer );
+}
+
+- (UIImage *) image
+{
+    return ( _imageView.image );
+}
+
+- (void) setImage: (UIImage *) anImage
+{
+    _imageView.image = anImage;
+    [self setNeedsLayout];
+}
+
+- (void) layoutSubviews
+{
+    [super layoutSubviews];
+    
+    CGSize imageSize = _imageView.image.size;
+    CGRect frame = _imageView.frame;
+    CGRect bounds = self.contentView.bounds;
+    
+    if ( (imageSize.width <= bounds.size.width) &&
+		(imageSize.height <= bounds.size.height) )
+    {
+        return;
+    }
+    
+    // scale it down to fit
+    CGFloat hRatio = bounds.size.width / imageSize.width;
+    CGFloat vRatio = bounds.size.height / imageSize.height;
+    CGFloat ratio = MAX(hRatio, vRatio);
+    
+    frame.size.width = floorf(imageSize.width * ratio);
+    frame.size.height = floorf(imageSize.height * ratio);
+    frame.origin.x = floorf((bounds.size.width - frame.size.width) * 0.5);
+    frame.origin.y = floorf((bounds.size.height - frame.size.height) * 0.5);
+    _imageView.frame = frame;
+}
 
 @end
-

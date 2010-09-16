@@ -1,8 +1,8 @@
 /*
- * ImageDemoViewController.h
+ * ExpandingGridViewController.h
  * Classes
  * 
- * Created by Jim Dovey on 17/4/2010.
+ * Created by Jim Dovey on 16/8/2010.
  * 
  * Copyright (c) 2010 Jim Dovey
  * All rights reserved.
@@ -36,26 +36,18 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "AQGridView.h"
-#import "ImageDemoCellChooser.h"
+#import <Foundation/Foundation.h>
+#import "AQGridViewController.h"
 
-@interface ImageDemoViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource, ImageDemoCellChooserDelegate>
+@interface ExpandingGridViewController : AQGridViewController
 {
-    NSArray * _orderedImageNames;
-    NSArray * _imageNames;
-    AQGridView * _gridView;
-    
-    NSUInteger _cellType;
-    UIPopoverController * _menuPopoverController;
+	NSArray *	_imageNames;
+	BOOL		_readyToExpand;
+	NSArray *	_expandedLocations;
+	CGRect		_startingRect;
 }
 
-@property (nonatomic, retain) IBOutlet AQGridView * gridView;
-
-- (IBAction) shuffle;
-- (IBAction) resetOrder;
-- (IBAction) displayCellTypeMenu: (UIBarButtonItem *) sender;
-- (IBAction) toggleLayoutDirection: (UIBarButtonItem *) sender;
+// TODO: Add the ability to specify the topmost image/cell when expanding
+- (void) expandCellsFromRect: (CGRect) rect ofView: (UIView *) aView;
 
 @end
-

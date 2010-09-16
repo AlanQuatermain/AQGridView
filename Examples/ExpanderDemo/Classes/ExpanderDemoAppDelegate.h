@@ -1,8 +1,8 @@
 /*
- * ImageDemoViewController.h
+ * ExpanderDemoAppDelegate.h
  * Classes
  * 
- * Created by Jim Dovey on 17/4/2010.
+ * Created by Jim Dovey on 16/8/2010.
  * 
  * Copyright (c) 2010 Jim Dovey
  * All rights reserved.
@@ -36,26 +36,22 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "AQGridView.h"
-#import "ImageDemoCellChooser.h"
 
-@interface ImageDemoViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource, ImageDemoCellChooserDelegate>
-{
-    NSArray * _orderedImageNames;
-    NSArray * _imageNames;
-    AQGridView * _gridView;
-    
-    NSUInteger _cellType;
-    UIPopoverController * _menuPopoverController;
+#import <UIKit/UIKit.h>
+
+@class ExpanderDemoViewController;
+
+@interface ExpanderDemoAppDelegate : NSObject <UIApplicationDelegate> {
+
+	UIWindow *window;
+
+	ExpanderDemoViewController *viewController;
 }
 
-@property (nonatomic, retain) IBOutlet AQGridView * gridView;
+@property (nonatomic, retain) IBOutlet UIWindow *window;
 
-- (IBAction) shuffle;
-- (IBAction) resetOrder;
-- (IBAction) displayCellTypeMenu: (UIBarButtonItem *) sender;
-- (IBAction) toggleLayoutDirection: (UIBarButtonItem *) sender;
+
+@property (nonatomic, retain) IBOutlet ExpanderDemoViewController *viewController;
 
 @end
 

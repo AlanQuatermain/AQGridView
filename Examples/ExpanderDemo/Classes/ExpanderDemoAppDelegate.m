@@ -1,8 +1,8 @@
 /*
- * ImageDemoViewController.h
+ * ExpanderDemoAppDelegate.h
  * Classes
  * 
- * Created by Jim Dovey on 17/4/2010.
+ * Created by Jim Dovey on 16/8/2010.
  * 
  * Copyright (c) 2010 Jim Dovey
  * All rights reserved.
@@ -36,26 +36,39 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "AQGridView.h"
-#import "ImageDemoCellChooser.h"
 
-@interface ImageDemoViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource, ImageDemoCellChooserDelegate>
-{
-    NSArray * _orderedImageNames;
-    NSArray * _imageNames;
-    AQGridView * _gridView;
-    
-    NSUInteger _cellType;
-    UIPopoverController * _menuPopoverController;
+#import "ExpanderDemoAppDelegate.h"
+
+#import "ExpanderDemoViewController.h"
+
+@implementation ExpanderDemoAppDelegate
+
+
+@synthesize window;
+
+@synthesize viewController;
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+	// Override point for customization after application launch.
+	viewController.view.frame = [[UIScreen mainScreen] applicationFrame];
+	 
+	[window addSubview:viewController.view];
+	[window makeKeyAndVisible];
+    return YES;
 }
 
-@property (nonatomic, retain) IBOutlet AQGridView * gridView;
+- (void)applicationWillTerminate:(UIApplication *)application {
 
-- (IBAction) shuffle;
-- (IBAction) resetOrder;
-- (IBAction) displayCellTypeMenu: (UIBarButtonItem *) sender;
-- (IBAction) toggleLayoutDirection: (UIBarButtonItem *) sender;
+	// Save data if appropriate.
+}
+
+- (void)dealloc {
+
+	[window release];
+	[viewController release];
+    [super dealloc];
+}
 
 @end
 
