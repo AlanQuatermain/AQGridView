@@ -82,6 +82,7 @@ typedef enum {
 		unsigned int highlighted:1;
 		unsigned int becomingHighlighted:1;
         unsigned int setShadowPath:1;
+        unsigned int editing:1;
 		unsigned int __RESERVED__:16;
 	} _cellFlags;
 }
@@ -112,5 +113,10 @@ typedef enum {
 
 - (void) setSelected: (BOOL) selected animated: (BOOL) animated;
 - (void) setHighlighted: (BOOL) highlighted animated: (BOOL) animated;
+
+// Editing
+
+@property(nonatomic,getter=isEditing) BOOL          editing;                    // show appropriate edit controls (+/- & reorder). By default -setEditing: calls setEditing:animated: with NO for animated.
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 @end

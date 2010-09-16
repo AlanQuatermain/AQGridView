@@ -470,6 +470,16 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		[self handleGridViewBoundsChanged: oldBounds toNewBounds: bounds];
 }
 
+- (BOOL) isEditing
+{
+	return ( _flags.isEditing == 1 );
+}
+
+- (void) setEditing: (BOOL) value
+{
+	[self setEditing:value animated:NO];
+}
+
 #pragma mark -
 #pragma mark Data Management
 
@@ -863,6 +873,16 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	if ( wasUpdating == NO )
 		[self endUpdateAnimations];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+	_flags.isEditing = (editing ? 1 : 0);
+	
+	NSArray *visibleCells = [self visibleCells];
+	for (AQGridViewCell *aCell in visibleCells) {
+		[aCell setEditing:editing animated:animated];
+	}
 }
 
 #pragma mark -
@@ -1504,6 +1524,7 @@ passToSuper:
 	[UIView setAnimationsEnabled: NO];
 	AQGridViewCell * cell = [_dataSource gridView: self cellForItemAtIndex: index];
 	cell.separatorStyle = _flags.separatorStyle;
+	cell.editing = self.editing;
 	
 	cell.frame = [self fixCellFrame: cell.frame forGridRect: [gridData cellRectAtIndex: index]];
 	if ( _backgroundView.superview == self )

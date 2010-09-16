@@ -83,6 +83,9 @@ typedef enum {
 
 - (CGRect) gridView: (AQGridView *) gridView adjustCellFrame: (CGRect) cellFrame withinGridCellFrame: (CGRect) gridCellFrame;
 
+// Editing
+- (void)gridView:(AQGridView *)aGridView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndex:(NSUInteger)index;
+
 @end
 
 extern NSString * const AQGridViewSelectionDidChangeNotification;
@@ -147,6 +150,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	delegateAdjustGridCellFrame:1;
 		
 		unsigned	dataSourceGridCellSize:1;
+		
+        unsigned int isEditing:1;
 		
 		unsigned	__RESERVED__:3;
 	} _flags;
@@ -227,6 +232,11 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 @property (nonatomic, assign) BOOL contentSizeGrowsToFillBounds;	// default is YES. Prior to iPhone OS 3.2, pattern colors tile from the bottom-left, necessitating that this be set to NO to avoid specially-constructed background patterns falling 'out of sync' with the cells displayed on top of it.
 
 @property (nonatomic, readonly) BOOL isAnimatingUpdates;
+
+// Editing
+
+@property(nonatomic,getter=isEditing) BOOL editing;                             // default is NO. setting is not animated.
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 @end
 
