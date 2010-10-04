@@ -170,6 +170,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 @property (nonatomic, readonly) CGSize gridCellSize;
 
+- (void)doAddVisibleCell: (UIView *)cell;
+
 - (CGRect) rectForItemAtIndex: (NSUInteger) index;
 - (CGRect) gridViewVisibleBounds;
 - (AQGridViewCell *) cellForItemAtIndex: (NSUInteger) index;

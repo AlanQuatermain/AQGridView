@@ -71,8 +71,6 @@
 {
 	[super viewDidLoad];
 	[self.gridView reloadData];
-	
-	_popoverShowing = NO;
 }
 
 - (AQGridView *) gridView
@@ -168,14 +166,6 @@
 - (AQGridViewCell *) gridView: (AQGridView *) gridView cellForItemAtIndex: (NSUInteger) index
 {
 	return ( nil );
-}
-
-#pragma mark -
-#pragma mark UIPopoverControllerDelegate methods
-
-- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
-{
-	_popoverShowing = NO;
 }
 
 @end

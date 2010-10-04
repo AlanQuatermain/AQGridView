@@ -4,5 +4,5 @@ build
 *.xcodeproj/*.pbxuser
 *.xcodeproj/*.mode1
 *.xcodeproj/*.mode1v3
-**/*.xcworkspace
-**/xcuserdata/*
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/

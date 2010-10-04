@@ -1,9 +1,11 @@
 /*
- * AQGridViewController.h
- * AQGridView
+ * ExpandFromGridViewCell.h
+ * Classes
  * 
- * Created by Jim Dovey on 24/2/2010.
- * Copyright (c) 2010 Kobo Inc. All rights reserved.
+ * Created by Jim Dovey on 16/8/2010.
+ * 
+ * Copyright (c) 2010 Jim Dovey
+ * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,18 +36,13 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "AQGridView.h"
+#import "ExpandFromGridViewCell.h"
 
-#define POPOVER_SIZE CGSizeMake( 345, 525 )
+@implementation ExpandFromGridViewCell
 
-@interface AQGridViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource>
+- (CGRect) rectForExpansionStart
 {
-	@private
-	BOOL _clearsSelectionOnViewWillAppear;
+	return ( _imageView.frame );
 }
-
-@property (nonatomic, retain) AQGridView * gridView;
-@property (nonatomic) BOOL clearsSelectionOnViewWillAppear;
 
 @end

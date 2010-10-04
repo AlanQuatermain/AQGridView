@@ -1,9 +1,11 @@
 /*
- * AQGridViewController.h
- * AQGridView
+ * ExpanderDemoAppDelegate.h
+ * Classes
  * 
- * Created by Jim Dovey on 24/2/2010.
- * Copyright (c) 2010 Kobo Inc. All rights reserved.
+ * Created by Jim Dovey on 16/8/2010.
+ * 
+ * Copyright (c) 2010 Jim Dovey
+ * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,18 +36,39 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "AQGridView.h"
 
-#define POPOVER_SIZE CGSizeMake( 345, 525 )
+#import "ExpanderDemoAppDelegate.h"
 
-@interface AQGridViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource>
-{
-	@private
-	BOOL _clearsSelectionOnViewWillAppear;
+#import "ExpanderDemoViewController.h"
+
+@implementation ExpanderDemoAppDelegate
+
+
+@synthesize window;
+
+@synthesize viewController;
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+	// Override point for customization after application launch.
+	viewController.view.frame = [[UIScreen mainScreen] applicationFrame];
+	 
+	[window addSubview:viewController.view];
+	[window makeKeyAndVisible];
+    return YES;
 }
 
-@property (nonatomic, retain) AQGridView * gridView;
-@property (nonatomic) BOOL clearsSelectionOnViewWillAppear;
+- (void)applicationWillTerminate:(UIApplication *)application {
+
+	// Save data if appropriate.
+}
+
+- (void)dealloc {
+
+	[window release];
+	[viewController release];
+    [super dealloc];
+}
 
 @end
+

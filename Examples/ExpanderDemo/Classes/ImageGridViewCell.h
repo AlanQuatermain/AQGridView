@@ -1,9 +1,11 @@
 /*
- * AQGridViewController.h
- * AQGridView
+ * ImageGridViewCell.h
+ * Classes
  * 
- * Created by Jim Dovey on 24/2/2010.
- * Copyright (c) 2010 Kobo Inc. All rights reserved.
+ * Created by Jim Dovey on 16/8/2010.
+ * 
+ * Copyright (c) 2010 Jim Dovey
+ * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,18 +36,12 @@
  *
  */
 
-#import <UIKit/UIKit.h>
-#import "AQGridView.h"
+#import <Foundation/Foundation.h>
+#import "AQGridViewCell.h"
 
-#define POPOVER_SIZE CGSizeMake( 345, 525 )
-
-@interface AQGridViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource>
+@interface ImageGridViewCell : AQGridViewCell
 {
-	@private
-	BOOL _clearsSelectionOnViewWillAppear;
+	UIImageView * _imageView;
 }
-
-@property (nonatomic, retain) AQGridView * gridView;
-@property (nonatomic) BOOL clearsSelectionOnViewWillAppear;
-
+@property (nonatomic, retain) UIImage * image;
 @end

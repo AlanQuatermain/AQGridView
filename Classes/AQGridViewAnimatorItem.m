@@ -26,17 +26,37 @@
 	[super dealloc];
 }
 
-- (BOOL) isEqual: (AQGridViewAnimatorItem *) object
-{
-	if ( [object isKindOfClass: [self class]] == NO )
-		return ( NO );
-	
-	return ( object.index == self.index );
-}
-
 - (NSUInteger) hash
 {
 	return ( self.index );
+}
+
+- (BOOL) isEqual: (AQGridViewAnimatorItem *) o
+{
+	if ( [o isKindOfClass: [self class]] == NO )
+		return ( NO );
+	
+	return ( o.index == self.index );
+}
+
+- (NSComparisonResult) compare: (id) obj
+{
+	if ( [obj isKindOfClass: [self class]] == NO )
+	{
+		if ( (id)self < obj )
+			return ( NSOrderedAscending );
+		if ( (id)self > obj )
+			return ( NSOrderedDescending );
+		return ( NSOrderedSame );			// how ??!?!?
+	}
+	
+	AQGridViewAnimatorItem * item = (AQGridViewAnimatorItem *) obj;
+	if ( self.index < item.index )
+		return ( NSOrderedAscending );
+	if ( self.index > item.index )
+		return ( NSOrderedDescending );
+	
+	return ( NSOrderedSame );
 }
 
 @end
