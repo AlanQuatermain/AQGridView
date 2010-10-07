@@ -608,7 +608,8 @@
 	// indices of items visible from old grid
 	NSIndexSet * oldVisibleIndices = [_oldGridData indicesOfCellsInRect: contentRect];
 	
-	NSLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
+    // The line below is commented because it produces too many logs
+	// NSLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
 	
 	if ( (isVertical) && (maxY > gridSize.height) )
 	{
@@ -637,7 +638,8 @@
 		[_gridView updateGridViewBoundsForNewGridData: _newGridData];
 	}
 	
-	NSLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
+    // The line below is fixed because it produces too many logs
+	//NSLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
 	NSIndexSet * newVisibleIndices = [_newGridData indicesOfCellsInRect: contentRect];
 	
 	NSMutableSet * newVisibleCells = [[NSMutableSet alloc] initWithSet: _gridView.animatingCells];

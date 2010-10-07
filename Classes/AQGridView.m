@@ -403,6 +403,10 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) updateContentRectWithOldMaxLocation: (CGPoint) oldMaxLocation gridSize: (CGSize) gridSize
 {
+    // The following line prevents an update leading to unneccessary auto-scrolling
+    // Before this fix, AQGridView animation always caused scrolling to the most bottom line
+    if (CGSizeEqualToSize(self.contentSize, gridSize)) return;
+    
 	// update content size
 	self.contentSize = gridSize;
 	
