@@ -538,7 +538,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 {
 	for ( AQGridViewCell * cell in reusableCells )
 	{
-		if ( [_visibleCells containsObject: cell] )
+		if ( [_reusableGridCells containsObject: cell] )
 		{
 			NSLog( @"Warning: tried to add duplicate gridview cell" );
 			continue;
