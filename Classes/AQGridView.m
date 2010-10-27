@@ -544,7 +544,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	{
 		if ( [_visibleCells containsObject: cell] )
 		{
-			NSLog( @"Warning: tried to add duplicate gridview cell" );
+            // It is OK to enqueue visible cells during reloadData method
+            // So the warning below seems to be obsolete
+			//NSLog( @"Warning: tried to add duplicate gridview cell" );
 			continue;
 		}
 		NSMutableSet * reuseSet = [_reusableGridCells objectForKey: cell.reuseIdentifier];
