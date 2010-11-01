@@ -625,7 +625,15 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	rect.size.width = self.bounds.size.width;
 	rect.size.height = self.contentSize.height -  (_gridData.topPadding + _gridData.bottomPadding);
 	rect.origin.y += _gridData.topPadding;
-	self.backgroundView.frame = rect;
+    
+    // Append additional space in the bottom
+    // in order to display more rows in the shelf
+    CGFloat overflowHeight = self.bounds.size.height;
+    rect.size.height += overflowHeight;
+    {
+        self.backgroundView.frame = rect;
+    }
+    rect.size.height -= overflowHeight;
 	
 	if ( _headerView != nil )
 	{
