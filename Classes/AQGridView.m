@@ -1490,6 +1490,15 @@ passToSuper:
 				[shifted shiftIndexesStartingAtIndex: [removedIndices firstIndex] by: 0 - (NSInteger)_visibleIndices.location];
 				//NSLog( @"Removed indices relative to visible cell list: %@", shifted );
 				
+				NSUInteger index=[shifted firstIndex];
+				while(index != NSNotFound){
+					NSLog(@"%i >= %i ?", index, [_visibleCells count]);
+					if (index >= [_visibleCells count]) {
+						[shifted removeIndex:index];
+					}					
+					index=[shifted indexGreaterThanIndex: index];
+				}
+				
 				// pull out the cells for manipulation
 				NSMutableArray * removedCells = [[_visibleCells objectsAtIndexes: shifted] mutableCopy];
 				
