@@ -1039,7 +1039,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		return;
 	
 	if ( notifyDelegate && _flags.delegateWillSelectItem )
-		[self.delegate gridView: self willSelectItemAtIndex: index];
+		index = [self.delegate gridView: self willSelectItemAtIndex: index];
 	
 	_selectedIndex = index;
 	[[self cellForItemAtIndex: index] setSelected: YES animated: animated];
@@ -1092,7 +1092,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	CGRect frame = self.bounds;
 	frame.size = self.contentSize;
 	_backgroundView.frame = self.bounds;//UIEdgeInsetsInsetRect( frame, self.contentInset );
-	
+
 	[self insertSubview: _backgroundView atIndex: 0];
 	
 	// this view is already laid out nicely-- no need to call -setNeedsLayout at all
