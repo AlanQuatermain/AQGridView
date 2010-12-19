@@ -220,6 +220,26 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.allowsSelection = (value ? 1 : 0);
 }
 
+- (BOOL) backgroundViewExtendsDown
+{
+	return ( _flags.backgroundViewExtendsDown);
+}
+
+- (void) setBackgroundViewExtendsDown: (BOOL) value
+{
+	_flags.backgroundViewExtendsDown = (value ? 1 : 0);
+}
+
+- (BOOL) backgroundViewExtendsUp
+{
+	return ( _flags.backgroundViewExtendsUp);
+}
+
+- (void) setBackgroundViewExtendsUp: (BOOL) value
+{
+	_flags.backgroundViewExtendsUp = (value ? 1 : 0);
+}
+
 - (BOOL) requiresSelection
 {
 	return ( _flags.requiresSelection );
@@ -596,6 +616,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.allCellsNeedLayout = 1;
 }
 
+#define MAX_BOUNCE_DISTANCE (500.0f)
+
 - (void) layoutSubviews
 {
 	if ( (_flags.needsReload == 1) && (_animationCount == 0) && (_reloadingSuspendedCount == 0) )
@@ -619,7 +641,18 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	rect.size.width = self.bounds.size.width;
 	rect.size.height = self.contentSize.height -  (_gridData.topPadding + _gridData.bottomPadding);
 	rect.origin.y += _gridData.topPadding;
-	self.backgroundView.frame = rect;
+	
+	CGRect backgroundRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+	
+	if ([self backgroundViewExtendsUp]) {
+		backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
+	}
+	
+	if ([self backgroundViewExtendsDown]) {
+		backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
+	}
+	
+	self.backgroundView.frame = backgroundRect;
 	
 	if ( _headerView != nil )
 	{
@@ -1091,7 +1124,18 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_backgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	CGRect frame = self.bounds;
 	frame.size = self.contentSize;
-	_backgroundView.frame = self.bounds;//UIEdgeInsetsInsetRect( frame, self.contentInset );
+	
+	CGRect backgroundRect = CGRectMake(0.0f, 0.0f, self.bounds.size.width, self.bounds.size.height);
+	
+	if ([self backgroundViewExtendsUp]) {
+		backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
+	}
+	
+	if ([self backgroundViewExtendsDown]) {
+		backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
+	}
+	
+	_backgroundView.frame = backgroundRect;
 	
 	[self insertSubview: _backgroundView atIndex: 0];
 	
