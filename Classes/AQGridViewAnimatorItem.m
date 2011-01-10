@@ -43,9 +43,9 @@
 {
 	if ( [obj isKindOfClass: [self class]] == NO )
 	{
-		if ( (id)self < obj )
+		if ( (void *)self < (void *)obj )
 			return ( NSOrderedAscending );
-		if ( (id)self > obj )
+		if ( (void *)self > (void *)obj )
 			return ( NSOrderedDescending );
 		return ( NSOrderedSame );			// how ??!?!?
 	}

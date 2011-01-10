@@ -2,7 +2,7 @@ h1=. AQGridView
 
 h3=. Winner of the _Best Developer Tool/Helper_ award at iPadDevCamp 2010 in San Jose
 
-p=. Version 1.1 -- 26 May 2010
+p=. Version 1.2 -- 10 January 2011
 
 p=. By "Jim Dovey":mailto:jimdovey@mac.com <br />
 Originally written for the "Kobo iPad Application":http://itunes.apple.com/ca/app/ebooks-by-kobo/id301259483?mt=8

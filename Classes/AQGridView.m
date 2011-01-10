@@ -615,11 +615,22 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			[self layoutAllCells];
 	}
 	
+	
 	CGRect rect = CGRectZero;
 	rect.size.width = self.bounds.size.width;
 	rect.size.height = self.contentSize.height -  (_gridData.topPadding + _gridData.bottomPadding);
 	rect.origin.y += _gridData.topPadding;
-	self.backgroundView.frame = rect;
+	
+	// Make sure background is an integral number of rows tall. That way, it draws patterned colours correctly on all OSes.
+	CGRect backgroundRect = rect;
+	CGFloat minimumHeight = rect.size.height;
+	CGFloat actualHeight = [_gridData cellSize].height * ([_gridData numberOfItems] / [_gridData numberOfItemsPerRow] + 1);
+	for (; actualHeight < minimumHeight; actualHeight += [_gridData cellSize].height) {
+	}
+	backgroundRect.size.height = actualHeight;
+	
+
+	self.backgroundView.frame = backgroundRect;
 	
 	if ( _headerView != nil )
 	{
@@ -636,6 +647,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		rect.origin.y  = self.contentSize.height - rect.size.height;
 		rect.size.width = self.bounds.size.width;
 		_footerView.frame = rect;
+		[self bringSubviewToFront:_footerView];
 	}
 }
 
@@ -867,9 +879,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[UIView setAnimationCurve: UIViewAnimationCurveEaseInOut];
 	[UIView setAnimationDuration: 0.3];
     
+	
 	self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
     
-	[UIView commitAnimations];
 	
 	[_gridData release];
 	_gridData = [[info newGridViewData] retain];
@@ -878,6 +890,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	[info release];
 	_reloadingSuspendedCount--;
+	[UIView commitAnimations];
 }
 
 - (void) cellUpdateAnimationStopped: (NSString *) animationID finished: (BOOL) finished context: (void *) context
@@ -885,7 +898,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	AQGridViewUpdateInfo * info = (AQGridViewUpdateInfo *)context;
 	
 	// if nothing was animated, we don't have to do anything at all
-	if ( self.animatingCells.count != 0 )
+//	if ( self.animatingCells.count != 0 )
 		[self fixCellsFromAnimation];
 	
 	// NB: info becomes invalid at this point
@@ -1479,7 +1492,7 @@ passToSuper:
 				{
 					for ( AQGridViewAnimatorItem * item in _animatingCells )
 					{
-						if ( [animatingInserted containsIndex: item.index] == NO )
+						if ( [newVisibleIndices containsIndex: item.index] == NO )
 							continue;
 						
 						if ( [item.animatingView isKindOfClass: [AQGridViewCell class]] )
@@ -1525,7 +1538,12 @@ passToSuper:
 			
 			if ( [_visibleCells count] > [newVisibleIndices count] )
 			{
-				NSLog( @"Have to prune visible cell list, I've still got extra cells in there!" );
+				//NSLog( @"Have to prune visible cell list, I've still got extra cells in there!" );
+                NSMutableIndexSet * animatingDestinationIndices = [[NSMutableIndexSet alloc] init];
+                for ( AQGridViewAnimatorItem * item in _animatingCells )
+                {
+                    [animatingDestinationIndices addIndex: item.index];
+                }
 				
 				NSMutableIndexSet * toRemove = [[NSMutableIndexSet alloc] init];
 				NSMutableIndexSet * seen = [[NSMutableIndexSet alloc] init];
@@ -1533,7 +1551,8 @@ passToSuper:
 				for ( i = 0; i < count; i++ )
 				{
 					AQGridViewCell * cell = [_visibleCells objectAtIndex: i];
-					if ( [newVisibleIndices containsIndex: cell.displayIndex] == NO )
+					if ( [newVisibleIndices containsIndex: cell.displayIndex] == NO &&
+                         [animatingDestinationIndices containsIndex: cell.displayIndex] == NO )
 					{
 						NSLog( @"Cell for index %lu is still in visible list, removing...", (unsigned long)cell.displayIndex );
 						[cell removeFromSuperview];
@@ -1547,12 +1566,12 @@ passToSuper:
 					}
 					
 					[seen addIndex: cell.displayIndex];
-					i++;
 				}
 				
 				// all removed from superview, just need to remove from the list now
 				[_visibleCells removeObjectsAtIndexes: toRemove];
 				[toRemove release];
+				[seen release];
 			}
 			
 			if ( [_visibleCells count] < [newVisibleIndices count] )
@@ -1583,6 +1602,8 @@ passToSuper:
 					
 					idx = [missingSet indexGreaterThanIndex: idx];
 				}
+				
+				[missingSet release];
 			}
 			
 			// everything should match up now, so update the visible range
@@ -2059,6 +2080,8 @@ passToSuper:
 		
 		cell.separatorEdge = edge;
 	}
+    
+    //NSLog( @"Displaying cell at index %lu", (unsigned long) index );
 	
 	if ( _flags.delegateWillDisplayCell == 0 )
 		return;

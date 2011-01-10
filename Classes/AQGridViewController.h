@@ -39,10 +39,12 @@
 
 #define POPOVER_SIZE CGSizeMake( 345, 525 )
 
-@interface AQGridViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource>
+@interface AQGridViewController : UIViewController <AQGridViewDelegate, AQGridViewDataSource, UIPopoverControllerDelegate>
 {
 	@private
 	BOOL _clearsSelectionOnViewWillAppear;
+	@protected
+	BOOL _popoverShowing;
 }
 
 @property (nonatomic, retain) AQGridView * gridView;
