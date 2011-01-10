@@ -14,6 +14,7 @@ h3. Used In These Applications:
 * "Stocks - The Finance App":http://itunes.apple.com/ca/app/stocks-the-finance-app/id373066200?mt=8 -- Portfolio view contents. <br />
 * "Rivet for iPad":http://itunes.apple.com/ca/app/rivet-for-ipad/id375055319?mt=8 -- Media shelves.
 * "Slide By Slide":http://itunes.apple.com/us/app/slide-by-slide/id387580384?mt=8 -- Slideshow picker.
+* "AppStart for iPad":http://itunes.apple.com/ca/app/appstart-for-ipad/id408984648 -- App reviews and guides.
 
 h2. Introduction
 
@@ -72,7 +73,7 @@ h2. Future Directions
 
 * *Section support*. This will need a large amount of refactoring to support moves between sections, and will need a new way of keeping track of visible cell indices (it currently uses an NSRange).
 * *High-performance rendering*. If cells don't need to update their content after being drawn, each row could be composited into a single view for reduced load on the CoreAnimation renderer. This would need support in the grid view for displaying these composited rows, and would also need special support in KBGridViewCell to mark individual cells as needing dynamic updates, so they could be skipped when compositing and displayed normally on top of the composited row. KVO would be used to keep track of this. NB: This would also need special handling for the 'glow' selection style (or possibly the tracking cell would always be placed on screen, regardless of its dynamism requirements).
-* *Content adjustments*. There are possibly still a couple of deeply-buried bugs in the cell movement code inside *KBGridViewUpdateInfo*. These are a pain to track down, and the code in that class could possibly use some cleanup. This is also something which would need to change a lot for section support (it makes heavy use of *NSIndexSet* right now).
+* -*Content adjustments*. There are possibly still a couple of deeply-buried bugs in the cell movement code inside *KBGridViewUpdateInfo*. These are a pain to track down, and the code in that class could possibly use some cleanup. This is also something which would need to change a lot for section support (it makes heavy use of *NSIndexSet* right now).-
 
 h2. Known Bugs
 
