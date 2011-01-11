@@ -487,8 +487,13 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	if ( (_flags.contentSizeFillsBounds == 1) && (newSize.height < self.bounds.size.height) )
 		newSize.height = self.bounds.size.height;
 	
-    if (self.gridFooterView)
-        newSize.height += CGRectGetHeight(self.gridFooterView.bounds);
+	if (self.gridFooterView)
+	{
+	    CGFloat footerHeight = CGRectGetHeight(self.gridFooterView.bounds);
+	    CGFloat minimumHeight = CGRectGetHeight(self.bounds) + footerHeight;
+	    if (newSize.height < footerHeight + minimumHeight)
+	        newSize.height = minimumHeight;
+	}
 	
 	CGSize oldSize = self.contentSize;
 	[super setContentSize: newSize];
