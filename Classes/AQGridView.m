@@ -489,8 +489,11 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	if (self.gridFooterView)
 	{
+	    // In-call status bar influences footer position
+	    CGFloat statusHeight = CGRectGetHeight([UIApplication sharedApplication].statusBarFrame) - 20;
+
 	    CGFloat footerHeight = CGRectGetHeight(self.gridFooterView.bounds);
-	    CGFloat minimumHeight = CGRectGetHeight(self.bounds) + footerHeight;
+	    CGFloat minimumHeight = statusHeight + CGRectGetHeight(self.bounds) + footerHeight;
 	    if (newSize.height < footerHeight + minimumHeight)
 	        newSize.height = minimumHeight;
 	}
