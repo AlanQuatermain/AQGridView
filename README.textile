@@ -15,6 +15,7 @@ h3. Used In These Applications:
 * "Rivet for iPad":http://itunes.apple.com/ca/app/rivet-for-ipad/id375055319?mt=8 -- Media shelves.
 * "Slide By Slide":http://itunes.apple.com/us/app/slide-by-slide/id387580384?mt=8 -- Slideshow picker.
 * "AppStart for iPad":http://itunes.apple.com/ca/app/appstart-for-ipad/id408984648 -- App reviews and guides.
+* "Slippy":http://itunes.apple.com/app/id408254506 -- Level chooser.
 
 h2. Introduction
 
