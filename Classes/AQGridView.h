@@ -128,6 +128,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	numColumns:6;
 		unsigned	separatorStyle:3;
 		unsigned	allowsSelection:1;
+		unsigned	backgroundViewExtendsUp:1;
+		unsigned	backgroundViewExtendsDown:1;
 		unsigned	usesPagedHorizontalScrolling:1;
 		unsigned	updating:1;				// unused
 		unsigned	ignoreTouchSelect:1;
@@ -213,6 +215,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 @property (nonatomic, assign) BOOL clipsContentWidthToBounds __attribute__((deprecated));	// default is YES. If you want to enable horizontal scrolling, set this to NO.
 
 @property (nonatomic, retain) UIView * backgroundView;		// specifies a view to place behind the cells
+@property (nonatomic) BOOL backgroundViewExtendsUp;			// default is NO. If YES, the background view extends upward and is visible during a bounce.
+@property (nonatomic) BOOL backgroundViewExtendsDown;		// default is NO. If YES, the background view extends downward and is visible during a bounce.
 @property (nonatomic) BOOL usesPagedHorizontalScrolling;	// default is NO, and scrolls verticalls only. Set to YES to have horizontal-only scrolling by page.
 
 @property (nonatomic) AQGridViewCellSeparatorStyle separatorStyle;	// default is AQGridViewCellSeparatorStyleEmptySpace
