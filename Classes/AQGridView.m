@@ -220,6 +220,26 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.allowsSelection = (value ? 1 : 0);
 }
 
+- (BOOL) backgroundViewExtendsDown
+{
+	return ( _flags.backgroundViewExtendsDown);
+}
+
+- (void) setBackgroundViewExtendsDown: (BOOL) value
+{
+	_flags.backgroundViewExtendsDown = (value ? 1 : 0);
+}
+
+- (BOOL) backgroundViewExtendsUp
+{
+	return ( _flags.backgroundViewExtendsUp);
+}
+
+- (void) setBackgroundViewExtendsUp: (BOOL) value
+{
+	_flags.backgroundViewExtendsUp = (value ? 1 : 0);
+}
+
 - (BOOL) requiresSelection
 {
 	return ( _flags.requiresSelection );
@@ -596,6 +616,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.allCellsNeedLayout = 1;
 }
 
+#define MAX_BOUNCE_DISTANCE (500.0f)
+
 - (void) layoutSubviews
 {
 	if ( (_flags.needsReload == 1) && (_animationCount == 0) && (_reloadingSuspendedCount == 0) )
@@ -615,7 +637,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			[self layoutAllCells];
 	}
 	
-	
 	CGRect rect = CGRectZero;
 	rect.size.width = self.bounds.size.width;
 	rect.size.height = self.contentSize.height -  (_gridData.topPadding + _gridData.bottomPadding);
@@ -623,6 +644,16 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	// Make sure background is an integral number of rows tall. That way, it draws patterned colours correctly on all OSes.
 	CGRect backgroundRect = rect;
+	
+	if ([self backgroundViewExtendsUp]) {
+		backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
+		backgroundRect.size.height += MAX_BOUNCE_DISTANCE;	// don't just move it, grow it
+	}
+	
+	if ([self backgroundViewExtendsDown]) {
+		backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
+	}
+	
 	CGFloat minimumHeight = rect.size.height;
 	CGFloat actualHeight = [_gridData cellSize].height * ([_gridData numberOfItems] / [_gridData numberOfItemsPerRow] + 1);
 	for (; actualHeight < minimumHeight; actualHeight += [_gridData cellSize].height) {
@@ -879,7 +910,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[UIView setAnimationCurve: UIViewAnimationCurveEaseInOut];
 	[UIView setAnimationDuration: 0.3];
     
-	
 	self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
     
 	
@@ -1104,7 +1134,19 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_backgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 	CGRect frame = self.bounds;
 	frame.size = self.contentSize;
-	_backgroundView.frame = self.bounds;//UIEdgeInsetsInsetRect( frame, self.contentInset );
+	
+	CGRect backgroundRect = CGRectMake(0.0f, 0.0f, self.bounds.size.width, self.bounds.size.height);
+	
+	if ([self backgroundViewExtendsUp]) {
+		backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
+		backgroundRect.size.height += MAX_BOUNCE_DISTANCE;		// don't just move it, grow it
+	}
+	
+	if ([self backgroundViewExtendsDown]) {
+		backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
+	}
+	
+	_backgroundView.frame = backgroundRect;
 	
 	[self insertSubview: _backgroundView atIndex: 0];
 	
