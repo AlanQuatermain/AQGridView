@@ -1102,7 +1102,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		return;
 	
 	if ( notifyDelegate && _flags.delegateWillSelectItem )
-		[self.delegate gridView: self willSelectItemAtIndex: index];
+		index = [self.delegate gridView: self willSelectItemAtIndex: index];
 	
 	_selectedIndex = index;
 	[[self cellForItemAtIndex: index] setSelected: YES animated: animated];
