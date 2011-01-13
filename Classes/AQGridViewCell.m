@@ -607,6 +607,21 @@
     _cellFlags.setShadowPath = 0;
 }
 
+- (BOOL) isEditing
+{
+	return ( _cellFlags.editing == 1 );
+}
+
+- (void) setEditing: (BOOL) value
+{
+	[self setEditing:value animated:NO];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+	_cellFlags.editing = (editing ? 1 : 0);
+}
+
 @end
 
 @implementation AQGridViewCell (AQGridViewCellPrivate)
