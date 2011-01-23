@@ -1700,6 +1700,9 @@ passToSuper:
 			[self layoutAllCells];
 		}
 	}
+	@catch (id exception)
+	{
+	}
 	@finally
 	{
 		[UIView setAnimationsEnabled: enableAnim];
