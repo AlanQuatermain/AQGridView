@@ -679,8 +679,18 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
 	}
 	
-	CGFloat minimumHeight = rect.size.height;
-	CGFloat actualHeight = [_gridData cellSize].height * ([_gridData numberOfItems] / [_gridData numberOfItemsPerRow] + 1);
+	CGFloat minimumHeight = rect.size.height, 
+		actualHeight = 0;
+		
+	if (([_gridData numberOfItems] == 0) || ([_gridData numberOfItemsPerRow] == 0)) {
+	
+		actualHeight = [_gridData cellSize].height;
+	
+	} else {
+	
+		actualHeight = [_gridData cellSize].height * ([_gridData numberOfItems] / [_gridData numberOfItemsPerRow] + 1);
+		
+	}
 	for (; actualHeight < minimumHeight; actualHeight += [_gridData cellSize].height) {
 	}
 	backgroundRect.size.height = actualHeight;
