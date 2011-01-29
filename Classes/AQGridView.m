@@ -1239,12 +1239,25 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 {
 	if ( [hitView isKindOfClass: [UIControl class]] )
 		return ( NO );
+
+
+//	Simply querying the superview will not work if the hit view is a subview of the contentView, e.g. its superview is a plain UIView *inside* a cell
 	
 	if ( [[hitView superview] isKindOfClass: [AQGridViewCell class]] )
 		return ( YES );
 	
 	if ( [hitView isKindOfClass: [AQGridViewCell class]] )
 		return ( YES );
+	
+	CGPoint hitCenter = [self convertPoint:[hitView center] fromView:hitView];
+				
+	for ( AQGridViewCell *aCell in [[[self visibleCells] copy] autorelease])
+	{
+	
+		if ( CGRectContainsPoint( aCell.frame, hitCenter ) )
+		return ( YES );
+	
+	}
 	
 	return ( NO );
 }
