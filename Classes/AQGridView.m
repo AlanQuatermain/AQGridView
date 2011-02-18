@@ -518,6 +518,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	        newSize.height = minimumHeight;
 	}
 	
+	newSize.height = fmax(newSize.height, self.frame.size.height+1);
+	
 	CGSize oldSize = self.contentSize;
 	[super setContentSize: newSize];
 	
