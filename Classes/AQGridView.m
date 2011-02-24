@@ -50,6 +50,25 @@
 #import <objc/objc.h>
 #import <objc/runtime.h>
 
+// Lightweight object class for touch selection parameters
+@interface UserSelectItemIndexParams : NSObject
+{
+  NSUInteger _indexNum;
+  NSUInteger _numFingers;
+};
+
+@property (nonatomic, assign) NSUInteger indexNum;
+@property (nonatomic, assign) NSUInteger numFingers;
+@end
+
+@implementation UserSelectItemIndexParams
+
+@synthesize indexNum = _indexNum;
+@synthesize numFingers = _numFingers;
+
+@end
+
+
 NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectionDidChangeNotification";
 
 @interface AQGridView (AQCellGridMath)
@@ -70,6 +89,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 @interface AQGridView ()
 @property (nonatomic, copy) NSIndexSet * animatingIndices;
 @end
+
 
 @implementation AQGridView
 
@@ -158,8 +178,10 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	_flags.delegateWillDisplayCell = [obj respondsToSelector: @selector(gridView:willDisplayCell:forItemAtIndex:)];
 	_flags.delegateWillSelectItem = [obj respondsToSelector: @selector(gridView:willSelectItemAtIndex:)];
+  _flags.delegateWillSelectItemMultiTouch = [obj respondsToSelector: @selector(gridView:willSelectItemAtIndex:numFingersTouch:)];
 	_flags.delegateWillDeselectItem = [obj respondsToSelector: @selector(gridView:willDeselectItemAtIndex:)];
 	_flags.delegateDidSelectItem = [obj respondsToSelector: @selector(gridView:didSelectItemAtIndex:)];
+  _flags.delegateDidSelectItemMultiTouch = [obj respondsToSelector: @selector(gridView:didSelectItemAtIndex:numFingersTouch:)];
 	_flags.delegateDidDeselectItem = [obj respondsToSelector: @selector(gridView:didDeselectItemAtIndex:)];
 	_flags.delegateGestureRecognizerActivated = [obj respondsToSelector: @selector(gridView:gestureRecognizer:activatedForItemAtIndex:)];
 	_flags.delegateAdjustGridCellFrame = [obj respondsToSelector: @selector(gridView:adjustCellFrame:withinGridCellFrame:)];
@@ -1119,6 +1141,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) _selectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
 			 scrollPosition: (AQGridViewScrollPosition) position notifyDelegate: (BOOL) notifyDelegate
+       numFingersTouch: (NSUInteger) numFingers
 {
 	if ( _selectedIndex == index )
 		return;		// already selected this item
@@ -1131,7 +1154,11 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	if ( notifyDelegate && _flags.delegateWillSelectItem )
 		index = [self.delegate gridView: self willSelectItemAtIndex: index];
-	
+  
+  if ( notifyDelegate && _flags.delegateWillSelectItemMultiTouch )
+		index = [self.delegate gridView: self willSelectItemAtIndex: index
+                    numFingersTouch:numFingers];
+  
 	_selectedIndex = index;
 	[[self cellForItemAtIndex: index] setSelected: YES animated: animated];
 	
@@ -1146,6 +1173,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	
 	if ( notifyDelegate && _flags.delegateDidSelectItem )
 		[self.delegate gridView: self didSelectItemAtIndex: index];
+  
+  if ( notifyDelegate && _flags.delegateDidSelectItemMultiTouch )
+		[self.delegate gridView: self didSelectItemAtIndex: index numFingersTouch:numFingers];
 	
 	// ensure that the selected item is no longer marked as just 'highlighted' (that's an intermediary state)
 	[_highlightedIndices removeIndex: index];
@@ -1154,7 +1184,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 - (void) selectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
 			scrollPosition: (AQGridViewScrollPosition) scrollPosition
 {
-	[self _selectItemAtIndex: index animated: animated scrollPosition: scrollPosition notifyDelegate: NO];
+	[self _selectItemAtIndex: index animated: animated scrollPosition: scrollPosition notifyDelegate: NO
+           numFingersTouch: 1];
 }
 
 - (void) deselectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
@@ -1272,14 +1303,16 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	//_pendingSelectionIndex = NSNotFound;
 }
 
-- (void) _userSelectItemAtIndex: (NSNumber *) indexNum
+- (void) _userSelectItemAtIndex: (UserSelectItemIndexParams*) params
 {
-	NSUInteger index = [indexNum unsignedIntegerValue];
+	NSUInteger index = params.indexNum;
+  NSUInteger numFingersCount = params.numFingers;
 	[self unhighlightItemAtIndex: index animated: NO];
 	if ( ([[self cellForItemAtIndex: index] isSelected]) && (self.requiresSelection == NO) )
 		[self _deselectItemAtIndex: index animated: NO notifyDelegate: YES];
 	else
-		[self _selectItemAtIndex: index animated: NO scrollPosition: AQGridViewScrollPositionNone notifyDelegate: YES];
+		[self _selectItemAtIndex: index animated: NO scrollPosition: AQGridViewScrollPositionNone notifyDelegate: YES
+             numFingersTouch: numFingersCount];
 	_pendingSelectionIndex = NSNotFound;
 }
 
@@ -1323,7 +1356,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 - (void) touchesBegan: (NSSet *) touches withEvent: (UIEvent *) event
 {
 	_flags.ignoreTouchSelect = ([self isDragging] ? 1 : 0);
-	
+  
 	UITouch * touch = [touches anyObject];
 	_touchBeganPosition = [touch locationInView: nil];
 	if ( (touch != nil) && (_pendingSelectionIndex == NSNotFound) )
@@ -1391,7 +1424,7 @@ passToSuper:
 
 - (void) touchesEnded: (NSSet *) touches withEvent: (UIEvent *) event
 {
-    [[self class] cancelPreviousPerformRequestsWithTarget: self
+  [[self class] cancelPreviousPerformRequestsWithTarget: self
 												 selector: @selector(_gridViewDeferredTouchesBegan:)
 												   object: nil];
 	
@@ -1431,10 +1464,15 @@ passToSuper:
 		if ( _flags.allowsSelection == 0 )
 			break;
 		
+    NSSet *touchEventSet = [event allTouches];
+    
 		// run this on the next runloop tick
+    UserSelectItemIndexParams* selectorParams = [[[UserSelectItemIndexParams alloc] init] autorelease];
+    selectorParams.indexNum = _pendingSelectionIndex;
+    selectorParams.numFingers = [touchEventSet count];
 		[self performSelector: @selector(_userSelectItemAtIndex:)
-				   withObject: [NSNumber numberWithUnsignedInteger: _pendingSelectionIndex]
-				   afterDelay: 0.0];
+				   withObject: selectorParams
+           afterDelay:0.0];
 		
 		[hitView release];
 		
