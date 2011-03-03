@@ -83,6 +83,9 @@ typedef enum {
 
 - (CGRect) gridView: (AQGridView *) gridView adjustCellFrame: (CGRect) cellFrame withinGridCellFrame: (CGRect) gridCellFrame;
 
+// Editing
+- (void)gridView:(AQGridView *)aGridView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndex:(NSUInteger)index;
+
 @end
 
 extern NSString * const AQGridViewSelectionDidChangeNotification;
@@ -128,6 +131,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	numColumns:6;
 		unsigned	separatorStyle:3;
 		unsigned	allowsSelection:1;
+		unsigned	backgroundViewExtendsUp:1;
+		unsigned	backgroundViewExtendsDown:1;
 		unsigned	usesPagedHorizontalScrolling:1;
 		unsigned	updating:1;				// unused
 		unsigned	ignoreTouchSelect:1;
@@ -148,6 +153,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	delegateAdjustGridCellFrame:1;
 		
 		unsigned	dataSourceGridCellSize:1;
+		
+        unsigned int isEditing:1;
 		
 		unsigned	__RESERVED__:1;
 	} _flags;
@@ -213,6 +220,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 @property (nonatomic, assign) BOOL clipsContentWidthToBounds __attribute__((deprecated));	// default is YES. If you want to enable horizontal scrolling, set this to NO.
 
 @property (nonatomic, retain) UIView * backgroundView;		// specifies a view to place behind the cells
+@property (nonatomic) BOOL backgroundViewExtendsUp;			// default is NO. If YES, the background view extends upward and is visible during a bounce.
+@property (nonatomic) BOOL backgroundViewExtendsDown;		// default is NO. If YES, the background view extends downward and is visible during a bounce.
 @property (nonatomic) BOOL usesPagedHorizontalScrolling;	// default is NO, and scrolls verticalls only. Set to YES to have horizontal-only scrolling by page.
 
 @property (nonatomic) AQGridViewCellSeparatorStyle separatorStyle;	// default is AQGridViewCellSeparatorStyleEmptySpace
@@ -231,6 +240,11 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 @property (nonatomic, assign) BOOL contentSizeGrowsToFillBounds;	// default is YES. Prior to iPhone OS 3.2, pattern colors tile from the bottom-left, necessitating that this be set to NO to avoid specially-constructed background patterns falling 'out of sync' with the cells displayed on top of it.
 
 @property (nonatomic, readonly) BOOL isAnimatingUpdates;
+
+// Editing
+
+@property(nonatomic,getter=isEditing) BOOL editing;                             // default is NO. setting is not animated.
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 @end
 

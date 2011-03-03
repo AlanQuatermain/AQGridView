@@ -175,6 +175,9 @@
 	
 	// work out how many rows we can fit
 	NSUInteger rows = (NSUInteger)floorf(_boundsSize.height / _actualCellSize.height);
+	if (0 == rows) {
+		rows = 1;
+	}
 	NSUInteger cols = _numberOfItems / rows;
 	if ( _numberOfItems % rows != 0 )
 		cols++;

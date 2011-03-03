@@ -146,6 +146,18 @@
 
 - (void) updateNewGridDataAndCreateMappingTables
 {
+#define GUARD_ITEMS 1
+#if GUARD_ITEMS
+# define TEST_GUARD(array,count)                                                    \
+    for ( int j = 0; j < 8; j++ )                                                   \
+    {                                                                               \
+        NSAssert((array)[(count)+j] == 0x55555555, @"Overwrote the guard area!" );  \
+    }                                                                               \
+    do {} while (0)
+#else
+# define TEST_GUARD(array,count)
+#endif
+    
 	NSUInteger numberOfItems = _oldGridData.numberOfItems;
 	numberOfItems += [_insertItems count];
 	numberOfItems -= [_deleteItems count];
@@ -174,8 +186,19 @@
 	
 	if ( _oldGridData.numberOfItems > 0 )
 	{
-		_oldToNewIndexMap = NSZoneMalloc( [self zone], _oldGridData.numberOfItems * sizeof(NSUInteger) );
+#if GUARD_ITEMS
+		NSUInteger count = _oldGridData.numberOfItems + 8;
+#else
+		NSUInteger count = _oldGridData.numberOfItems;
+#endif
+		_oldToNewIndexMap = NSZoneMalloc( [self zone], count * sizeof(NSUInteger) );
+#if GUARD_ITEMS
+		memset(_oldToNewIndexMap, 0x55, count * sizeof(NSUInteger));
+#endif
 		memset_pattern4( _oldToNewIndexMap, &stamp, _oldGridData.numberOfItems * sizeof(NSUInteger) );
+#if GUARD_ITEMS
+		NSAssert(_oldToNewIndexMap[_oldGridData.numberOfItems] == 0x55555555, @"Eeek! Scribbling on guards didn't work!");
+#endif
 	}
 	else
 	{
@@ -184,8 +207,19 @@
 	
 	if ( _newGridData.numberOfItems > 0 )
 	{
-		_newToOldIndexMap = NSZoneMalloc( [self zone], _newGridData.numberOfItems * sizeof(NSUInteger) );
+#if GUARD_ITEMS
+		NSUInteger count = _newGridData.numberOfItems + 8;
+#else
+		NSUInteger count = _newGridData.numberOfItems;
+#endif
+		_newToOldIndexMap = NSZoneMalloc( [self zone], count * sizeof(NSUInteger) );
+#if GUARD_ITEMS
+		memset(_newToOldIndexMap, 0x55, count * sizeof(NSUInteger));
+#endif
 		memset_pattern4( _newToOldIndexMap, &stamp, _newGridData.numberOfItems * sizeof(NSUInteger) );
+#if GUARD_ITEMS
+		NSAssert(_newToOldIndexMap[_newGridData.numberOfItems] == 0x55555555, @"Eeek! Scribbling on guards didn't work!");
+#endif
 	}
 	else
 	{
@@ -202,6 +236,7 @@
 			if ( [newToOldIndices containsIndex: i] == NO )
 			{
 				_oldToNewIndexMap[i] = NSNotFound;
+                TEST_GUARD(_oldToNewIndexMap, _oldGridData.numberOfItems);
 				continue;
 			}
 			
@@ -212,6 +247,49 @@
 		for ( AQGridViewUpdateItem * item in _moveItems )
 		{
 			_oldToNewIndexMap[item.index] = item.newIndex;
+            TEST_GUARD(_oldToNewIndexMap, _oldGridData.numberOfItems);
+            
+			if ( _moveItems.count == 1 )
+			{
+				if ( item.index < item.newIndex )
+				{
+					// moving forwards-- shuffle middle items down one place
+					for ( NSInteger i = item.index+1; i <= item.newIndex && i < _oldGridData.numberOfItems; i++ )
+					{
+						if ( _oldToNewIndexMap[i] != NSNotFound )
+                        {
+                            if ( i < _oldGridData.numberOfItems-1 )
+                            {
+                                _oldToNewIndexMap[i] = _oldToNewIndexMap[i]-1;
+                                TEST_GUARD(_oldToNewIndexMap, _oldGridData.numberOfItems);
+                            }
+                        }
+                        else
+                        {
+                            break;      // stop when we reach a gap
+                        }
+					}
+				}
+				else if ( item.index > item.newIndex )
+				{
+					// moving backwards-- shuffle middle items up one place
+					for ( NSInteger i = MIN(item.index-1, (_oldGridData.numberOfItems-1)); i >= item.newIndex; i-- )
+					{
+						if ( _oldToNewIndexMap[i] != NSNotFound )
+                        {
+                            if ( i >= 0 )
+                            {
+                                _oldToNewIndexMap[i] = _oldToNewIndexMap[i]+1;
+                                TEST_GUARD(_oldToNewIndexMap, _oldGridData.numberOfItems);
+                            }
+                        }
+                        else
+                        {
+                            break;      // stop when we reach a gap
+                        }
+					}
+				}
+			}
 		}
 	}
 	
@@ -223,6 +301,7 @@
 			if ( [oldToNewIndices containsIndex: i] == NO )
 			{
 				_newToOldIndexMap[i] = NSNotFound;
+                TEST_GUARD(_newToOldIndexMap, _newGridData.numberOfItems);
 				continue;
 			}
 			
@@ -233,6 +312,49 @@
 		for ( AQGridViewUpdateItem * item in _moveItems )
 		{
 			_newToOldIndexMap[item.newIndex] = item.index;
+            TEST_GUARD(_newToOldIndexMap, _newGridData.numberOfItems);
+            
+			if ( _moveItems.count == 1 )
+			{
+				if ( item.index < item.newIndex )
+				{
+					// moving forwards-- shuffle middle items down one place
+					for ( NSInteger i = item.index; i <= item.newIndex && i < _newGridData.numberOfItems; i++ )
+					{
+						if ( _newToOldIndexMap[i] != NSNotFound )
+                        {
+                            if ( i < _newGridData.numberOfItems-1 )
+                            {
+                                _newToOldIndexMap[i] = _newToOldIndexMap[i]+1;
+                                TEST_GUARD(_newToOldIndexMap, _newGridData.numberOfItems);
+                            }
+                        }
+                        else
+                        {
+                            break;      // stop when we reach a gap
+                        }
+					}
+				}
+				else
+				{
+					// moving backwards-- shuffle middle items up one place
+					for ( NSInteger i = MIN(item.newIndex, (_newGridData.numberOfItems-1)); (i < item.index && i < _newGridData.numberOfItems); i++ )
+					{
+						if ( _newToOldIndexMap[i] != NSNotFound )
+                        {
+                            if ( i >= 0 )
+                            {
+                                _newToOldIndexMap[i] = _newToOldIndexMap[i]-1;
+                                TEST_GUARD(_newToOldIndexMap, _newGridData.numberOfItems);
+                            }
+                        }
+                        else
+                        {
+                            break;      // stop when we reach a gap
+                        }
+					}
+				}
+			}
 		}
 	}
 	
@@ -608,7 +730,8 @@
 	// indices of items visible from old grid
 	NSIndexSet * oldVisibleIndices = [_oldGridData indicesOfCellsInRect: contentRect];
 	
-	NSLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
+    // The line below is commented because it produces too many logs
+	// NSLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
 	
 	if ( (isVertical) && (maxY > gridSize.height) )
 	{
@@ -637,7 +760,8 @@
 		[_gridView updateGridViewBoundsForNewGridData: _newGridData];
 	}
 	
-	NSLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
+    // The line below is fixed because it produces too many logs
+	//NSLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
 	NSIndexSet * newVisibleIndices = [_newGridData indicesOfCellsInRect: contentRect];
 	
 	NSMutableSet * newVisibleCells = [[NSMutableSet alloc] initWithSet: _gridView.animatingCells];
