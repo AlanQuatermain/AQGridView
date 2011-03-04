@@ -311,33 +311,6 @@
 				break;
 				
 			case AQGridViewCellSelectionStyleGray:
-				imageName = @"AQGridSelectionGray.png";
-				break;
-				
-			case AQGridViewCellSelectionStyleBlueGray:
-				imageName = @"AQGridSelectionGrayBlue.png";
-				break;
-				
-			case AQGridViewCellSelectionStyleGreen:
-				imageName = @"AQGridSelectionGreen.png";
-				break;
-				
-			case AQGridViewCellSelectionStyleRed:
-				imageName = @"AQGridSelectionRed.png";
-				break;
-		}
-		
-		NSData *pngData = [NSData dataWithBytesNoCopy: pngBytes length: pngLength freeWhenDone: NO];
-		_selectedBackgroundView = [[UIImageView alloc] initWithImage: [UIImage imageWithData: pngData]];
-#else
-		NSString * imageName = @"AQGridSelection.png";
-		switch ( _cellFlags.selectionStyle )
-		{
-			case AQGridViewCellSelectionStyleBlue:
-			default:
-				break;
-				
-			case AQGridViewCellSelectionStyleGray:
 				pngBytes = AQGridSelectionGray_png;
 				pngLength = AQGridSelectionGray_png_len;
 				break;
@@ -355,6 +328,33 @@
 			case AQGridViewCellSelectionStyleRed:
 				pngBytes = AQGridSelectionRed_png;
 				pngLength = AQGridSelectionRed_png_len;
+				break;
+		}
+		
+		NSData *pngData = [NSData dataWithBytesNoCopy: pngBytes length: pngLength freeWhenDone: NO];
+		_selectedBackgroundView = [[UIImageView alloc] initWithImage: [UIImage imageWithData: pngData]];
+#else
+		NSString * imageName = @"AQGridSelection.png";
+		switch ( _cellFlags.selectionStyle )
+		{
+			case AQGridViewCellSelectionStyleBlue:
+			default:
+				break;
+				
+			case AQGridViewCellSelectionStyleGray:
+				imageName = @"AQGridSelectionGray.png";
+				break;
+				
+			case AQGridViewCellSelectionStyleBlueGray:
+				imageName = @"AQGridSelectionGrayBlue.png";
+				break;
+				
+			case AQGridViewCellSelectionStyleGreen:
+				imageName = @"AQGridSelectionGreen.png";
+				break;
+				
+			case AQGridViewCellSelectionStyleRed:
+				imageName = @"AQGridSelectionRed.png";
 				break;
 		}
 		
