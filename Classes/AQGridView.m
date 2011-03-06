@@ -1769,6 +1769,7 @@ passToSuper:
 		NSLog(@"Exception: %@", exception);
 		@throw exception;
 
+	}
 	@finally
 	{
 		[UIView setAnimationsEnabled: enableAnim];

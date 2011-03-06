@@ -316,6 +316,9 @@
 {
 	if ( (_cellFlags.usingDefaultSelectedBackgroundView == 1) && (_selectedBackgroundView == nil) )
 	{
+	
+		NSString * imageName;
+	
 #ifdef BUILTIN_IMAGES
 		unsigned char * pngBytes = AQGridSelection_png;
 		NSUInteger pngLength = AQGridSelection_png_len;
@@ -345,7 +348,7 @@
 		NSData *pngData = [NSData dataWithBytesNoCopy: pngBytes length: pngLength freeWhenDone: NO];
 		_selectedBackgroundView = [[UIImageView alloc] initWithImage: [UIImage imageWithData: pngData]];
 #else
-		NSString * imageName = @"AQGridSelection.png";
+		imageName = @"AQGridSelection.png";
 		switch ( _cellFlags.selectionStyle )
 		{
 			case AQGridViewCellSelectionStyleBlue:
