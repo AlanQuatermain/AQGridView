@@ -1723,6 +1723,12 @@ passToSuper:
 			[self layoutAllCells];
 		}
 	}
+	@catch (NSException *exception) {
+
+		NSLog(@"Exception: %@", exception);
+		@throw exception;
+
+	}
 	@finally
 	{
 		[UIView setAnimationsEnabled: enableAnim];
