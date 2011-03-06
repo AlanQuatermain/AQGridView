@@ -73,9 +73,11 @@ typedef enum {
 
 // Called before selection occurs. Return a new index, or NSNotFound, to change the proposed selection.
 - (NSUInteger) gridView: (AQGridView *) gridView willSelectItemAtIndex: (NSUInteger) index;
+- (NSUInteger) gridView: (AQGridView *) gridView willSelectItemAtIndex: (NSUInteger) index numFingersTouch:(NSUInteger) numFingers;
 - (NSUInteger) gridView: (AQGridView *) gridView willDeselectItemAtIndex: (NSUInteger) index;
 // Called after the user changes the selection
 - (void) gridView: (AQGridView *) gridView didSelectItemAtIndex: (NSUInteger) index;
+- (void) gridView: (AQGridView *) gridView didSelectItemAtIndex: (NSUInteger) index numFingersTouch:(NSUInteger)numFingers;
 - (void) gridView: (AQGridView *) gridView didDeselectItemAtIndex: (NSUInteger) index;
 
 // NOT YET IMPLEMENTED
@@ -124,7 +126,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	
 	UIView *						_headerView;
 	UIView *						_footerView;
-	
+  
 	struct
 	{
 		unsigned	resizesCellWidths:1;
@@ -146,8 +148,10 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		
 		unsigned	delegateWillDisplayCell:1;
 		unsigned	delegateWillSelectItem:1;
+    unsigned  delegateWillSelectItemMultiTouch:1;
 		unsigned	delegateWillDeselectItem:1;
 		unsigned	delegateDidSelectItem:1;
+    unsigned  delegateDidSelectItemMultiTouch:1;
 		unsigned	delegateDidDeselectItem:1;
 		unsigned	delegateGestureRecognizerActivated:1;
 		unsigned	delegateAdjustGridCellFrame:1;
