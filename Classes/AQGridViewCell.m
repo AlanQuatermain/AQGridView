@@ -43,6 +43,7 @@
 @interface AQGridViewCell ()
 @property (nonatomic, retain) UIView * contentView;
 @property (nonatomic, copy) NSString * reuseIdentifier;
+
 @end
 
 @implementation AQGridViewCell
@@ -76,7 +77,7 @@
 
 - (void) awakeFromNib
 {
-    _cellFlags.usingDefaultSelectedBackgroundView = 1;
+	_cellFlags.usingDefaultSelectedBackgroundView = 1;
 	_cellFlags.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
 	
 	if ( [CALayer instancesRespondToSelector: @selector(shadowPath)] )
@@ -85,7 +86,7 @@
 		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGray;
 	_selectionColorInfo = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,  &kCFTypeDictionaryValueCallBacks );
 	self.backgroundColor = [UIColor whiteColor];
-    
+	    
     [super awakeFromNib];
 }
 
@@ -127,17 +128,31 @@
 
 - (UIView *) contentView
 {
-	if ( _contentView == nil )
-    {
-		_contentView = [[UIView alloc] initWithFrame: self.bounds];
-        _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        _contentView.autoresizesSubviews = YES;
-        self.autoresizesSubviews = YES;
-        _contentView.backgroundColor = [UIColor whiteColor];
-		[_contentView.layer setValue: [NSNumber numberWithBool: YES] forKey: @"KoboHackInterestingLayer"];
-        [self addSubview: _contentView];
-    }
+	if ( _contentView == nil ) {
+	
+		UIView *addedView = [[UIView alloc] initWithFrame: self.bounds];
+		addedView.backgroundColor = [UIColor whiteColor];
+		
+		[self setContentView:addedView];
+		
+	}
 	return ( _contentView );
+}
+
+- (void) setContentView:(UIView *)newContentView {
+
+	self.autoresizesSubviews = YES;
+
+	[_contentView removeFromSuperview];
+	[_contentView release];
+
+	_contentView = [newContentView retain];
+	_contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	_contentView.autoresizesSubviews = YES;
+	[_contentView.layer setValue: [NSNumber numberWithBool: YES] forKey: @"KoboHackInterestingLayer"];
+
+	[self addSubview: _contentView];
+
 }
 
 - (CALayer *) glowSelectionLayer
