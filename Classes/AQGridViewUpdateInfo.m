@@ -258,7 +258,7 @@
 					{
 						if ( _oldToNewIndexMap[i] != NSNotFound )
                         {
-                            if ( i < _oldGridData.numberOfItems-1 )
+                            if ( i <= _oldGridData.numberOfItems-1 )
                             {
                                 _oldToNewIndexMap[i] = _oldToNewIndexMap[i]-1;
                                 TEST_GUARD(_oldToNewIndexMap, _oldGridData.numberOfItems);
