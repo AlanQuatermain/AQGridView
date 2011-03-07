@@ -273,10 +273,10 @@
 				else if ( item.index > item.newIndex )
 				{
 					// moving backwards-- shuffle middle items up one place
-					for ( NSInteger i = MIN(item.index-1, (_oldGridData.numberOfItems-1)); i >= item.newIndex; i-- )
+					for ( NSInteger i = MIN(item.index-1, (_oldGridData.numberOfItems-1)); (i >= item.newIndex && i >= 0); i-- )
 					{
 						if ( _oldToNewIndexMap[i] != NSNotFound )
-                        {
+		{
                             if ( i >= 0 )
                             {
                                 _oldToNewIndexMap[i] = _oldToNewIndexMap[i]+1;
