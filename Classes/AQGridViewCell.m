@@ -301,10 +301,10 @@
 {
 	if ( (_cellFlags.usingDefaultSelectedBackgroundView == 1) && (_selectedBackgroundView == nil) )
 	{
+        NSString *imageName = nil;
 #ifdef BUILTIN_IMAGES
 		unsigned char * pngBytes = AQGridSelection_png;
 		NSUInteger pngLength = AQGridSelection_png_len;
-                NSString *imageName = nil;
 
 		switch ( _cellFlags.selectionStyle )
 		{
