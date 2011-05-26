@@ -230,7 +230,7 @@
             CGRect r = [_gridView rectForItemAtIndex: _emptyCellIndex];
             CGRect f = _draggingCell.frame;
             f.origin.x = r.origin.x + floorf((r.size.width - f.size.width) * 0.5);
-            f.origin.y = r.origin.y + floorf((r.size.height - f.size.height) * 0.5);
+            f.origin.y = r.origin.y + floorf((r.size.height - f.size.height) * 0.5) - _gridView.contentOffset.y;
             NSLog( @"Gesture ended-- moving to %@", NSStringFromCGRect(f) );
             _draggingCell.frame = f;
             

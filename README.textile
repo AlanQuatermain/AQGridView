@@ -17,6 +17,10 @@ h3. Used In These Applications:
 * "AppStart for iPad":http://itunes.apple.com/ca/app/appstart-for-ipad/id408984648 -- App reviews and guides.
 * "Slippy":http://itunes.apple.com/app/id408254506 -- Level chooser.
 
+h3. Supporting AQGridView
+
+People have asked how they can show their support. Other than implementing nice features & pushing them back upstream, you can always take a look at my "Amazon Wish List":http://amzn.com/w/34WILFNNUUDKQ.
+
 h2. Introduction
 
 *AQGridView* is an attempt to create something similar to *NSCollectionView* on the iPhone. If *CALayoutManager* were available on the iPhone, specifically the *CAConstraintLayoutManager*, then this would be relatively easy to put together. However, since none of those exist, there's a lot of work to be done.
