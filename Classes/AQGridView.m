@@ -1597,7 +1597,7 @@ passToSuper:
 
 				NSUInteger index=[shifted firstIndex];
 				while(index != NSNotFound){
-					NSLog(@"%i >= %i ?", index, [_visibleCells count]);
+					//NSLog(@"%i >= %i ?", index, [_visibleCells count]);
 					if (index >= [_visibleCells count]) {
 						[shifted removeIndex:index];
 					}
