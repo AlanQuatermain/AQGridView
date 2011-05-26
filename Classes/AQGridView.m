@@ -1431,7 +1431,7 @@ passToSuper:
 												 selector: @selector(_gridViewDeferredTouchesBegan:)
 												   object: nil];
 
-	UIView * hitView = [_touchedContentView retain];
+	UIView * hitView = _touchedContentView;
 	_touchedContentView = nil;
 
 	[super touchesEnded: touches withEvent: event];
@@ -1491,6 +1491,9 @@ passToSuper:
     _pendingSelectionIndex = NSNotFound;
     [self highlightItemAtIndex: NSNotFound animated: NO scrollPosition: AQGridViewScrollPositionNone];
     [super touchesCancelled: touches withEvent: event];
+    
+    [_touchedContentView release];
+    _touchedContentView = nil;
 }
 
 - (void)doAddVisibleCell: (UIView *)cell
