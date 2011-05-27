@@ -121,4 +121,7 @@ typedef enum {
 @property(nonatomic,getter=isEditing) BOOL          editing;                    // show appropriate edit controls (+/- & reorder). By default -setEditing: calls setEditing:animated: with NO for animated.
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
+// Sorting
+- (NSComparisonResult) compareOriginAgainstCell: (AQGridViewCell *) otherCell;
+
 @end
