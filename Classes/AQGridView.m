@@ -88,6 +88,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 @interface AQGridView ()
 @property (nonatomic, copy) NSIndexSet * animatingIndices;
+- (void) cellUpdateAnimationStopped: (NSString *) animationID finished: (BOOL) finished context: (void *) context;
 @end
 
 
@@ -1594,7 +1595,7 @@ passToSuper:
 
 				NSUInteger index=[shifted firstIndex];
 				while(index != NSNotFound){
-					NSLog(@"%i >= %i ?", index, [_visibleCells count]);
+					//NSLog(@"%i >= %i ?", index, [_visibleCells count]);
 					if (index >= [_visibleCells count]) {
 						[shifted removeIndex:index];
 					}
