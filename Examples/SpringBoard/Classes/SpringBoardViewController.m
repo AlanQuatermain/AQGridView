@@ -131,14 +131,14 @@
     if ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) )
     {
         // width will be 768, which divides by four nicely already
-        NSLog( @"Setting left+right content insets to zero" );
+        DLog( @"Setting left+right content insets to zero" );
         _gridView.leftContentInset = 0.0;
         _gridView.rightContentInset = 0.0;
     }
     else
     {
         // width will be 1024, so subtract a little to get a width divisible by five
-        NSLog( @"Setting left+right content insets to 2.0" );
+        DLog( @"Setting left+right content insets to 2.0" );
         _gridView.leftContentInset = 2.0;
         _gridView.rightContentInset = 2.0;
     }
@@ -231,7 +231,7 @@
             CGRect f = _draggingCell.frame;
             f.origin.x = r.origin.x + floorf((r.size.width - f.size.width) * 0.5);
             f.origin.y = r.origin.y + floorf((r.size.height - f.size.height) * 0.5) - _gridView.contentOffset.y;
-            NSLog( @"Gesture ended-- moving to %@", NSStringFromCGRect(f) );
+            DLog( @"Gesture ended-- moving to %@", NSStringFromCGRect(f) );
             _draggingCell.frame = f;
             
             _draggingCell.transform = CGAffineTransformIdentity;
@@ -298,7 +298,7 @@
 			
             if ( index != _emptyCellIndex )
             {
-                NSLog( @"Moving empty cell from %u to %u", _emptyCellIndex, index );
+                DLog( @"Moving empty cell from %u to %u", _emptyCellIndex, index );
                 
                 // batch the movements
                 [_gridView beginUpdates];
@@ -308,7 +308,7 @@
                 {
                     for ( NSUInteger i = index; i < _emptyCellIndex; i++ )
                     {
-                        NSLog( @"Moving %u to %u", i, i+1 );
+                        DLog( @"Moving %u to %u", i, i+1 );
                         [_gridView moveItemAtIndex: i toIndex: i+1 withAnimation: AQGridViewItemAnimationFade];
                     }
                 }
@@ -316,7 +316,7 @@
                 {
                     for ( NSUInteger i = index; i > _emptyCellIndex; i-- )
                     {
-                        NSLog( @"Moving %u to %u", i, i-1 );
+                        DLog( @"Moving %u to %u", i, i-1 );
                         [_gridView moveItemAtIndex: i toIndex: i-1 withAnimation: AQGridViewItemAnimationFade];
                     }
                 }
@@ -363,7 +363,7 @@
     
     if ( index == _emptyCellIndex )
     {
-        NSLog( @"Loading empty cell at index %u", index );
+        DLog( @"Loading empty cell at index %u", index );
         AQGridViewCell * hiddenCell = [gridView dequeueReusableCellWithIdentifier: EmptyIdentifier];
         if ( hiddenCell == nil )
         {

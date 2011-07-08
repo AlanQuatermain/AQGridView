@@ -731,7 +731,7 @@
 	NSIndexSet * oldVisibleIndices = [_oldGridData indicesOfCellsInRect: contentRect];
 	
     // The line below is commented because it produces too many logs
-	// NSLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
+	// DLog( @"Updating from original content rect %@", NSStringFromCGRect(contentRect) );
 	
 	if ( (isVertical) && (maxY > gridSize.height) )
 	{
@@ -761,7 +761,7 @@
 	}
 	
     // The line below is fixed because it produces too many logs
-	//NSLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
+	//DLog( @"Updated content rect: %@", NSStringFromCGRect(contentRect) );
 	NSIndexSet * newVisibleIndices = [_newGridData indicesOfCellsInRect: contentRect];
 	
 	NSMutableSet * newVisibleCells = [[NSMutableSet alloc] initWithSet: _gridView.animatingCells];
@@ -836,7 +836,7 @@
 		// animate it into its new location
 		CGRect frame = [_gridView fixCellFrame: cell.frame forGridRect: [_newGridData cellRectAtIndex: newIndex]];
 		//if ( CGRectEqualToRect(frame, cell.frame) == NO )
-		//	NSLog( @"Moving frame from %@ to %@", NSStringFromCGRect(cell.frame), NSStringFromCGRect(frame) );
+		//	DLog( @"Moving frame from %@ to %@", NSStringFromCGRect(cell.frame), NSStringFromCGRect(frame) );
 		cell.frame = frame;
 		
 		// tell the grid view's delegate about it
