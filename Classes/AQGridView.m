@@ -656,9 +656,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 	if ( (_reloadingSuspendedCount == 0) && (!CGRectIsEmpty([self gridViewVisibleBounds])) )
 	{
-		@autoreleasepool {
-			[self updateVisibleGridCellsNow];
-		}
+        [self updateVisibleGridCellsNow];
 	}
 
 	if ( _flags.allCellsNeedLayout == 1 )
@@ -1496,19 +1494,13 @@ passToSuper:
 
 - (void) sortVisibleCellList
 {
-#warning I have commented out the body of sortVisibleCellList() pending figuring out how to use OSAtomicCompareAndSwapPtrBarrier() with ARC
-    // see : https://devforums.apple.com/thread/111141
-    /*
-	static NSArray * __sortDescriptors = nil;
-	if ( __sortDescriptors == nil )
-	{
-		NSArray * obj = [[NSArray alloc] initWithObjects: [[[NSSortDescriptor alloc] initWithKey: @"displayIndex" ascending: YES] autorelease], nil];
-		if ( OSAtomicCompareAndSwapPtrBarrier(nil, obj, (void * volatile *)&__sortDescriptors) == false )
-			[obj release];		// already stored by another thread
-	}
+	__block NSArray * __sortDescriptors;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+		__sortDescriptors = [[NSArray alloc] initWithObjects: [[NSSortDescriptor alloc] initWithKey: @"displayIndex" ascending: YES], nil];
+    });
 
 	[_visibleCells sortUsingDescriptors: __sortDescriptors];
-     */
 }
 
 - (void) updateGridViewBoundsForNewGridData: (AQGridViewData *) newGridData
