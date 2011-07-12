@@ -57,11 +57,6 @@
     return ( self );
 }
 
-- (void) dealloc
-{
-    [_itemTitles release];
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -129,7 +124,7 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     
     cell.textLabel.text = [_itemTitles objectAtIndex: indexPath.row];

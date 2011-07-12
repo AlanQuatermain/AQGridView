@@ -43,12 +43,12 @@
 @interface ImageDemoCellChooser : UITableViewController
 {
     NSArray * _itemTitles;
-    id<ImageDemoCellChooserDelegate> __weak _delegate;
+    id<ImageDemoCellChooserDelegate> __unsafe_unretained _delegate;
 }
 
 - (id) initWithItemTitles: (NSArray *) titles;
 
-@property (nonatomic, assign) id<ImageDemoCellChooserDelegate> __weak delegate;
+@property (nonatomic, assign) id<ImageDemoCellChooserDelegate> delegate;
 
 @end
 
