@@ -78,9 +78,9 @@
 	[_oldGridData release];
 	[_newGridData release];
 	if ( _oldToNewIndexMap != NULL )
-		NSZoneFree( [self zone], _oldToNewIndexMap );
+		free( _oldToNewIndexMap );
 	if ( _newToOldIndexMap != NULL )
-		NSZoneFree( [self zone], _newToOldIndexMap );
+		free( _newToOldIndexMap );
 	[_onlyMovedIndices release];
 	[super dealloc];
 }
@@ -191,7 +191,7 @@
 #else
 		NSUInteger count = _oldGridData.numberOfItems;
 #endif
-		_oldToNewIndexMap = NSZoneMalloc( [self zone], count * sizeof(NSUInteger) );
+		_oldToNewIndexMap = malloc( count * sizeof(NSUInteger) );
 #if GUARD_ITEMS
 		memset(_oldToNewIndexMap, 0x55, count * sizeof(NSUInteger));
 #endif
@@ -212,7 +212,7 @@
 #else
 		NSUInteger count = _newGridData.numberOfItems;
 #endif
-		_newToOldIndexMap = NSZoneMalloc( [self zone], count * sizeof(NSUInteger) );
+		_newToOldIndexMap = malloc( count * sizeof(NSUInteger) );
 #if GUARD_ITEMS
 		memset(_newToOldIndexMap, 0x55, count * sizeof(NSUInteger));
 #endif

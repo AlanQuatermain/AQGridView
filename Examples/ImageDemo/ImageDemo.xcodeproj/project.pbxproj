@@ -416,6 +416,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ImageDemo_Prefix.pch;
 				INFOPLIST_FILE = "ImageDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = ImageDemo;
 			};
 			name = Debug;
@@ -428,6 +429,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ImageDemo_Prefix.pch;
 				INFOPLIST_FILE = "ImageDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = ImageDemo;
 				VALIDATE_PRODUCT = YES;
 			};

@@ -987,7 +987,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) cellUpdateAnimationStopped: (NSString *) animationID finished: (BOOL) finished context: (void *) context
 {
-	AQGridViewUpdateInfo * info = (AQGridViewUpdateInfo *)context;
+	AQGridViewUpdateInfo * info = (__bridge AQGridViewUpdateInfo *)context;
 
 	// if nothing was animated, we don't have to do anything at all
 //	if ( self.animatingCells.count != 0 )
@@ -1531,6 +1531,9 @@ passToSuper:
 
 - (void) sortVisibleCellList
 {
+#warning I have commented out the body of sortVisibleCellList() pending figuring out how to use OSAtomicCompareAndSwapPtrBarrier() with ARC
+    // see : https://devforums.apple.com/thread/111141
+    /*
 	static NSArray * __sortDescriptors = nil;
 	if ( __sortDescriptors == nil )
 	{
@@ -1540,6 +1543,7 @@ passToSuper:
 	}
 
 	[_visibleCells sortUsingDescriptors: __sortDescriptors];
+     */
 }
 
 - (void) updateGridViewBoundsForNewGridData: (AQGridViewData *) newGridData
@@ -1555,231 +1559,232 @@ passToSuper:
 
 	_reloadingSuspendedCount++;
 
-
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	NSIndexSet * newVisibleIndices = [_gridData indicesOfCellsInRect: [self gridViewVisibleBounds]];
-
-	BOOL enableAnim = [UIView areAnimationsEnabled];
-	[UIView setAnimationsEnabled: NO];
-
-	@try
-	{
-		// a couple of simple tests
-		// TODO: if we replace _visibleIndices with an index set, this comparison will have to change
-		if ( ([_visibleCells count] != [newVisibleIndices count]) ||
-			([newVisibleIndices countOfIndexesInRange: _visibleIndices] != _visibleIndices.length) )
-		{
-			// something has changed. Compute intersections and remove/add cells as required
-			NSIndexSet * currentVisibleIndices = [NSIndexSet indexSetWithIndexesInRange: _visibleIndices];
-
-			// index sets for removed and inserted items
-			NSMutableIndexSet * removedIndices = nil, * insertedIndices = nil;
-
-			// handle the simple case first
-			// TODO: if we replace _visibleIndices with an index set, this comparison will have to change
-			if ( [currentVisibleIndices intersectsIndexesInRange: _visibleIndices] == NO )
-			{
-				removedIndices = [[currentVisibleIndices mutableCopy] autorelease];
-				insertedIndices = [[newVisibleIndices mutableCopy] autorelease];
-			}
-			else	// more complicated -- compute negative intersections
-			{
-				removedIndices = [[[currentVisibleIndices aq_indexesOutsideIndexSet: newVisibleIndices] mutableCopy] autorelease];
-				insertedIndices = [[[newVisibleIndices aq_indexesOutsideIndexSet: currentVisibleIndices] mutableCopy] autorelease];
-			}
-
-			if ( [removedIndices count] != 0 )
-			{
-				NSMutableIndexSet * shifted = [removedIndices mutableCopy];
-
-				// get an index set for everything being removed relative to items' locations within the visible cell list
-				[shifted shiftIndexesStartingAtIndex: [removedIndices firstIndex] by: 0 - (NSInteger)_visibleIndices.location];
-				//NSLog( @"Removed indices relative to visible cell list: %@", shifted );
-
-				NSUInteger index=[shifted firstIndex];
-				while(index != NSNotFound){
-					//NSLog(@"%i >= %i ?", index, [_visibleCells count]);
-					if (index >= [_visibleCells count]) {
-						[shifted removeIndex:index];
-					}
-					index=[shifted indexGreaterThanIndex: index];
-				}
-
-				// pull out the cells for manipulation
-				NSMutableArray * removedCells = [[_visibleCells objectsAtIndexes: shifted] mutableCopy];
-
-				// remove them from the visible list
-				[_visibleCells removeObjectsInArray: removedCells];
-				//NSLog( @"After removals, visible cells count = %lu", (unsigned long)[_visibleCells count] );
-
-				// don't need this any more
-				[shifted release]; shifted = nil;
-
-				// remove cells from the view hierarchy -- but only if they're not being animated by something else
-				NSArray * animating = [[self.animatingCells valueForKey: @"animatingView"] allObjects];
-				if ( animating != nil )
-					[removedCells removeObjectsInArray: animating];
-
-				// these are not being displayed or animated offscreen-- take them off the screen immediately
-				[removedCells makeObjectsPerformSelector: @selector(removeFromSuperview)];
-
-				// put them into the cell reuse queue
-				[self enqueueReusableCells: removedCells];
-
-				[removedCells release];
-			}
-
-			if ( [insertedIndices count] != 0 )
-			{
-				// some items are going in -- put them at the end and the sort function will move them to the right index during layout
-				// if any of these new indices correspond to animating cells (NOT UIImageViews) then copy them into the visible cell list
-				NSMutableIndexSet * animatingInserted = [insertedIndices mutableCopy];
-
-				// compute the intersection of insertedIndices and _animatingIndices
-				NSUInteger idx = [insertedIndices firstIndex];
-				while ( idx != NSNotFound )
-				{
-					if ( [_animatingIndices containsIndex: idx] == NO )
-						[animatingInserted removeIndex: idx];
-
-					idx = [insertedIndices indexGreaterThanIndex: idx];
-				}
-
-				if ( [animatingInserted count] != 0 )
-				{
-					for ( AQGridViewAnimatorItem * item in _animatingCells )
-					{
-						if ( [newVisibleIndices containsIndex: item.index] == NO )
-							continue;
-
-						if ( [item.animatingView isKindOfClass: [AQGridViewCell class]] )
-						{
-							// ensure this is in the visible cell list
-							if ( [_visibleCells containsObject: item.animatingView] == NO )
-								//[_visibleCells addObject: item.animatingView];
-								[self doAddVisibleCell: item.animatingView];
-						}
-						else
-						{
-							// it's an image that's being moved, likely because it *was* going offscreen before
-							// the user scrolled. Create a real cell, but hide it until the animation is complete.
-							AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
-							//[_visibleCells addObject: cell];
-							[self doAddVisibleCell: cell];
-
-							// we don't tell the delegate yet, we just hide it
-							cell.hiddenForAnimation = YES;
-						}
-					}
-
-					// remove these from the set of indices for which we will generate new cells
-					[insertedIndices removeIndexes: animatingInserted];
-				}
-
-				[animatingInserted release];
-
-				// insert cells for these indices
-				idx = [insertedIndices firstIndex];
-				while ( idx != NSNotFound )
-				{
-					AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
-					//[_visibleCells addObject: cell];
-					[self doAddVisibleCell: cell];
-
-					// tell the delegate
-					[self delegateWillDisplayCell: cell atIndex: idx];
-
-					idx = [insertedIndices indexGreaterThanIndex: idx];
-				}
-			}
-
-			if ( [_visibleCells count] > [newVisibleIndices count] )
-			{
-				//NSLog( @"Have to prune visible cell list, I've still got extra cells in there!" );
-                NSMutableIndexSet * animatingDestinationIndices = [[NSMutableIndexSet alloc] init];
-                for ( AQGridViewAnimatorItem * item in _animatingCells )
+    @autoreleasepool {
+        
+        NSIndexSet * newVisibleIndices = [_gridData indicesOfCellsInRect: [self gridViewVisibleBounds]];
+        
+        BOOL enableAnim = [UIView areAnimationsEnabled];
+        [UIView setAnimationsEnabled: NO];
+        
+        @try
+        {
+            // a couple of simple tests
+            // TODO: if we replace _visibleIndices with an index set, this comparison will have to change
+            if ( ([_visibleCells count] != [newVisibleIndices count]) ||
+                ([newVisibleIndices countOfIndexesInRange: _visibleIndices] != _visibleIndices.length) )
+            {
+                // something has changed. Compute intersections and remove/add cells as required
+                NSIndexSet * currentVisibleIndices = [NSIndexSet indexSetWithIndexesInRange: _visibleIndices];
+                
+                // index sets for removed and inserted items
+                NSMutableIndexSet * removedIndices = nil, * insertedIndices = nil;
+                
+                // handle the simple case first
+                // TODO: if we replace _visibleIndices with an index set, this comparison will have to change
+                if ( [currentVisibleIndices intersectsIndexesInRange: _visibleIndices] == NO )
                 {
-                    [animatingDestinationIndices addIndex: item.index];
+                    removedIndices = [[currentVisibleIndices mutableCopy] autorelease];
+                    insertedIndices = [[newVisibleIndices mutableCopy] autorelease];
                 }
-
-				NSMutableIndexSet * toRemove = [[NSMutableIndexSet alloc] init];
-				NSMutableIndexSet * seen = [[NSMutableIndexSet alloc] init];
-				NSUInteger i, count = [_visibleCells count];
-				for ( i = 0; i < count; i++ )
-				{
-					AQGridViewCell * cell = [_visibleCells objectAtIndex: i];
-					if ( [newVisibleIndices containsIndex: cell.displayIndex] == NO &&
-                         [animatingDestinationIndices containsIndex: cell.displayIndex] == NO )
-					{
-						NSLog( @"Cell for index %lu is still in visible list, removing...", (unsigned long)cell.displayIndex );
-						[cell removeFromSuperview];
-						[toRemove addIndex: i];
-					}
-					else if ( [seen containsIndex: cell.displayIndex] )
-					{
-						NSLog( @"Multiple cells with index %lu found-- removing duplicate...", (unsigned long)cell.displayIndex );
-						[cell removeFromSuperview];
-						[toRemove addIndex: i];
-					}
-
-					[seen addIndex: cell.displayIndex];
-				}
-
-				// all removed from superview, just need to remove from the list now
-				[_visibleCells removeObjectsAtIndexes: toRemove];
-				[toRemove release];
-				[seen release];
-			}
-
-			if ( [_visibleCells count] < [newVisibleIndices count] )
-			{
-				NSLog( @"Visible cell list is missing some items!" );
-
-				NSMutableIndexSet * visibleSet = [[NSMutableIndexSet alloc] init];
-				for ( AQGridViewCell * cell in _visibleCells )
-				{
-					[visibleSet addIndex: cell.displayIndex];
-				}
-
-				NSMutableIndexSet * missingSet = [newVisibleIndices mutableCopy];
-				[missingSet removeIndexes: visibleSet];
-				[visibleSet release];
-
-				NSLog( @"Got %lu missing indices", (unsigned long)[missingSet count] );
-
-				NSUInteger idx = [missingSet firstIndex];
-				while ( idx != NSNotFound )
-				{
-					AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
-					//[_visibleCells addObject: cell];
-					[self doAddVisibleCell: cell];
-
-					// tell the delegate
-					[self delegateWillDisplayCell: cell atIndex: idx];
-
-					idx = [missingSet indexGreaterThanIndex: idx];
-				}
-
-				[missingSet release];
-			}
-
-			// everything should match up now, so update the visible range
-			_visibleIndices.location = [newVisibleIndices firstIndex];
-			_visibleIndices.length   = [newVisibleIndices count];
-
-			// layout these cells -- this will also sort the visible cell list
-			[self layoutAllCells];
-		}
-	}
-	@catch (id exception)
-	{
-	}
-	@finally
-	{
-		[UIView setAnimationsEnabled: enableAnim];
-		[pool drain];
-		_reloadingSuspendedCount--;
-	}
+                else	// more complicated -- compute negative intersections
+                {
+                    removedIndices = [[[currentVisibleIndices aq_indexesOutsideIndexSet: newVisibleIndices] mutableCopy] autorelease];
+                    insertedIndices = [[[newVisibleIndices aq_indexesOutsideIndexSet: currentVisibleIndices] mutableCopy] autorelease];
+                }
+                
+                if ( [removedIndices count] != 0 )
+                {
+                    NSMutableIndexSet * shifted = [removedIndices mutableCopy];
+                    
+                    // get an index set for everything being removed relative to items' locations within the visible cell list
+                    [shifted shiftIndexesStartingAtIndex: [removedIndices firstIndex] by: 0 - (NSInteger)_visibleIndices.location];
+                    //NSLog( @"Removed indices relative to visible cell list: %@", shifted );
+                    
+                    NSUInteger index=[shifted firstIndex];
+                    while(index != NSNotFound){
+                        //NSLog(@"%i >= %i ?", index, [_visibleCells count]);
+                        if (index >= [_visibleCells count]) {
+                            [shifted removeIndex:index];
+                        }
+                        index=[shifted indexGreaterThanIndex: index];
+                    }
+                    
+                    // pull out the cells for manipulation
+                    NSMutableArray * removedCells = [[_visibleCells objectsAtIndexes: shifted] mutableCopy];
+                    
+                    // remove them from the visible list
+                    [_visibleCells removeObjectsInArray: removedCells];
+                    //NSLog( @"After removals, visible cells count = %lu", (unsigned long)[_visibleCells count] );
+                    
+                    // don't need this any more
+                    [shifted release]; shifted = nil;
+                    
+                    // remove cells from the view hierarchy -- but only if they're not being animated by something else
+                    NSArray * animating = [[self.animatingCells valueForKey: @"animatingView"] allObjects];
+                    if ( animating != nil )
+                        [removedCells removeObjectsInArray: animating];
+                    
+                    // these are not being displayed or animated offscreen-- take them off the screen immediately
+                    [removedCells makeObjectsPerformSelector: @selector(removeFromSuperview)];
+                    
+                    // put them into the cell reuse queue
+                    [self enqueueReusableCells: removedCells];
+                    
+                    [removedCells release];
+                }
+                
+                if ( [insertedIndices count] != 0 )
+                {
+                    // some items are going in -- put them at the end and the sort function will move them to the right index during layout
+                    // if any of these new indices correspond to animating cells (NOT UIImageViews) then copy them into the visible cell list
+                    NSMutableIndexSet * animatingInserted = [insertedIndices mutableCopy];
+                    
+                    // compute the intersection of insertedIndices and _animatingIndices
+                    NSUInteger idx = [insertedIndices firstIndex];
+                    while ( idx != NSNotFound )
+                    {
+                        if ( [_animatingIndices containsIndex: idx] == NO )
+                            [animatingInserted removeIndex: idx];
+                        
+                        idx = [insertedIndices indexGreaterThanIndex: idx];
+                    }
+                    
+                    if ( [animatingInserted count] != 0 )
+                    {
+                        for ( AQGridViewAnimatorItem * item in _animatingCells )
+                        {
+                            if ( [newVisibleIndices containsIndex: item.index] == NO )
+                                continue;
+                            
+                            if ( [item.animatingView isKindOfClass: [AQGridViewCell class]] )
+                            {
+                                // ensure this is in the visible cell list
+                                if ( [_visibleCells containsObject: item.animatingView] == NO )
+                                    //[_visibleCells addObject: item.animatingView];
+                                    [self doAddVisibleCell: item.animatingView];
+                            }
+                            else
+                            {
+                                // it's an image that's being moved, likely because it *was* going offscreen before
+                                // the user scrolled. Create a real cell, but hide it until the animation is complete.
+                                AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
+                                //[_visibleCells addObject: cell];
+                                [self doAddVisibleCell: cell];
+                                
+                                // we don't tell the delegate yet, we just hide it
+                                cell.hiddenForAnimation = YES;
+                            }
+                        }
+                        
+                        // remove these from the set of indices for which we will generate new cells
+                        [insertedIndices removeIndexes: animatingInserted];
+                    }
+                    
+                    [animatingInserted release];
+                    
+                    // insert cells for these indices
+                    idx = [insertedIndices firstIndex];
+                    while ( idx != NSNotFound )
+                    {
+                        AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
+                        //[_visibleCells addObject: cell];
+                        [self doAddVisibleCell: cell];
+                        
+                        // tell the delegate
+                        [self delegateWillDisplayCell: cell atIndex: idx];
+                        
+                        idx = [insertedIndices indexGreaterThanIndex: idx];
+                    }
+                }
+                
+                if ( [_visibleCells count] > [newVisibleIndices count] )
+                {
+                    //NSLog( @"Have to prune visible cell list, I've still got extra cells in there!" );
+                    NSMutableIndexSet * animatingDestinationIndices = [[NSMutableIndexSet alloc] init];
+                    for ( AQGridViewAnimatorItem * item in _animatingCells )
+                    {
+                        [animatingDestinationIndices addIndex: item.index];
+                    }
+                    
+                    NSMutableIndexSet * toRemove = [[NSMutableIndexSet alloc] init];
+                    NSMutableIndexSet * seen = [[NSMutableIndexSet alloc] init];
+                    NSUInteger i, count = [_visibleCells count];
+                    for ( i = 0; i < count; i++ )
+                    {
+                        AQGridViewCell * cell = [_visibleCells objectAtIndex: i];
+                        if ( [newVisibleIndices containsIndex: cell.displayIndex] == NO &&
+                            [animatingDestinationIndices containsIndex: cell.displayIndex] == NO )
+                        {
+                            NSLog( @"Cell for index %lu is still in visible list, removing...", (unsigned long)cell.displayIndex );
+                            [cell removeFromSuperview];
+                            [toRemove addIndex: i];
+                        }
+                        else if ( [seen containsIndex: cell.displayIndex] )
+                        {
+                            NSLog( @"Multiple cells with index %lu found-- removing duplicate...", (unsigned long)cell.displayIndex );
+                            [cell removeFromSuperview];
+                            [toRemove addIndex: i];
+                        }
+                        
+                        [seen addIndex: cell.displayIndex];
+                    }
+                    
+                    // all removed from superview, just need to remove from the list now
+                    [_visibleCells removeObjectsAtIndexes: toRemove];
+                    [toRemove release];
+                    [seen release];
+                }
+                
+                if ( [_visibleCells count] < [newVisibleIndices count] )
+                {
+                    NSLog( @"Visible cell list is missing some items!" );
+                    
+                    NSMutableIndexSet * visibleSet = [[NSMutableIndexSet alloc] init];
+                    for ( AQGridViewCell * cell in _visibleCells )
+                    {
+                        [visibleSet addIndex: cell.displayIndex];
+                    }
+                    
+                    NSMutableIndexSet * missingSet = [newVisibleIndices mutableCopy];
+                    [missingSet removeIndexes: visibleSet];
+                    [visibleSet release];
+                    
+                    NSLog( @"Got %lu missing indices", (unsigned long)[missingSet count] );
+                    
+                    NSUInteger idx = [missingSet firstIndex];
+                    while ( idx != NSNotFound )
+                    {
+                        AQGridViewCell * cell = [self createPreparedCellForIndex: idx];
+                        //[_visibleCells addObject: cell];
+                        [self doAddVisibleCell: cell];
+                        
+                        // tell the delegate
+                        [self delegateWillDisplayCell: cell atIndex: idx];
+                        
+                        idx = [missingSet indexGreaterThanIndex: idx];
+                    }
+                    
+                    [missingSet release];
+                }
+                
+                // everything should match up now, so update the visible range
+                _visibleIndices.location = [newVisibleIndices firstIndex];
+                _visibleIndices.length   = [newVisibleIndices count];
+                
+                // layout these cells -- this will also sort the visible cell list
+                [self layoutAllCells];
+            }
+        }
+        @catch (id exception)
+        {
+        }
+        @finally
+        {
+            [UIView setAnimationsEnabled: enableAnim];
+            _reloadingSuspendedCount--;
+        }
+        
+    }
 }
 /*
 - (void) updateVisibleGridCellsNow

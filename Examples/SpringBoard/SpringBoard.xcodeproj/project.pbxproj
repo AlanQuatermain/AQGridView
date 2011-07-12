@@ -271,6 +271,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = SpringBoard_Prefix.pch;
 				INFOPLIST_FILE = "SpringBoard-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = SpringBoard;
 			};
 			name = Debug;
@@ -283,6 +284,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = SpringBoard_Prefix.pch;
 				INFOPLIST_FILE = "SpringBoard-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = SpringBoard;
 				VALIDATE_PRODUCT = YES;
 			};
