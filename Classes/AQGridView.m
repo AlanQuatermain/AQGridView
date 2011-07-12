@@ -1492,9 +1492,10 @@ passToSuper:
 
 @implementation AQGridView (AQCellLayout)
 
+NSArray * __sortDescriptors;
+
 - (void) sortVisibleCellList
 {
-	__block NSArray * __sortDescriptors;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
 		__sortDescriptors = [[NSArray alloc] initWithObjects: [[NSSortDescriptor alloc] initWithKey: @"displayIndex" ascending: YES], nil];
