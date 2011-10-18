@@ -50,7 +50,8 @@ typedef enum {
 	AQGridViewItemAnimationLeft,
 	AQGridViewItemAnimationTop,
 	AQGridViewItemAnimationBottom,
-	AQGridViewItemAnimationNone
+	AQGridViewItemAnimationNone,
+	AQGridViewItemAnimationPop
 } AQGridViewItemAnimation;
 
 typedef enum {

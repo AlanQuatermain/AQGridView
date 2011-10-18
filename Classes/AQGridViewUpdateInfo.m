@@ -521,6 +521,7 @@
 	// this is what we'll animate
 	switch ( animation )
 	{
+		case AQGridViewItemAnimationPop: // No action needed for the pop animation			
 		case AQGridViewItemAnimationFade:
 			// nothing else left for the fade animation
 			break;
@@ -625,7 +626,16 @@
 			[itemsToSetBeforeAnimation setObject: [NSValue valueWithCGPoint: center] forKey: @"center"];
 			break;
 		}
-			
+		case AQGridViewItemAnimationPop:
+		{
+			float percentageOfOriginalWidth = 10; // Make this higher or lower to start with a small or bigger picture
+			float width = (cellSize.width / 100) * percentageOfOriginalWidth; // 10 percent of original size
+			float inset = (cellSize.width / 2) - (width / 2);
+			CGRect newSize = CGRectInset(cell.frame, inset, inset);
+			[itemsToAnimate setObject:[NSValue valueWithCGRect:cell.frame] forKey: @"frame"];
+			[itemsToSetBeforeAnimation setObject: [NSValue valueWithCGRect:newSize] forKey: @"frame"];
+			break;			
+		}			
 		default:
 			break;
 	}
@@ -680,6 +690,7 @@
 	switch ( animation )
 	{
 		case AQGridViewItemAnimationFade:
+		case AQGridViewItemAnimationPop:
 		default:
 			break;		// fade always happens
 			
