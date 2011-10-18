@@ -50,10 +50,12 @@ typedef enum {
 	NSUInteger				_newIndex;
 	AQGridViewUpdateAction	_action;
 	AQGridViewItemAnimation	_animation;
+	AnimationBlock			_animationBlock;
 	NSInteger				_offset;
 }
 
 - (id) initWithIndex: (NSUInteger) index action: (AQGridViewUpdateAction) action animation: (AQGridViewItemAnimation) animation;
+- (id) initWithIndex:(NSUInteger)index action:(AQGridViewUpdateAction)action animationBlock:(AnimationBlock)animationBlock;
 
 - (NSComparisonResult) compare: (AQGridViewUpdateItem *) other;
 - (NSComparisonResult) inverseCompare: (AQGridViewUpdateItem *) other;
@@ -62,6 +64,7 @@ typedef enum {
 @property (nonatomic) NSUInteger newIndex;		// only valid for AQGridViewUpdateActionMove
 @property (nonatomic, readonly) AQGridViewUpdateAction action;
 @property (nonatomic, readonly) AQGridViewItemAnimation animation;
+@property (nonatomic, readonly) AnimationBlock animationBlock;
 
 // this is an offset to apply to the index, due to other changes in the list which occurred since this index was chosen
 @property (nonatomic) NSInteger offset;

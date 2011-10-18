@@ -974,7 +974,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 	self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
 
-
 	[_gridData release];
 	_gridData = [[info newGridViewData] retain];
 	if ( _selectedIndex != NSNotFound )
@@ -1027,6 +1026,26 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	// not in the middle of an update loop -- commit animations here
 	if ( needsAnimationSetup )
 		[self endUpdateAnimations];
+}
+
+
+
+- (void) _updateItemsAtIndices:(NSIndexSet*) indices updateAction:(AQGridViewUpdateAction) action withAnimationBlock:(AnimationBlock) animationBlock
+{
+	BOOL needsAnimationSetup = ([_updateInfoStack count] <= _animationCount);
+	
+	if (needsAnimationSetup)
+		[self setupUpdateAnimations];
+	
+	[[_updateInfoStack lastObject] updateItemsAtIndices: indices updateAction: action withAnimationBlock:animationBlock];
+
+	if (needsAnimationSetup)
+		[self endUpdateAnimations];
+}
+
+- (void) insertItemsAtIndices:(NSIndexSet *)indices withAnimationBlock:(AnimationBlock) animationBlock
+{
+	[self _updateItemsAtIndices:indices updateAction:AQGridViewUpdateActionInsert withAnimationBlock:animationBlock];
 }
 
 - (void) insertItemsAtIndices: (NSIndexSet *) indices withAnimation: (AQGridViewItemAnimation) animation

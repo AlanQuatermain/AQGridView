@@ -126,6 +126,24 @@
 	}
 }
 
+- (void) updateItemsAtIndices: (NSIndexSet *) indices
+				 updateAction: (AQGridViewUpdateAction) action
+				withAnimationBlock: (AnimationBlock) animationBlock
+{
+	NSMutableArray * array = [self updateItemArrayForAction: action];
+	NSUInteger i = [indices firstIndex];
+	while ( i != NSNotFound )
+	{
+		AQGridViewUpdateItem * item = [[AQGridViewUpdateItem alloc] initWithIndex: i
+																		   action: action
+																   animationBlock:animationBlock];
+		[array addObject: item];
+		[item release];
+		
+		i = [indices indexGreaterThanIndex: i];
+	}
+}
+
 - (void) moveItemAtIndex: (NSUInteger) index
 				 toIndex: (NSUInteger) newIndex
 		   withAnimation: (AQGridViewItemAnimation) animation
@@ -557,12 +575,24 @@
 			imageView.center = center;
 			break;
 		}
+		case AQGridViewitemAnimationBlock:
+		{
+			break;
+		}
 			
 		default:
 			break;
 	}
 	
 	return ( imageView );
+}
+
+- (void) animateInsertionForCell:(AQGridViewCell*) cell withAnimationBlock:(AnimationBlock) animationBlock
+{
+	[_gridView addSubview: cell];
+	[UIView setAnimationsEnabled: YES];	
+	
+	animationBlock(cell);
 }
 
 - (void) animateInsertionForCell: (AQGridViewCell *) cell withAnimation: (AQGridViewItemAnimation) animation
@@ -635,7 +665,12 @@
 			[itemsToAnimate setObject:[NSValue valueWithCGRect:cell.frame] forKey: @"frame"];
 			[itemsToSetBeforeAnimation setObject: [NSValue valueWithCGRect:newSize] forKey: @"frame"];
 			break;			
-		}			
+		}	
+		case AQGridViewitemAnimationBlock:
+		{
+			
+			break;
+		}
 		default:
 			break;
 	}
@@ -896,7 +931,12 @@
 			AQGridViewCell * cell = [_gridView createPreparedCellForIndex: item.index usingGridData: _newGridData];
 			if ( cell != nil )
 			{
-				[self animateInsertionForCell: cell withAnimation: item.animation];
+				if (item.animation == AQGridViewitemAnimationBlock)
+				{
+					[self animateInsertionForCell:cell withAnimationBlock:item.animationBlock];
+				}
+				else
+					[self animateInsertionForCell: cell withAnimation: item.animation];
 				[_gridView delegateWillDisplayCell: cell atIndex: item.index];
 				[newVisibleCells addObject: [AQGridViewAnimatorItem itemWithView: cell index: item.index]];
 			}
