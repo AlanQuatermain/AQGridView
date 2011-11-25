@@ -82,6 +82,11 @@
 - (void) updateItemsAtIndices: (NSIndexSet *) indices
 				 updateAction: (AQGridViewUpdateAction) action
 				withAnimation: (AQGridViewItemAnimation) animation;
+
+- (void) updateItemsAtIndices: (NSIndexSet *) indices
+				 updateAction: (AQGridViewUpdateAction) action
+		   withAnimationBlock: (AnimationBlock) animationBlock;
+
 - (void) moveItemAtIndex: (NSUInteger) index
 				 toIndex: (NSUInteger) index
 		   withAnimation: (AQGridViewItemAnimation) animation;

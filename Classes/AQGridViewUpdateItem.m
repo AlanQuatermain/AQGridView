@@ -38,7 +38,7 @@
 
 @implementation AQGridViewUpdateItem
 
-@synthesize originalIndex=_index, newIndex=_newIndex, action=_action, animation=_animation, offset=_offset;
+@synthesize originalIndex=_index, newIndex=_newIndex, action=_action, animation=_animation, offset=_offset, animationBlock = _animationBlock;
 
 - (id) initWithIndex: (NSUInteger) index action: (AQGridViewUpdateAction) action animation: (AQGridViewItemAnimation) animation
 {
@@ -49,6 +49,20 @@
 	_index = index;
 	_action = action;
 	_animation = animation;
+	
+	return ( self );
+}
+
+- (id) initWithIndex:(NSUInteger)index action:(AQGridViewUpdateAction)action animationBlock:(AnimationBlock)animationBlock
+{
+	self = [super init];
+	if ( self == nil )
+		return ( nil );
+	
+	_index = index;
+	_action = action;
+	_animation = AQGridViewitemAnimationBlock;
+	_animationBlock = animationBlock;
 	
 	return ( self );
 }

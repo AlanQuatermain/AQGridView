@@ -50,13 +50,17 @@ typedef enum {
 	AQGridViewItemAnimationLeft,
 	AQGridViewItemAnimationTop,
 	AQGridViewItemAnimationBottom,
-	AQGridViewItemAnimationNone
+	AQGridViewItemAnimationNone,
+	AQGridViewItemAnimationPop,
+	AQGridViewitemAnimationBlock
 } AQGridViewItemAnimation;
 
 typedef enum {
 	AQGridViewLayoutDirectionVertical,
 	AQGridViewLayoutDirectionHorizontal
 } AQGridViewLayoutDirection;
+
+typedef void (^AnimationBlock)(AQGridViewCell*);
 
 @protocol AQGridViewDataSource;
 @class AQGridView, AQGridViewData, AQGridViewUpdateInfo;
@@ -205,6 +209,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 - (void) endUpdates;		// only call insert/delete/reload calls inside an update block.
 
 - (void) insertItemsAtIndices: (NSIndexSet *) indices withAnimation: (AQGridViewItemAnimation) animation;
+- (void) insertItemsAtIndices:(NSIndexSet *)indices withAnimationBlock:(AnimationBlock) animationBlock;
+
 - (void) deleteItemsAtIndices: (NSIndexSet *) indices withAnimation: (AQGridViewItemAnimation) animation;
 - (void) reloadItemsAtIndices: (NSIndexSet *) indices withAnimation: (AQGridViewItemAnimation) animation;
 
