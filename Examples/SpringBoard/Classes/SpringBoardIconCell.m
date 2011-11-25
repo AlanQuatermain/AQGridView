@@ -71,11 +71,6 @@
     return ( self );
 }
 
-- (void) dealloc
-{
-    [_iconView release];
-    [super dealloc];
-}
 
 - (UIImage *) icon
 {

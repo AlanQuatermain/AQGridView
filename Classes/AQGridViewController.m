@@ -57,7 +57,6 @@
 {
 	AQGridView * aView = [[AQGridView alloc] initWithFrame: CGRectZero];
 	self.gridView = aView;
-	[aView release];
     
     [self _sharedGridViewDefaultSetup];
 }
@@ -152,9 +151,6 @@
 }
 
 
-- (void)dealloc {
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark Grid View Data Source

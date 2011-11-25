@@ -82,7 +82,6 @@
     gr.minimumPressDuration = 0.5;
     gr.delegate = self;
     [_gridView addGestureRecognizer: gr];
-    [gr release];
     
     if ( _icons == nil )
     {
@@ -207,10 +206,9 @@
 			}
             
             // update the data store
-            id obj = [[_icons objectAtIndex: _dragOriginIndex] retain];
+            id obj = [_icons objectAtIndex: _dragOriginIndex];
             [_icons removeObjectAtIndex: _dragOriginIndex];
             [_icons insertObject: obj atIndex: index];
-            [obj release];
             
             if ( index != _emptyCellIndex )
             {
@@ -342,10 +340,8 @@
     
     // dismiss our copy of the cell
     [_draggingCell removeFromSuperview];
-    [_draggingCell release];
     _draggingCell = nil;
     
-    [indices release];
 }
 
 #pragma mark -
@@ -369,8 +365,8 @@
         {
             // must be the SAME SIZE AS THE OTHERS
             // Yes, this is probably a bug. Sigh. Look at -[AQGridView fixCellsFromAnimation] to fix
-            hiddenCell = [[[AQGridViewCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 72.0, 72.0)
-                                                reuseIdentifier: EmptyIdentifier] autorelease];
+            hiddenCell = [[AQGridViewCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 72.0, 72.0)
+                                                reuseIdentifier: EmptyIdentifier];
         }
         
         hiddenCell.hidden = YES;
@@ -380,7 +376,7 @@
     SpringBoardIconCell * cell = (SpringBoardIconCell *)[gridView dequeueReusableCellWithIdentifier: CellIdentifier];
     if ( cell == nil )
     {
-        cell = [[[SpringBoardIconCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 72.0, 72.0) reuseIdentifier: CellIdentifier] autorelease];
+        cell = [[SpringBoardIconCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 72.0, 72.0) reuseIdentifier: CellIdentifier];
     }
     
     cell.icon = [_icons objectAtIndex: index];
@@ -397,14 +393,8 @@
 {
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
-    [_gridView release]; _gridView = nil;
+     _gridView = nil;
 }
 
-- (void) dealloc
-{
-    [_icons release];
-    [_gridView release];
-    [super dealloc];
-}
 
 @end

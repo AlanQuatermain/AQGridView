@@ -64,7 +64,6 @@ enum
     ImageDemoCellChooser * chooser = [[ImageDemoCellChooser alloc] initWithItemTitles: [NSArray arrayWithObjects: NSLocalizedString(@"Plain", @""), NSLocalizedString(@"Filled", @""), nil]];
     chooser.delegate = self;
     _menuPopoverController = [[UIPopoverController alloc] initWithContentViewController: chooser];
-    [chooser release];
     
     if ( _orderedImageNames != nil )
         return;
@@ -84,7 +83,6 @@ enum
     _orderedImageNames = [[allImageNames sortedArrayUsingSelector: @selector(caseInsensitiveCompare:)] copy];
     _imageNames = [_orderedImageNames copy];
     
-    [allImageNames release];
     
     [self.gridView reloadData];
 }
@@ -100,17 +98,9 @@ enum
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
     self.gridView = nil;
-    [_menuPopoverController release]; _menuPopoverController = nil;
+     _menuPopoverController = nil;
 }
 
-- (void) dealloc
-{
-    [_gridView release];
-    [_imageNames release];
-    [_orderedImageNames release];
-    [_menuPopoverController release];
-    [super dealloc];
-}
 
 - (IBAction) shuffle
 {
@@ -135,13 +125,10 @@ enum
         [sourceArray removeObjectAtIndex: index];
     }
     
-    [_imageNames release];
     _imageNames = [destArray copy];
     
     [self.gridView endUpdates];
     
-    [sourceArray release];
-    [destArray release];
 }
 
 - (IBAction) resetOrder
@@ -160,7 +147,6 @@ enum
     
     [self.gridView endUpdates];
     
-    [_imageNames release];
     _imageNames = [_orderedImageNames copy];
 }
 
@@ -249,8 +235,8 @@ enum
             ImageDemoGridViewCell * plainCell = (ImageDemoGridViewCell *)[aGridView dequeueReusableCellWithIdentifier: PlainCellIdentifier];
             if ( plainCell == nil )
             {
-                plainCell = [[[ImageDemoGridViewCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 200.0, 150.0)
-                                                     reuseIdentifier: PlainCellIdentifier] autorelease];
+                plainCell = [[ImageDemoGridViewCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 200.0, 150.0)
+                                                     reuseIdentifier: PlainCellIdentifier];
                 plainCell.selectionGlowColor = [UIColor blueColor];
             }
             
@@ -265,8 +251,8 @@ enum
             ImageDemoFilledCell * filledCell = (ImageDemoFilledCell *)[aGridView dequeueReusableCellWithIdentifier: FilledCellIdentifier];
             if ( filledCell == nil )
             {
-                filledCell = [[[ImageDemoFilledCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 200.0, 150.0)
-                                                         reuseIdentifier: FilledCellIdentifier] autorelease];
+                filledCell = [[ImageDemoFilledCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 200.0, 150.0)
+                                                         reuseIdentifier: FilledCellIdentifier];
                 filledCell.selectionStyle = AQGridViewCellSelectionStyleBlueGray;
             }
             
