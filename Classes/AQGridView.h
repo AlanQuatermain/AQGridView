@@ -37,6 +37,18 @@
 #import <UIKit/UIKit.h>
 #import "AQGridViewCell.h"
 
+// Courtesy of http://iphoneincubator.com/blog/debugging/the-evolution-of-a-replacement-for-DLog
+// DLog is almost a drop-in replacement for DLog
+// DLog();
+// DLog(@"here");
+// DLog(@"value: %d", x);
+// Unfortunately this doesn't work DLog(aStringVariable); you have to do this instead DLog(@"%@", aStringVariable);
+#ifdef DEBUG
+#	define DLog(fmt, ...) DLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+#else
+#	define DLog(...)
+#endif
+
 typedef enum {
 	AQGridViewScrollPositionNone,
 	AQGridViewScrollPositionTop,
