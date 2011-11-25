@@ -17,6 +17,7 @@ h3. Used In These Applications:
 * "AppStart for iPad":http://itunes.apple.com/ca/app/appstart-for-ipad/id408984648 -- App reviews and guides.
 * "Slippy":http://itunes.apple.com/app/id408254506 -- Level chooser.
 * "Equineline Sales Catalog":http://itunes.apple.com/us/app/equineline-sales-catalog/id440355734?mt=8&ls=1 -- Bookshelf view.
+* "Completion":http://www.completionapp.com -- Springboard-style home screen.
 
 h3. Supporting AQGridView
 
