@@ -97,7 +97,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 @interface AQGridView : UIScrollView
 {
-	id<AQGridViewDataSource>		_dataSource;
+	id<AQGridViewDataSource>		__unsafe_unretained _dataSource;
 
 	AQGridViewData *				_gridData;
 	NSMutableArray *				_updateInfoStack;

@@ -64,12 +64,6 @@
     return ( self );
 }
 
-- (void) dealloc
-{
-    [_imageView release];
-    [_title release];
-    [super dealloc];
-}
 
 - (UIImage *) image
 {

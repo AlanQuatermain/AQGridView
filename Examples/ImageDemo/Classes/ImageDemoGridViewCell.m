@@ -52,11 +52,6 @@
     return ( self );
 }
 
-- (void) dealloc
-{
-    [_imageView release];
-    [super dealloc];
-}
 
 - (CALayer *) glowSelectionLayer
 {
