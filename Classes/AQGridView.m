@@ -654,6 +654,15 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	if ( (_flags.needsReload == 1) && (_animationCount == 0) && (_reloadingSuspendedCount == 0) )
 		[self reloadData];
 
+    if (_headerView)
+    {
+        if (_gridData.topPadding != _headerView.frame.size.height)
+        {
+            _flags.allCellsNeedLayout = 1;
+            _gridData.topPadding = _headerView.frame.size.height;
+        }
+    }
+    
 	if ( (_reloadingSuspendedCount == 0) && (!CGRectIsEmpty([self gridViewVisibleBounds])) )
 	{
         [self updateVisibleGridCellsNow];
