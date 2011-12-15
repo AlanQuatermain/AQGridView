@@ -112,6 +112,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
     self.canCancelContentTouches = YES;
 
 	_selectedIndex = NSNotFound;
+    _flags.layoutChange = NO;
 	_pendingSelectionIndex = NSNotFound;
 
 	_flags.resizesCellWidths = 0;
@@ -120,6 +121,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.allowsSelection = 1;
 	_flags.usesPagedHorizontalScrolling = NO;
 	_flags.contentSizeFillsBounds = 1;
+    
 }
 
 - (id)initWithFrame: (CGRect) frame
@@ -200,6 +202,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 - (void) setLayoutDirection: (AQGridViewLayoutDirection) direction
 {
 	_gridData.layoutDirection = direction;
+    _flags.layoutChange = YES;
+
 }
 
 - (NSUInteger) numberOfItems
@@ -249,6 +253,27 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.backgroundViewExtendsUp = (value ? 1 : 0);
 }
 
+- (BOOL) backgroundViewExtendsLeft
+{
+	return ( _flags.backgroundViewExtendsLeft);
+}
+
+- (void) setBackgroundViewExtendsLeft: (BOOL) value
+{
+	_flags.backgroundViewExtendsLeft = (value ? 1 : 0);
+}
+
+
+- (BOOL) backgroundViewExtendsRight
+{
+	return ( _flags.backgroundViewExtendsRight);
+}
+
+- (void) setBackgroundViewExtendsRight: (BOOL) value
+{
+	_flags.backgroundViewExtendsRight = (value ? 1 : 0);
+}
+
 - (BOOL) requiresSelection
 {
 	return ( _flags.requiresSelection );
@@ -257,6 +282,16 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 - (void) setRequiresSelection: (BOOL) value
 {
 	_flags.requiresSelection = (value ? 1 : 0);
+}
+
+- (BOOL) layoutChange
+{
+	return ( _flags.layoutChange );
+}
+
+- (void) setLayoutChange: (BOOL) value
+{
+	_flags.layoutChange = (value ? 1 : 0);
 }
 
 - (BOOL) resizesCellWidthToFit
@@ -510,6 +545,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 {
 	if ( (_flags.contentSizeFillsBounds == 1) && (newSize.height < self.bounds.size.height) )
 		newSize.height = self.bounds.size.height;
+    if ( (_flags.contentSizeFillsBounds == 1) && (newSize.width < self.bounds.size.width) )
+		newSize.width = self.bounds.size.width;
 
 	if (self.gridFooterView)
 	{
@@ -522,9 +559,12 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	    if (newSize.height < footerHeight + minimumHeight)
 	        newSize.height = minimumHeight;
 	}
-
-	newSize.height = fmax(newSize.height, self.frame.size.height+1);
-
+    if(self.layoutDirection == AQGridViewLayoutDirectionVertical){
+        newSize.height = fmax(newSize.height, self.frame.size.height+1);
+    }else{
+        newSize.width = fmax(newSize.width, self.frame.size.width+1);
+        
+    }
 	CGSize oldSize = self.contentSize;
 	[super setContentSize: newSize];
 
@@ -558,6 +598,10 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 	if ( !CGSizeEqualToSize(bounds.size, oldBounds.size) )
 		[self handleGridViewBoundsChanged: oldBounds toNewBounds: bounds];
+    if ( _flags.layoutChange == YES ){
+		[self handleGridViewBoundsChanged: oldBounds toNewBounds: bounds];
+        _flags.layoutChange = NO;
+    }
 }
 
 - (BOOL) isEditing
@@ -667,40 +711,77 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	}
 
 	CGRect rect = CGRectZero;
-	rect.size.width = self.bounds.size.width;
-	rect.size.height = self.contentSize.height -  (_gridData.topPadding + _gridData.bottomPadding);
-	rect.origin.y += _gridData.topPadding;
-
+    
+    if(self.layoutDirection == AQGridViewLayoutDirectionVertical){
+        rect.size.width = self.bounds.size.width;
+        rect.size.height = self.contentSize.height -  (_gridData.topPadding + _gridData.bottomPadding);
+        rect.origin.y += _gridData.topPadding;
+    }else{
+        rect.size.height = self.bounds.size.height;
+        rect.size.width = self.contentSize.width -  (_gridData.leftPadding + _gridData.rightPadding);
+        rect.origin.x += _gridData.leftPadding;
+    }
 	// Make sure background is an integral number of rows tall. That way, it draws patterned colours correctly on all OSes.
 	CGRect backgroundRect = rect;
-
-	if ([self backgroundViewExtendsUp]) {
-		backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
-		backgroundRect.size.height += MAX_BOUNCE_DISTANCE;	// don't just move it, grow it
-	}
-
-	if ([self backgroundViewExtendsDown]) {
-		backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
-	}
-
+    
+       
 	CGFloat minimumHeight = rect.size.height,
-		actualHeight = 0;
+    minimumWidth = rect.size.width,
+    actualWidth = 0,
+    actualHeight = 0;
+    if(self.layoutDirection == AQGridViewLayoutDirectionVertical){
+        if (([_gridData numberOfItems] == 0) || ([_gridData numberOfItemsPerRow] == 0)) {
 
-	if (([_gridData numberOfItems] == 0) || ([_gridData numberOfItemsPerRow] == 0)) {
+            actualHeight = [_gridData cellSize].height;
 
-		actualHeight = [_gridData cellSize].height;
+        } else {
 
-	} else {
+            actualHeight = [_gridData cellSize].height * (ceilf((CGFloat)[_gridData numberOfItems] / (CGFloat)[_gridData numberOfItemsPerRow]) + 1);
 
-		actualHeight = [_gridData cellSize].height * ([_gridData numberOfItems] / [_gridData numberOfItemsPerRow] + 1);
+        }
+        for (; actualHeight < minimumHeight; actualHeight += [_gridData cellSize].height) {
+        }
+        backgroundRect.size.height = actualHeight;
+    }else{
+        if (([_gridData numberOfItems] == 0) || ([_gridData numberOfItemsPerColumn] == 0)) {
+            
+            actualWidth = [_gridData cellSize].width;
+            
+        } else {
+            
+            actualWidth = [_gridData cellSize].width * (ceilf((CGFloat)[_gridData numberOfItems] / (CGFloat)[_gridData numberOfItemsPerColumn]) + 1);
 
-	}
-	for (; actualHeight < minimumHeight; actualHeight += [_gridData cellSize].height) {
-	}
-	backgroundRect.size.height = actualHeight;
+        }
+        for (; actualWidth < minimumWidth; actualWidth += [_gridData cellSize].width) {
+        }
+        backgroundRect.size.width = actualWidth;
+        
+    }
 
+    if(self.layoutDirection == AQGridViewLayoutDirectionVertical){
+        
+        if ([self backgroundViewExtendsUp]) {
+            backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
+            backgroundRect.size.height += MAX_BOUNCE_DISTANCE;	// don't just move it, grow it
+            
+        }
+        
+        if ([self backgroundViewExtendsDown]) {
+            backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
+        }
+    }
+    else{
+        if ([self backgroundViewExtendsLeft]) {
+            backgroundRect.origin.x = backgroundRect.origin.x - MAX_BOUNCE_DISTANCE;
+            backgroundRect.size.width += MAX_BOUNCE_DISTANCE;	// don't just move it, grow it
+        }
+        
+        if ([self backgroundViewExtendsRight]) {
+            backgroundRect.size.width = backgroundRect.size.width + MAX_BOUNCE_DISTANCE;
+        }
+    }
 
-	self.backgroundView.frame = backgroundRect;
+    self.backgroundView.frame = backgroundRect;
 
 	if ( _headerView != nil )
 	{
@@ -719,6 +800,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		_footerView.frame = rect;
 		[self bringSubviewToFront:_footerView];
 	}
+    
+    
 }
 
 - (CGRect) rectForItemAtIndex: (NSUInteger) index
@@ -874,7 +957,12 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 	//NSAssert([newVisibleCells count] == _visibleIndices.length, @"visible cell count after animation doesn't match visible indices");
 
-	[newVisibleCells sortUsingSelector: @selector(compareOriginAgainstCell:)];
+    if(self.layoutDirection == AQGridViewLayoutDirectionVertical){
+        [newVisibleCells sortUsingSelector: @selector(compareOriginAgainstCellVertical:)];
+    }else
+    {
+        [newVisibleCells sortUsingSelector: @selector(compareOriginAgainstCellHorizontal:)];
+    }
 	[_visibleCells removeObjectsInArray: newVisibleCells];
 	[_visibleCells makeObjectsPerformSelector: @selector(removeFromSuperview)];
 	[_visibleCells setArray: newVisibleCells];
@@ -1190,14 +1278,26 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 	CGRect backgroundRect = CGRectMake(0.0f, 0.0f, self.bounds.size.width, self.bounds.size.height);
 
-	if ([self backgroundViewExtendsUp]) {
-		backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
-		backgroundRect.size.height += MAX_BOUNCE_DISTANCE;		// don't just move it, grow it
-	}
+    if(self.layoutDirection == AQGridViewLayoutDirectionVertical){
+        if ([self backgroundViewExtendsUp]) {
+            backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
+            backgroundRect.size.height += MAX_BOUNCE_DISTANCE;		// don't just move it, grow it
+        }
 
-	if ([self backgroundViewExtendsDown]) {
-		backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
+        if ([self backgroundViewExtendsDown]) {
+            backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
+        }
+    }else{
+    
+    if ([self backgroundViewExtendsLeft]) {
+		backgroundRect.origin.x = backgroundRect.origin.x - MAX_BOUNCE_DISTANCE;
+		backgroundRect.size.width += MAX_BOUNCE_DISTANCE;		// don't just move it, grow it
 	}
+    
+	if ([self backgroundViewExtendsRight]) {
+		backgroundRect.size.width = backgroundRect.size.width + MAX_BOUNCE_DISTANCE;
+	}
+    }
 
 	_backgroundView.frame = backgroundRect;
 
