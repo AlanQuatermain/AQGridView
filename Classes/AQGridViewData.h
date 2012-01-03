@@ -40,7 +40,7 @@
 
 @interface AQGridViewData : NSObject <NSCopying, NSMutableCopying>
 {
-	AQGridView *				_gridView;				// weak reference
+	AQGridView *				__unsafe_unretained _gridView;				// weak reference
 	CGSize						_boundsSize;
 	AQGridViewLayoutDirection	_layoutDirection;
 	CGSize						_desiredCellSize;		// NB: 'cell' here means a grid cell -- i.e. constant size, tessellating

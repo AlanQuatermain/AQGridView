@@ -72,7 +72,7 @@
 	NSMutableIndexSet *	_onlyMovedIndices;
 	
 	// needs to ask the grid view for cells
-	AQGridView *		_gridView;		// weak reference
+	AQGridView *		__unsafe_unretained _gridView;		// weak reference
 	
 	NSMutableSet *		_animatingCells;
 }
