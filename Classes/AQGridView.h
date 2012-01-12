@@ -112,7 +112,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	NSIndexSet *					_animatingIndices;
 
 	NSMutableIndexSet *				_highlightedIndices;
-	UIView *						_touchedContentView;		// weak reference
+	UIView *						__unsafe_unretained _touchedContentView;		// weak reference
 
 	UIView *						_backgroundView;
 	UIColor *						_separatorColor;
@@ -151,10 +151,10 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 		unsigned	delegateWillDisplayCell:1;
 		unsigned	delegateWillSelectItem:1;
-    unsigned  delegateWillSelectItemMultiTouch:1;
+        unsigned    delegateWillSelectItemMultiTouch:1;
 		unsigned	delegateWillDeselectItem:1;
 		unsigned	delegateDidSelectItem:1;
-    unsigned  delegateDidSelectItemMultiTouch:1;
+        unsigned    delegateDidSelectItemMultiTouch:1;
 		unsigned	delegateDidDeselectItem:1;
 		unsigned	delegateGestureRecognizerActivated:1;
 		unsigned	delegateAdjustGridCellFrame:1;
@@ -168,8 +168,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	} _flags;
 }
 
-@property (nonatomic, assign) IBOutlet id<AQGridViewDataSource> dataSource;
-@property (nonatomic, assign) IBOutlet id<AQGridViewDelegate> delegate;
+@property (nonatomic, unsafe_unretained) IBOutlet id<AQGridViewDataSource> dataSource;
+@property (nonatomic, unsafe_unretained) IBOutlet id<AQGridViewDelegate> delegate;
 
 @property (nonatomic, assign) AQGridViewLayoutDirection layoutDirection;
 

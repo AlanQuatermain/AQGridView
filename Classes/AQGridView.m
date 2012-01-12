@@ -929,8 +929,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 - (void) endUpdateAnimations
 {
 	NSAssert([_updateInfoStack lastObject] != nil, @"_updateInfoStack should not be empty at this point" );
-
-	AQGridViewUpdateInfo * info = [_updateInfoStack lastObject];
+    
+	__block AQGridViewUpdateInfo * info = [_updateInfoStack lastObject];
 
 	if ( info.numberOfUpdates == 0 )
 	{
@@ -952,46 +952,34 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		[NSException raise: NSInternalInconsistencyException format: @"Invalid number of items in AQGridView: Started with %u, added %u, deleted %u. Expected %u items after changes, but got %u", (unsigned)_gridData.numberOfItems, (unsigned)numAdded, (unsigned)numDeleted, (unsigned)expectedItemCount, (unsigned)actualItemCount];
 	}
 
-	// there's a race condition with the info's removal from the stack if there are no animations taking place,
-	//  where -cellUpdateAnimationStopped:finished:context: is called immediately, before we've finished with the
-	//  object. Therefore we retain it while we want to use it, just in case
-
 	[info cleanupUpdateItems];
 	_animationCount++;
 	//NSAssert(_animationCount == 1, @"Stacked animations occurring!!");
-
-    [UIView beginAnimations: @"CellUpdates" context: (void*)objc_unretainedPointer(info)];
-	[UIView setAnimationDelegate: self];
-	[UIView setAnimationDidStopSelector: @selector(cellUpdateAnimationStopped:finished:context:)];
-	[UIView setAnimationCurve: UIViewAnimationCurveEaseInOut];
-	[UIView setAnimationDuration: 0.3];
-
-	self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
-
-
-	_gridData = [info newGridViewData];
-	if ( _selectedIndex != NSNotFound )
-		_selectedIndex = [info newIndexForOldIndex: _selectedIndex];
-
-	_reloadingSuspendedCount--;
-	[UIView commitAnimations];
-}
-
-- (void) cellUpdateAnimationStopped: (NSString *) animationID finished: (BOOL) finished context: (void *) context
-{
-	AQGridViewUpdateInfo * info = (__bridge AQGridViewUpdateInfo *)context;
-
-	// if nothing was animated, we don't have to do anything at all
-//	if ( self.animatingCells.count != 0 )
-		[self fixCellsFromAnimation];
-
-	// NB: info becomes invalid at this point
-	[_updateInfoStack removeObject: info];
-	_animationCount--;
-
-	//_reloadingSuspendedCount--;
-	if ( _flags.delegateDidEndUpdateAnimation == 1 )
-		[self.delegate gridViewDidEndUpdateAnimation: self];
+    
+    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^(void) {
+                         self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
+                         
+                         
+                         _gridData = [info newGridViewData];
+                         if ( _selectedIndex != NSNotFound )
+                             _selectedIndex = [info newIndexForOldIndex: _selectedIndex];
+                         
+                         _reloadingSuspendedCount--;
+                     }
+                     completion:^(BOOL finished) {
+                         // if nothing was animated, we don't have to do anything at all
+                         //	if ( self.animatingCells.count != 0 )
+                         [self fixCellsFromAnimation];
+                         
+                         // NB: info becomes invalid at this point
+                         [_updateInfoStack removeObject: info];
+                         _animationCount--;
+                         
+                         //_reloadingSuspendedCount--;
+                         if ( _flags.delegateDidEndUpdateAnimation == 1 )
+                             [self.delegate gridViewDidEndUpdateAnimation: self];
+                     }];
 }
 
 - (void) beginUpdates
