@@ -81,7 +81,9 @@
 
 - (void) awakeFromNib
 {
-    _cellFlags.usingDefaultSelectedBackgroundView = 1;
+	[super awakeFromNib];
+	
+	_cellFlags.usingDefaultSelectedBackgroundView = 1;
 	_cellFlags.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
 	
 	if ( [CALayer instancesRespondToSelector: @selector(shadowPath)] )
@@ -90,8 +92,6 @@
 		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGray;
 	_selectionColorInfo = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,  &kCFTypeDictionaryValueCallBacks );
 	self.backgroundColor = [UIColor whiteColor];
-    
-    [super awakeFromNib];
 }
 
 - (void) dealloc
