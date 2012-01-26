@@ -677,6 +677,21 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	// Make sure background is an integral number of rows tall. That way, it draws patterned colours correctly on all OSes.
 	CGRect backgroundRect = rect;
 
+	CGFloat minimumHeight = rect.size.height,
+		actualHeight = 0,
+		cellHeight = [_gridData cellSize].height;
+
+	if (([_gridData numberOfItems] == 0) || ([_gridData numberOfItemsPerRow] == 0)) {
+		actualHeight = cellHeight;
+	} else {
+		actualHeight = cellHeight * ([_gridData numberOfItems] / [_gridData numberOfItemsPerRow]);
+	}
+	
+	if (actualHeight < minimumHeight)
+		actualHeight = fmodf(actualHeight, cellHeight) + cellHeight;
+	
+	backgroundRect.size.height = MAX(actualHeight, CGRectGetHeight(self.bounds));
+	
 	if ([self backgroundViewExtendsUp]) {
 		backgroundRect.origin.y = backgroundRect.origin.y - MAX_BOUNCE_DISTANCE;
 		backgroundRect.size.height += MAX_BOUNCE_DISTANCE;	// don't just move it, grow it
@@ -685,23 +700,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	if ([self backgroundViewExtendsDown]) {
 		backgroundRect.size.height = backgroundRect.size.height + MAX_BOUNCE_DISTANCE;
 	}
-
-	CGFloat minimumHeight = rect.size.height,
-		actualHeight = 0;
-
-	if (([_gridData numberOfItems] == 0) || ([_gridData numberOfItemsPerRow] == 0)) {
-
-		actualHeight = [_gridData cellSize].height;
-
-	} else {
-
-		actualHeight = [_gridData cellSize].height * ([_gridData numberOfItems] / [_gridData numberOfItemsPerRow] + 1);
-
-	}
-	for (; actualHeight < minimumHeight; actualHeight += [_gridData cellSize].height) {
-	}
-	backgroundRect.size.height = actualHeight;
-
 
 	self.backgroundView.frame = backgroundRect;
 
