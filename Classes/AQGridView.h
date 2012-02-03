@@ -210,6 +210,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 - (void) moveItemAtIndex: (NSUInteger) index toIndex: (NSUInteger) newIndex withAnimation: (AQGridViewItemAnimation) animation;
 
+@property (nonatomic, assign) CGFloat animationDuration;
+
 // Selection
 
 @property (nonatomic) BOOL allowsSelection;	// default is YES

@@ -93,12 +93,14 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 @implementation AQGridView
 
-@synthesize dataSource=_dataSource, backgroundView=_backgroundView, separatorColor=_separatorColor, animatingCells=_animatingCells, animatingIndices=_animatingIndices;
+@synthesize dataSource=_dataSource, backgroundView=_backgroundView, separatorColor=_separatorColor, animatingCells=_animatingCells, animatingIndices=_animatingIndices, animationDuration = _animationDuration;
 
 - (void) _sharedGridViewInit
 {
 	_gridData = [[AQGridViewData alloc] initWithGridView: self];
 	[_gridData setDesiredCellSize: CGSizeMake(96.0, 128.0)];
+    
+    _animationDuration = 0.3;
 
 	_visibleBounds = self.bounds;
 	_visibleCells = [[NSMutableArray alloc] init];
@@ -934,7 +936,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_animationCount++;
 	//NSAssert(_animationCount == 1, @"Stacked animations occurring!!");
     
-    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut
+    [UIView animateWithDuration:_animationDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut
                      animations:^(void) {
                          self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
                          
