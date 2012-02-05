@@ -1736,8 +1736,9 @@ NSArray * __sortDescriptors;
                 [self layoutAllCells];
             }
         }
-        @catch (id exception)
+        @catch (__unsafe_unretained NSException *exception)
         {
+            // do nothing
         }
         @finally
         {
