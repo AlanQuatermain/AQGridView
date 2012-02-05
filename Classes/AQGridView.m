@@ -88,6 +88,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 @interface AQGridView ()
 @property (nonatomic, copy) NSIndexSet * animatingIndices;
+- (void) cellUpdateAnimationStopped: (NSString *) animationID finished: (BOOL) finished context: (void *) context;
+- (void) handleGridViewBoundsChanged: (CGRect) oldBounds toNewBounds: (CGRect) bounds;
 @end
 
 
@@ -356,6 +358,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[_headerView removeFromSuperview];
 
 	_headerView = newHeaderView;
+    
+    CGFloat oldHeight = _gridData.topPadding;
+
 	if ( _headerView == nil )
 	{
 		_gridData.topPadding = 0.0;
@@ -366,6 +371,10 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		_gridData.topPadding = _headerView.frame.size.height;
 	}
 
+    if ( _gridData.topPadding != oldHeight ) 
+    {
+        [self handleGridViewBoundsChanged:self.bounds toNewBounds:self.bounds];
+    }
 	[self setNeedsLayout];
 }
 
@@ -382,6 +391,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[_footerView removeFromSuperview];
 
 	_footerView = newFooterView;
+    
+    CGFloat oldHeight = _gridData.bottomPadding;
 	if ( _footerView == nil )
 	{
 		_gridData.bottomPadding = 0.0;
@@ -392,6 +403,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		_gridData.bottomPadding = _footerView.frame.size.height;
 	}
 
+    if ( _gridData.bottomPadding != oldHeight ) {
+        [self handleGridViewBoundsChanged:self.bounds toNewBounds:self.bounds];
+    }
 	[self setNeedsLayout];
 }
 
@@ -653,6 +667,14 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	if ( (_flags.needsReload == 1) && (_animationCount == 0) && (_reloadingSuspendedCount == 0) )
 		[self reloadData];
 
+    if ( (_headerView && _gridData.topPadding != _headerView.frame.size.height ) || 
+         (_footerView && _gridData.bottomPadding != _footerView.frame.size.height) )
+    {
+        _gridData.topPadding = _headerView.frame.size.height;
+        _gridData.bottomPadding = _footerView.frame.size.height;
+        [self handleGridViewBoundsChanged:self.bounds toNewBounds:self.bounds];
+    }
+    
 	if ( (_reloadingSuspendedCount == 0) && (!CGRectIsEmpty([self gridViewVisibleBounds])) )
 	{
         [self updateVisibleGridCellsNow];
@@ -1714,8 +1736,9 @@ NSArray * __sortDescriptors;
                 [self layoutAllCells];
             }
         }
-        @catch (id exception)
+        @catch (__autoreleasing NSException *exception)
         {
+            // do nothing
         }
         @finally
         {
