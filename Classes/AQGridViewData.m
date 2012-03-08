@@ -193,7 +193,6 @@
 	NSParameterAssert(isnormal(_boundsSize.width) && isnormal(_boundsSize.height));
 
 	if ( _layoutDirection == AQGridViewLayoutDirectionVertical ) {
-		NSLog(@"is vertical, returning boundssize width / actual cell size width = %f / %f", _boundsSize.width, _actualCellSize.width);
 		return ( (NSUInteger)floorf(_boundsSize.width / _actualCellSize.width) );
 	}
 	
