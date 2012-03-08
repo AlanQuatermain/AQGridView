@@ -53,6 +53,7 @@
 	
 	_gridView = gridView;
 	_boundsSize = gridView.bounds.size;
+	_actualCellSize = CGSizeZero;
 	
 	return ( self );
 }
@@ -77,11 +78,14 @@
 	return ( [self copyWithZone: zone] );
 }
 
-- (void) gridViewDidChangeBoundsSize: (CGSize) boundsSize
-{
+- (void) gridViewDidChangeBoundsSize: (CGSize) boundsSize {
+
+	NSParameterAssert(isnormal(boundsSize.width) && isnormal(boundsSize.height));
+
 	_boundsSize = boundsSize;
 	if ( _layoutDirection == AQGridViewLayoutDirectionVertical )
 		[self fixDesiredCellSizeForWidth: boundsSize.width];
+	
 }
 
 - (NSUInteger) itemIndexForPoint: (CGPoint) point
@@ -120,22 +124,34 @@
 	return ( [self cellRectAtIndex: [self itemIndexForPoint: point]] );
 }
 
-- (void) setDesiredCellSize: (CGSize) desiredCellSize
-{
+- (void) setDesiredCellSize: (CGSize) desiredCellSize {
+	
+	NSParameterAssert(isnormal(desiredCellSize.width) && isnormal(desiredCellSize.height));
+	NSParameterAssert(isnormal(_boundsSize.width) && isnormal(_boundsSize.height));
+	
 	_desiredCellSize = desiredCellSize;
 	if ( _layoutDirection == AQGridViewLayoutDirectionVertical )
 		[self fixDesiredCellSizeForWidth: _boundsSize.width];
 	else
 		_actualCellSize = _desiredCellSize;
+	
+	NSParameterAssert(isnormal(_actualCellSize.width) && isnormal(_actualCellSize.height));
+	
 }
 
-- (void) setLayoutDirection: (AQGridViewLayoutDirection) direction
-{
+- (void) setLayoutDirection: (AQGridViewLayoutDirection) direction {
+
+	NSParameterAssert(isnormal(_desiredCellSize.width) && isnormal(_desiredCellSize.height));
+	NSParameterAssert(isnormal(_boundsSize.width) && isnormal(_boundsSize.height));
+
 	if ( direction == AQGridViewLayoutDirectionVertical )
 		[self fixDesiredCellSizeForWidth: _boundsSize.width];
 	else
 		_actualCellSize = _desiredCellSize;
 	_layoutDirection = direction;
+	
+	NSParameterAssert(isnormal(_actualCellSize.width) && isnormal(_actualCellSize.height));
+	
 }
 
 - (CGSize) cellSize
@@ -152,14 +168,16 @@
 	return ( rect );
 }
 
-- (CGSize) sizeForEntireGrid
-{
+- (CGSize) sizeForEntireGrid {
+
 	NSUInteger numPerRow = [self numberOfItemsPerRow];
-    if ( numPerRow == 0 )       // avoid a divide-by-zero exception
-        return ( CGSizeZero );
+	NSParameterAssert(numPerRow);
+	
 	NSUInteger numRows = _numberOfItems / numPerRow;
 	if ( _numberOfItems % numPerRow != 0 )
 		numRows++;
+	
+	NSParameterAssert(isnormal(_actualCellSize.width) && isnormal(_actualCellSize.height));
 	
 	CGFloat height = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
 	if (height < _gridView.bounds.size.height)
@@ -170,8 +188,14 @@
 
 - (NSUInteger) numberOfItemsPerRow
 {
-	if ( _layoutDirection == AQGridViewLayoutDirectionVertical )
+	
+	NSParameterAssert(isnormal(_actualCellSize.width) && isnormal(_actualCellSize.height));
+	NSParameterAssert(isnormal(_boundsSize.width) && isnormal(_boundsSize.height));
+
+	if ( _layoutDirection == AQGridViewLayoutDirectionVertical ) {
+		NSLog(@"is vertical, returning boundssize width / actual cell size width = %f / %f", _boundsSize.width, _actualCellSize.width);
 		return ( (NSUInteger)floorf(_boundsSize.width / _actualCellSize.width) );
+	}
 	
 	// work out how many rows we can fit
 	NSUInteger rows = (NSUInteger)floorf(_boundsSize.height / _actualCellSize.height);
@@ -187,9 +211,10 @@
 
 - (CGRect) cellRectAtIndex: (NSUInteger) index
 {
+	
 	NSUInteger numPerRow = [self numberOfItemsPerRow];
-    if ( numPerRow == 0 )       // avoid a divide-by-zero exception
-        return ( CGRectZero );
+	NSParameterAssert(numPerRow);
+	
 	NSUInteger skipRows = index / numPerRow;
 	NSUInteger skipCols = index % numPerRow;
 	
@@ -238,13 +263,20 @@
 
 - (void) fixDesiredCellSizeForWidth: (CGFloat) width
 {
-    // Much thanks to Brandon Sneed (@bsneed) for the following new algorithm, reduced to two floating-point divisions -- that's O(1) folks!
+
+	NSParameterAssert(isnormal(width));
+	NSParameterAssert(isnormal(_desiredCellSize.width) && isnormal(_desiredCellSize.height));
+	
+	// Much thanks to Brandon Sneed (@bsneed) for the following new algorithm, reduced to two floating-point divisions -- that's O(1) folks!
 	CGFloat w = floorf(width - _leftPadding - _rightPadding);
 	CGFloat dw = floorf(_desiredCellSize.width);
-    CGFloat multiplier = floorf( w / dw );
+	CGFloat multiplier = MAX(1, floorf( w / dw ));
 	
 	_actualCellSize.width = floorf( w / multiplier );
 	_actualCellSize.height = _desiredCellSize.height;
+	
+	NSParameterAssert(isnormal(_actualCellSize.width) && isnormal(_actualCellSize.height));
+	
 }
 
 @end
