@@ -533,8 +533,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	CGSize oldSize = self.contentSize;
 	[super setContentSize: newSize];
 
-	if ( oldSize.width != newSize.width )
-		[_gridData gridViewDidChangeBoundsSize: newSize];
+//	if ( oldSize.width != newSize.width )
+//		[_gridData gridViewDidChangeBoundsSize: newSize];
 
 	if ( CGRectGetMaxY(self.bounds) > newSize.height )
 	{
