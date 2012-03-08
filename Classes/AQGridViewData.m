@@ -193,7 +193,9 @@
 	NSParameterAssert(isnormal(_boundsSize.width) && isnormal(_boundsSize.height));
 
 	if ( _layoutDirection == AQGridViewLayoutDirectionVertical ) {
-		return ( (NSUInteger)floorf(_boundsSize.width / _actualCellSize.width) );
+		NSUInteger returnNum = ( (NSUInteger)floorf(_boundsSize.width / _actualCellSize.width) );
+		NSParameterAssert(isnormal(returnNum));
+		return returnNum;
 	}
 	
 	// work out how many rows we can fit
@@ -204,8 +206,9 @@
 	NSUInteger cols = _numberOfItems / rows;
 	if ( _numberOfItems % rows != 0 )
 		cols++;
+		
+	return MAX(1, cols);	
 	
-	return ( cols );	
 }
 
 - (CGRect) cellRectAtIndex: (NSUInteger) index
