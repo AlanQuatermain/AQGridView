@@ -1,6 +1,7 @@
 *~
 .DS_Store
 build
-*.xcodeproj/*.pbxuser
-*.xcodeproj/*.mode1
-*.xcodeproj/*.mode1v3
+*.pbxuser
+*.mode1
+*.mode1v3
+*siriusdely*

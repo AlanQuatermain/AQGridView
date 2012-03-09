@@ -42,7 +42,6 @@
 
 @interface AQGridViewCell ()
 @property (nonatomic, retain) UIView * contentView;
-@property (nonatomic, copy) NSString * reuseIdentifier;
 @end
 
 @implementation AQGridViewCell

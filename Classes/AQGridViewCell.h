@@ -96,7 +96,7 @@ typedef enum {
 // The 'selectedBackgroundView' will be added as a subview directly above the backgroundView if not nil, or behind all other views. It is added as a subview only when the cell is selected. Calling -setSelected:animated: will cause the 'selectedBackgroundView' to animate in and out with an alpha fade.
 @property (nonatomic, retain) UIView * selectedBackgroundView;
 
-@property (nonatomic, readonly, copy) NSString * reuseIdentifier;
+@property (nonatomic, copy) NSString * reuseIdentifier;
 - (void) prepareForReuse;		// if the cell is reusable (has a reuse identifier), this is called just before the cell is returned from the grid view method dequeueReusableCellWithIdentifier:.  If you override, you MUST call super.
 
 @property (nonatomic) AQGridViewCellSelectionStyle selectionStyle;		// default is AQGridViewCellSelectionStyleGlow
