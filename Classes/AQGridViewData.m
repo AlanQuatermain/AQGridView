@@ -144,9 +144,10 @@
         return ( CGRectZero );
 	NSUInteger skipRows = index / numPerRow;
 	NSUInteger skipCols = index % numPerRow;
+	CGFloat horSpacing = (_currentWidth / numPerRow) - _actualCellSize.width;
 	
 	CGRect result = CGRectZero;
-	result.origin.x = _actualCellSize.width * (CGFloat)skipCols + _leftPadding;
+	result.origin.x = (horSpacing / 2) + ((_actualCellSize.width + horSpacing) * (CGFloat)skipCols + _leftPadding);
 	result.origin.y = (_actualCellSize.height  * (CGFloat)skipRows) + _topPadding;
 	result.size = _actualCellSize;
 	
@@ -204,7 +205,7 @@
 			dw++;
 	}
 	
-	_actualCellSize.width = (CGFloat)dw;
+	_actualCellSize.width = 192;
 	_actualCellSize.height = _desiredCellSize.height;
 }
 
