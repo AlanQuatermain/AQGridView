@@ -147,7 +147,7 @@
 	CGFloat horSpacing = (_currentWidth / numPerRow) - _actualCellSize.width;
 	
 	CGRect result = CGRectZero;
-	result.origin.x = (horSpacing / 2) + ((_actualCellSize.width + horSpacing) * (CGFloat)skipCols + _leftPadding);
+	result.origin.x = (_actualCellSize.width + horSpacing) * (CGFloat)skipCols + _leftPadding;
 	result.origin.y = (_actualCellSize.height  * (CGFloat)skipRows) + _topPadding;
 	result.size = _actualCellSize;
 	
@@ -200,12 +200,10 @@
 	}
 	else
 	{
-		// TODO: this could be optimized
-		while ( (w % dw) != 0 )
-			dw++;
+		dw += (w % dw) / (w / dw);
 	}
 	
-	_actualCellSize.width = 192;
+	_actualCellSize.width = dw;
 	_actualCellSize.height = _desiredCellSize.height;
 }
 
