@@ -437,7 +437,7 @@
 	if ( _cellFlags.selectionStyle == AQGridViewCellSelectionStyleNone )
 	{
 		_cellFlags.highlighted = (value ? 1 : 0);
-		return;
+		//return;
 	}
 	
 	_cellFlags.becomingHighlighted = (value ? 1 : 0);
