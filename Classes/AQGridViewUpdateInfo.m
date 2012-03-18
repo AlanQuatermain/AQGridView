@@ -463,7 +463,7 @@
 
 - (UIImageView *) _imageViewForView: (UIView *) view
 {
-	UIGraphicsBeginImageContext(view.bounds.size);
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, [[UIScreen mainScreen] scale]);
 	[view.layer renderInContext: UIGraphicsGetCurrentContext()];
 	
 	UIImageView * result = [[UIImageView alloc] initWithImage: UIGraphicsGetImageFromCurrentImageContext()];
