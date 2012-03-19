@@ -83,32 +83,29 @@
 	NSString * animationDesc = @"<Unknown>";
 	switch ( _animation )
 	{
-		case UITableViewRowAnimationFade:
+		case AQGridViewItemAnimationFade:
 			animationDesc = @"Fade";
 			break;
-		case UITableViewRowAnimationRight:
+		case AQGridViewItemAnimationRight:
 			animationDesc = @"Right";
 			break;
-		case UITableViewRowAnimationLeft:
+		case AQGridViewItemAnimationLeft:
 			animationDesc = @"Left";
 			break;
-		case UITableViewRowAnimationTop:
+		case AQGridViewItemAnimationTop:
 			animationDesc = @"Top";
 			break;
-		case UITableViewRowAnimationBottom:
+		case AQGridViewItemAnimationBottom:
 			animationDesc = @"Bottom";
 			break;
-		case UITableViewRowAnimationNone:
+		case AQGridViewItemAnimationNone:
 			animationDesc = @"None";
-			break;
-		case UITableViewRowAnimationMiddle:
-			animationDesc = @"Middle";
 			break;
 		default:
 			break;
 	}
 	
-	return ( [NSString stringWithFormat: @"%@{index=%u, action=%@, animation=%@, offset=%.02f}", [super description], (unsigned)_index, actionDesc, animationDesc, _offset] );
+	return ( [NSString stringWithFormat: @"%@{index=%u, action=%@, animation=%@, offset=%i}", [super description], (unsigned)_index, actionDesc, animationDesc, _offset] );
 }
 
 - (NSComparisonResult) compare: (AQGridViewUpdateItem *) other
