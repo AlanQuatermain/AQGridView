@@ -110,8 +110,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	self.separatorColor = [UIColor colorWithWhite: 0.85 alpha: 1.0];
     self.canCancelContentTouches = YES;
 
-	//_selectedIndex = NSNotFound;
-    _selectedIndices = [[NSMutableIndexSet alloc] init];
+	_selectedIndices = [[NSMutableIndexSet alloc] init];
 	_pendingSelectionIndex = NSNotFound;
 
 	_flags.resizesCellWidths = 0;
@@ -952,8 +951,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
                          
                          
                          _gridData = [info newGridViewData];
-                         //if ( _selectedIndex != NSNotFound )
-                         //    _selectedIndex = [info newIndexForOldIndex: _selectedIndex];
                          NSMutableIndexSet *newIndices = [[NSMutableIndexSet alloc] init];
                          [_selectedIndices enumerateIndexesUsingBlock:
                           ^(NSUInteger idx, BOOL *stop) {
