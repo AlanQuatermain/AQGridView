@@ -116,7 +116,11 @@
 {
 	if ( (_clearsSelectionOnViewWillAppear) && ([self.gridView indexOfSelectedItem] != NSNotFound) )
 	{
-		[self.gridView deselectItemAtIndex: [self.gridView indexOfSelectedItem] animated: NO];
+        [[self.gridView indicesOfSelectedItems] enumerateIndexesUsingBlock:
+         ^(NSUInteger idx, BOOL *stop) 
+         {
+             [self.gridView deselectItemAtIndex: idx animated: NO];
+         }];
 	}
 }
 
