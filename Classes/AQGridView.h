@@ -122,7 +122,6 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 	NSInteger						_updateCount;
 
-	//NSUInteger						_selectedIndex;
 	NSUInteger						_pendingSelectionIndex;
     NSMutableIndexSet *             _selectedIndices;
     
