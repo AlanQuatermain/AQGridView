@@ -1105,21 +1105,21 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			 scrollPosition: (AQGridViewScrollPosition) position notifyDelegate: (BOOL) notifyDelegate
        numFingersTouch: (NSUInteger) numFingers
 {
-	if ( _selectedIndex == index )
-		return;		// already selected this item
+    if ( index == NSNotFound || index == _selectedIndex || _flags.allowsSelection == 0 )
+        return;
+    
+    if ( notifyDelegate && _flags.delegateWillSelectItem )
+        index = [self.delegate gridView: self willSelectItemAtIndex: index];
 
-	if ( _selectedIndex != NSNotFound )
-		[self _deselectItemAtIndex: _selectedIndex animated: animated notifyDelegate: notifyDelegate];
+    if ( notifyDelegate && _flags.delegateWillSelectItemMultiTouch )
+        index = [self.delegate gridView: self willSelectItemAtIndex: index
+                        numFingersTouch: numFingers];
 
-	if ( _flags.allowsSelection == 0 )
-		return;
+    if ( index == NSNotFound || index == _selectedIndex )
+        return;
 
-	if ( notifyDelegate && _flags.delegateWillSelectItem )
-		index = [self.delegate gridView: self willSelectItemAtIndex: index];
-
-  if ( notifyDelegate && _flags.delegateWillSelectItemMultiTouch )
-		index = [self.delegate gridView: self willSelectItemAtIndex: index
-                    numFingersTouch:numFingers];
+    if ( _selectedIndex != NSNotFound )
+        [self _deselectItemAtIndex: _selectedIndex animated: animated notifyDelegate: notifyDelegate];
 
 	_selectedIndex = index;
 	[[self cellForItemAtIndex: index] setSelected: YES animated: animated];
