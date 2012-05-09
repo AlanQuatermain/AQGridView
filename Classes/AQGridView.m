@@ -1015,6 +1015,21 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		[self endUpdateAnimations];
 }
 
+/* Added a swap method for 2 items in the grid */
+- (void) swapItemAtIndex:(NSUInteger) index withIndex:(NSUInteger) secondIndex withAnimation:(AQGridViewItemAnimation) animation
+{
+	BOOL needsAnimationSetup = ([_updateInfoStack count] <= _animationCount);
+	
+	if ( needsAnimationSetup )
+		[self setupUpdateAnimations];
+	
+	[[_updateInfoStack lastObject] moveItemAtIndex:index toIndex:secondIndex withAnimation:animation];
+	[[_updateInfoStack lastObject] moveItemAtIndex:secondIndex toIndex:index withAnimation:animation];
+	
+	if ( needsAnimationSetup )
+		[self endUpdateAnimations];	
+}
+
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
 	_flags.isEditing = (editing ? 1 : 0);
