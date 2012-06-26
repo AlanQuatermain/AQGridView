@@ -60,6 +60,23 @@ h3. How to use it in your project
 
 This project compiles to a static library which you can include, or you can just reference the source files directly. Note that there are some resources to copy into your project for the tableview-style selection backgrounds.
 
+To include the project in your project named "MY_PROJECT":
+
+# Clone the repo
+# Delete the .git file
+# If desired delete the Examples folder
+# Move the cloned AQGridView file folder to the desired location in your project file folder
+# Add the cloned folder to your project repo with @git add@ if desired
+# From within Xcode, select "Add Files to 'MY_PROJECT'", select "AQGridView.xcodeproj" (leave the "Add to Targets" box checked)
+# AQGridView should now appear in the Xcode Project Navigator / folder thing
+# Click on the "MY_PROJECT" entry, Targets -> MY_PROJECT -> Build Phases -> Target Dependencies -> + "AQGridView"
+# Click on the "MY_PROJECT" entry, Targets -> MY_PROJECT -> Build Phases -> Link Binary with Libraries -> + "libAQGridView.a"
+# Click on the "MY_PROJECT" entry, Targets -> MY_PROJECT -> Build Settings -> Search Paths -> User Header Search Paths -> + "AQGridView"
+# Click on the "MY_PROJECT" entry, Targets -> MY_PROJECT -> Build Settings -> Linking -> Other Linker Flags -> + "-ObjC"
+# @#import "AQGridViewController.h"@
+# AQGridViewController *grid = [AQGridViewController alloc];
+# If this doesn't work try tweaking some of the settings referenced in setup for https://github.com/Cocoanetics/DTCoreText
+
 h2. Overview
 
 AQGridView has a number of supporting internal classes. The ones you'll interact with directly are:
