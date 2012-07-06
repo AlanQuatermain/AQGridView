@@ -8,4 +8,5 @@ build
 *.perspectivev3
 *.pbxuser
 *.xcuserdatad
-*.xcworkspacedata
+xcuserdata/
+project.xcworkspace/
