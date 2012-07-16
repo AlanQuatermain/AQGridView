@@ -39,6 +39,7 @@
 
 @interface AQGridViewData (AQGridViewDataPrivate)
 - (void) fixDesiredCellSizeForWidth: (CGFloat) width;
+- (void) fixDesiredCellSizeForHeight: (CGFloat) height;
 @end
 
 @implementation AQGridViewData
@@ -82,6 +83,8 @@
 	_boundsSize = boundsSize;
 	if ( _layoutDirection == AQGridViewLayoutDirectionVertical )
 		[self fixDesiredCellSizeForWidth: boundsSize.width];
+    else
+        [self fixDesiredCellSizeForHeight:boundsSize.height];
 }
 
 - (NSUInteger) itemIndexForPoint: (CGPoint) point
@@ -98,7 +101,13 @@
 	NSUInteger x = (NSUInteger)floorf(point.x);
 	NSUInteger col = x / (NSUInteger)_actualCellSize.width;
 	
-	NSUInteger result = (row * [self numberOfItemsPerRow]) + col;
+    NSUInteger result;
+    if (_layoutDirection == AQGridViewLayoutDirectionVertical) {
+        result = (row * [self numberOfItemsPerRow]) + col;
+    }else{
+        result = (col * [self numberOfItemsPerColumn]) + row;
+    }
+    
 	if ( result >= self.numberOfItems )
 		result = NSNotFound;
 	
@@ -126,7 +135,7 @@
 	if ( _layoutDirection == AQGridViewLayoutDirectionVertical )
 		[self fixDesiredCellSizeForWidth: _boundsSize.width];
 	else
-		_actualCellSize = _desiredCellSize;
+        [self fixDesiredCellSizeForHeight:_boundsSize.height];
 }
 
 - (void) setLayoutDirection: (AQGridViewLayoutDirection) direction
@@ -134,7 +143,7 @@
 	if ( direction == AQGridViewLayoutDirectionVertical )
 		[self fixDesiredCellSizeForWidth: _boundsSize.width];
 	else
-		_actualCellSize = _desiredCellSize;
+        [self fixDesiredCellSizeForHeight:_boundsSize.height];
 	_layoutDirection = direction;
 }
 
@@ -154,18 +163,35 @@
 
 - (CGSize) sizeForEntireGrid
 {
-	NSUInteger numPerRow = [self numberOfItemsPerRow];
-    if ( numPerRow == 0 )       // avoid a divide-by-zero exception
-        return ( CGSizeZero );
-	NSUInteger numRows = _numberOfItems / numPerRow;
-	if ( _numberOfItems % numPerRow != 0 )
-		numRows++;
+    if ( _layoutDirection == AQGridViewLayoutDirectionVertical ){
+
+        NSUInteger numPerRow = [self numberOfItemsPerRow];
+        if ( numPerRow == 0 )       // avoid a divide-by-zero exception
+            return ( CGSizeZero );
+        NSUInteger numRows = _numberOfItems / numPerRow;
+        if ( _numberOfItems % numPerRow != 0 )
+            numRows++;
 	
-	CGFloat height = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
-	if (height < _gridView.bounds.size.height)
-		height = _gridView.bounds.size.height;
-	
-	return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding, height) );
+        CGFloat height = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
+        if (height < _gridView.bounds.size.height)
+            height = _gridView.bounds.size.height;
+        
+        return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding, height) );
+    }else{
+        NSUInteger numPerCol = [self numberOfItemsPerColumn];
+        if ( numPerCol == 0 )       // avoid a divide-by-zero exception
+            return ( CGSizeZero );
+        NSUInteger numCols = _numberOfItems / numPerCol;
+        if ( _numberOfItems % numPerCol != 0 )
+            numCols++;
+        
+        CGFloat width = ( ((CGFloat)ceilf((CGFloat)numCols * _actualCellSize.width)) + _leftPadding + _rightPadding );
+        if (width < _gridView.bounds.size.width)
+            width = _gridView.bounds.size.width;
+        
+        return ( CGSizeMake(width,((CGFloat)ceilf(_actualCellSize.height * numPerCol)) + _topPadding + _bottomPadding) );
+    }
+
 }
 
 - (NSUInteger) numberOfItemsPerRow
@@ -185,49 +211,99 @@
 	return ( cols );	
 }
 
+- (NSUInteger) numberOfItemsPerColumn
+{
+    NSUInteger cols = (NSUInteger)floorf(_boundsSize.height / _actualCellSize.height);
+	return ( cols );	
+}
+
+
 - (CGRect) cellRectAtIndex: (NSUInteger) index
 {
-	NSUInteger numPerRow = [self numberOfItemsPerRow];
-    if ( numPerRow == 0 )       // avoid a divide-by-zero exception
-        return ( CGRectZero );
-	NSUInteger skipRows = index / numPerRow;
-	NSUInteger skipCols = index % numPerRow;
+    CGRect result = CGRectZero;
+    if ( _layoutDirection == AQGridViewLayoutDirectionVertical){
+
+        NSUInteger numPerRow = [self numberOfItemsPerRow];
+        if ( numPerRow == 0 )       // avoid a divide-by-zero exception
+            return ( CGRectZero );
+        NSUInteger skipRows = index / numPerRow;
+        NSUInteger skipCols = index % numPerRow;
 	
-	CGRect result = CGRectZero;
-	result.origin.x = _actualCellSize.width * (CGFloat)skipCols + _leftPadding;
-	result.origin.y = (_actualCellSize.height  * (CGFloat)skipRows) + _topPadding;
-	result.size = _actualCellSize;
+        result.origin.x = _actualCellSize.width * (CGFloat)skipCols + _leftPadding;
+        result.origin.y = (_actualCellSize.height  * (CGFloat)skipRows) + _topPadding;
+        result.size = _actualCellSize;
 	
-	return ( result );
+    }else{
+        
+        NSUInteger numPerCol = [self numberOfItemsPerColumn];
+        if (numPerCol == 0)
+            return (CGRectZero);
+        NSUInteger skipCols = index / numPerCol;
+        NSUInteger skipRows = index % numPerCol;
+        
+        result.origin.x = _actualCellSize.width * (CGFloat)skipCols + _leftPadding;
+        result.origin.y = (_actualCellSize.height  * (CGFloat)skipRows) + _topPadding;
+        result.size = _actualCellSize;
+    }
+    return ( result );
+
 }
 
 - (NSIndexSet *) indicesOfCellsInRect: (CGRect) aRect
 {
 	NSMutableIndexSet * result = [NSMutableIndexSet indexSet];
-	NSUInteger numPerRow = [self numberOfItemsPerRow];
+    if ( _layoutDirection == AQGridViewLayoutDirectionVertical){
+
+        NSUInteger numPerRow = [self numberOfItemsPerRow];
 	
-	for ( NSUInteger i = 0; i < _numberOfItems; i++ )
-	{
-		CGRect cellRect = [self cellRectAtIndex: i];
+        for ( NSUInteger i = 0; i < _numberOfItems; i++ )
+        {
+            CGRect cellRect = [self cellRectAtIndex: i];
+            
+            if ( CGRectGetMaxY(cellRect) < CGRectGetMinY(aRect) )
+            {
+                // jump forward to the next row
+                i += (numPerRow - 1);
+                continue;
+            }
 		
-		if ( CGRectGetMaxY(cellRect) < CGRectGetMinY(aRect) )
-		{
-			// jump forward to the next row
-			i += (numPerRow - 1);
-			continue;
-		}
-		
-		if ( CGRectIntersectsRect(cellRect, aRect) )
-		{
-			[result addIndex: i];
-			if ( (CGRectGetMaxY(cellRect) > CGRectGetMaxY(aRect)) &&
-				 (CGRectGetMaxX(cellRect) > CGRectGetMaxX(aRect)) )
-			{
-				// passed the bottom-right edge of the given rect
-				break;
-			}
-		}
-	}
+            if ( CGRectIntersectsRect(cellRect, aRect) )
+            {
+                [result addIndex: i];
+                if ( (CGRectGetMaxY(cellRect) > CGRectGetMaxY(aRect)) &&
+                    (CGRectGetMaxX(cellRect) > CGRectGetMaxX(aRect)) )
+                {
+                    // passed the bottom-right edge of the given rect
+                    break;
+                }
+            }
+        }
+    }else{
+        NSUInteger numPerCol = [self numberOfItemsPerColumn];
+        for ( NSUInteger i = 0; i < _numberOfItems; i++ )
+        {
+            CGRect cellRect = [self cellRectAtIndex: i];
+            
+            if ( CGRectGetMaxX(cellRect) < CGRectGetMinX(aRect) )
+            {
+                // jump forward to the next column
+                i += (numPerCol - 1);
+                continue;
+            }              
+            
+            if ( CGRectIntersectsRect(cellRect, aRect) )
+            {
+                [result addIndex: i];
+                if ( (CGRectGetMaxY(cellRect) > CGRectGetMaxY(aRect)) &&
+                    (CGRectGetMaxX(cellRect) > CGRectGetMaxX(aRect)) )
+                {
+                    // passed the bottom-right edge of the given rect
+                    break;
+                }
+            }
+        } 
+    }
+
 	
 	return ( result );
 }
@@ -245,6 +321,19 @@
 	
 	_actualCellSize.width = floorf( w / multiplier );
 	_actualCellSize.height = _desiredCellSize.height;
+}
+
+- (void) fixDesiredCellSizeForHeight: (CGFloat) height
+{
+    
+    // Much thanks to Brandon Sneed (@bsneed) for the following new algorithm, reduced to two floating-point divisions -- that's O(1) folks!
+	CGFloat h = floorf(height - _topPadding - _bottomPadding);
+	CGFloat dh = floorf(_desiredCellSize.height);
+    CGFloat multiplier = floorf( h / dh );
+	
+	_actualCellSize.height = floorf( h / multiplier );
+	_actualCellSize.width = _desiredCellSize.width;
+    
 }
 
 @end
