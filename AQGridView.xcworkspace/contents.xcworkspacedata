@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:AQGridView.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Examples/SpringBoard/SpringBoard.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Examples/ImageDemo/ImageDemo.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Examples/ExpanderDemo/ExpanderDemo.xcodeproj">
+   </FileRef>
+</Workspace>
