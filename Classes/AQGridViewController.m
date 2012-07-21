@@ -53,12 +53,14 @@
 	self.gridView.dataSource = self;
 }
 
-- (void) loadView
-{
-	AQGridView * aView = [[AQGridView alloc] initWithFrame: CGRectZero];
+- (void) loadView {
+
+	AQGridView *aView = [[AQGridView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+	
 	self.gridView = aView;
     
-    [self _sharedGridViewDefaultSetup];
+	[self _sharedGridViewDefaultSetup];
+	
 }
 
 - (void) awakeFromNib
