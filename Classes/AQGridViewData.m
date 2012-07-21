@@ -210,7 +210,9 @@
 	{
 		CGRect cellRect = [self cellRectAtIndex: i];
 		
-		if ( CGRectGetMaxY(cellRect) < CGRectGetMinY(aRect) )
+        // numPerRow must be > 0 or you get an infinite loop
+        // (i becomes 0 - 1 => UINT_MAX; loop UINT_MAX+1 => 0, etc.)
+		if ( CGRectGetMaxY(cellRect) < CGRectGetMinY(aRect) && numPerRow > 0 )
 		{
 			// jump forward to the next row
 			i += (numPerRow - 1);
