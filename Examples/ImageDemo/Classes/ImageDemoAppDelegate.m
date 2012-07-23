@@ -41,15 +41,13 @@
 
 @implementation ImageDemoAppDelegate
 
-@synthesize window;
-@synthesize viewController;
+@synthesize window = _window;
+@synthesize viewController = _viewController;
 
+- (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
-    
-    // Override point for customization after app launch    
-    [window addSubview:viewController.view];
-    [window makeKeyAndVisible];
+	_window.rootViewController = _viewController;
+	[_window makeKeyAndVisible];
 
 	return YES;
 }
