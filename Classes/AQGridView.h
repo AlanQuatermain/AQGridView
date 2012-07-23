@@ -136,7 +136,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	numColumns:6;
 		unsigned	separatorStyle:3;
 		unsigned	allowsSelection:1;
-        unsigned    multipleSelection:1;
+		unsigned	multipleSelection:1;
 		unsigned	backgroundViewExtendsUp:1;
 		unsigned	backgroundViewExtendsDown:1;
 		unsigned	usesPagedHorizontalScrolling:1;
@@ -152,18 +152,17 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 		unsigned	delegateWillDisplayCell:1;
 		unsigned	delegateWillSelectItem:1;
-        unsigned    delegateWillSelectItemMultiTouch:1;
+		unsigned	delegateWillSelectItemMultiTouch:1;
 		unsigned	delegateWillDeselectItem:1;
 		unsigned	delegateDidSelectItem:1;
-        unsigned    delegateDidSelectItemMultiTouch:1;
+		unsigned	delegateDidSelectItemMultiTouch:1;
 		unsigned	delegateDidDeselectItem:1;
 		unsigned	delegateGestureRecognizerActivated:1;
 		unsigned	delegateAdjustGridCellFrame:1;
-		unsigned    delegateDidEndUpdateAnimation:1;
-
+		unsigned	delegateDidEndUpdateAnimation:1;
 		unsigned	dataSourceGridCellSize:1;
-
-        unsigned int isEditing:1;
+		
+		unsigned	int isEditing:1;
 
 		unsigned	__RESERVED__:1;
 	} _flags;
