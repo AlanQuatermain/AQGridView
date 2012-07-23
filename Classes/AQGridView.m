@@ -41,14 +41,11 @@
 #import "AQGridViewUpdateInfo.h"
 #import "AQGridViewCell+AQGridViewCellPrivate.h"
 #import "AQGridView+CellLocationDelegation.h"
+#import "AQGridView+Hackery.h"
 #import "NSIndexSet+AQIsSetContiguous.h"
 #import "NSIndexSet+AQIndexesOutsideSet.h"
 
 #import <libkern/OSAtomic.h>
-
-// see _basicHitTest:withEvent: below
-#import <objc/objc.h>
-#import <objc/runtime.h>
 
 // Lightweight object class for touch selection parameters
 @interface UserSelectItemIndexParams : NSObject
@@ -1246,20 +1243,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 #pragma mark -
 #pragma mark Touch Events
 
-- (UIView *) _basicHitTest: (CGPoint) point withEvent: (UIEvent *) event
-{
-	// STUPID STUPID RAT CREATURES
-	// ===========================
-	//
-	// Problem: we want to do a default hit-test without UIScrollView's processing getting in the way.
-	// UIScrollView implements _defaultHitTest:withEvent: for this, but we can't call that due to it
-	//  being a private API.
-	// Instead, we have to manufacture a call to our super-super class here, grr
-	Method method = class_getInstanceMethod( [UIView class], @selector(hitTest:withEvent:) );
-	IMP imp = method_getImplementation( method );
-	return ( (UIView *)imp(self, @selector(hitTest:withEvent:), point, event) ); // -[UIView hitTest:withEvent:]
-}
-
 - (BOOL) _canSelectItemContainingHitView: (UIView *) hitView
 {
 	if ( [hitView isKindOfClass: [UIControl class]] )
@@ -1353,7 +1336,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	if ( (touch != nil) && (_pendingSelectionIndex == NSNotFound) )
 	{
 		CGPoint pt = [touch locationInView: self];
-		UIView * hitView = [self _basicHitTest: pt withEvent: event];
+		UIView * hitView = [self aqBasicHitTest:pt withEvent:event];
 		_touchedContentView = hitView;
 
 		// unhighlight anything not here
