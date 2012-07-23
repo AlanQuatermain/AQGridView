@@ -33,6 +33,10 @@
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		DA6243C512102682007EC097 /* NSIndexSet+AQIndexesOutsideSet.h in Headers */ = {isa = PBXBuildFile; fileRef = DA6243C312102682007EC097 /* NSIndexSet+AQIndexesOutsideSet.h */; };
 		DA6243C612102682007EC097 /* NSIndexSet+AQIndexesOutsideSet.m in Sources */ = {isa = PBXBuildFile; fileRef = DA6243C412102682007EC097 /* NSIndexSet+AQIndexesOutsideSet.m */; };
+		FFD4E69415BD559C007F8352 /* AQGridView+Deprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD4E69215BD559C007F8352 /* AQGridView+Deprecated.h */; };
+		FFD4E69515BD559C007F8352 /* AQGridView+Deprecated.m in Sources */ = {isa = PBXBuildFile; fileRef = FFD4E69315BD559C007F8352 /* AQGridView+Deprecated.m */; };
+		FFD4E69915BD58A0007F8352 /* AQGridView+Hackery.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD4E69715BD58A0007F8352 /* AQGridView+Hackery.h */; };
+		FFD4E69A15BD58A0007F8352 /* AQGridView+Hackery.m in Sources */ = {isa = PBXBuildFile; fileRef = FFD4E69815BD58A0007F8352 /* AQGridView+Hackery.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +72,11 @@
 		D2AAC07E0554694100DB518D /* libAQGridView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAQGridView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA6243C312102682007EC097 /* NSIndexSet+AQIndexesOutsideSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSIndexSet+AQIndexesOutsideSet.h"; sourceTree = "<group>"; };
 		DA6243C412102682007EC097 /* NSIndexSet+AQIndexesOutsideSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSIndexSet+AQIndexesOutsideSet.m"; sourceTree = "<group>"; };
+		FFD4E69215BD559C007F8352 /* AQGridView+Deprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridView+Deprecated.h"; sourceTree = "<group>"; };
+		FFD4E69315BD559C007F8352 /* AQGridView+Deprecated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AQGridView+Deprecated.m"; sourceTree = "<group>"; };
+		FFD4E69715BD58A0007F8352 /* AQGridView+Hackery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridView+Hackery.h"; sourceTree = "<group>"; };
+		FFD4E69815BD58A0007F8352 /* AQGridView+Hackery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AQGridView+Hackery.m"; sourceTree = "<group>"; };
+		FFD4E6AD15BD59C3007F8352 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +103,7 @@
 		0867D691FE84028FC02AAC07 /* AQGridView */ = {
 			isa = PBXGroup;
 			children = (
+				FFD4E6AD15BD59C3007F8352 /* LICENSE */,
 				389782A6117A311B00D5CC8F /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				389782CB117A314A00D5CC8F /* Resources */,
@@ -123,13 +133,17 @@
 		389782A6117A311B00D5CC8F /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				389782A7117A311B00D5CC8F /* AQGridView+CellLayout.h */,
-				389782A8117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h */,
 				389782A9117A311B00D5CC8F /* AQGridView.h */,
 				389782AA117A311B00D5CC8F /* AQGridView.m */,
-				389782AC117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h */,
+				389782A7117A311B00D5CC8F /* AQGridView+CellLayout.h */,
+				389782A8117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h */,
+				FFD4E69215BD559C007F8352 /* AQGridView+Deprecated.h */,
+				FFD4E69315BD559C007F8352 /* AQGridView+Deprecated.m */,
+				FFD4E69715BD58A0007F8352 /* AQGridView+Hackery.h */,
+				FFD4E69815BD58A0007F8352 /* AQGridView+Hackery.m */,
 				389782AD117A311B00D5CC8F /* AQGridViewCell.h */,
 				389782AE117A311B00D5CC8F /* AQGridViewCell.m */,
+				389782AC117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h */,
 				389782AF117A311B00D5CC8F /* AQGridViewController.h */,
 				389782B0117A311B00D5CC8F /* AQGridViewController.m */,
 				389782B1117A311B00D5CC8F /* AQGridViewData.h */,
@@ -183,6 +197,8 @@
 				389785BF117AB2E600D5CC8F /* NSIndexSet+AQIsSetContiguous.h in Headers */,
 				DA6243C512102682007EC097 /* NSIndexSet+AQIndexesOutsideSet.h in Headers */,
 				38A6A0B811DA5E95005A3A29 /* AQGridViewAnimatorItem.h in Headers */,
+				FFD4E69415BD559C007F8352 /* AQGridView+Deprecated.h in Headers */,
+				FFD4E69915BD58A0007F8352 /* AQGridView+Hackery.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +289,8 @@
 				389785C0117AB2E600D5CC8F /* NSIndexSet+AQIsSetContiguous.m in Sources */,
 				DA6243C612102682007EC097 /* NSIndexSet+AQIndexesOutsideSet.m in Sources */,
 				38A6A0B911DA5E95005A3A29 /* AQGridViewAnimatorItem.m in Sources */,
+				FFD4E69515BD559C007F8352 /* AQGridView+Deprecated.m in Sources */,
+				FFD4E69A15BD58A0007F8352 /* AQGridView+Hackery.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

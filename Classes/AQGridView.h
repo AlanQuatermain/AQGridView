@@ -122,9 +122,9 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 	NSInteger						_updateCount;
 
-	NSUInteger						_selectedIndex;
 	NSUInteger						_pendingSelectionIndex;
-
+    NSMutableIndexSet *             _selectedIndices;
+    
 	CGPoint							_touchBeganPosition;
 
 	UIView *						_headerView;
@@ -135,7 +135,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	resizesCellWidths:1;
 		unsigned	numColumns:6;
 		unsigned	separatorStyle:3;
-		unsigned	allowsSelection:1;
+		unsigned	selectable:1;
+		unsigned	allowsMultipleSelection:1;
 		unsigned	backgroundViewExtendsUp:1;
 		unsigned	backgroundViewExtendsDown:1;
 		unsigned	usesPagedHorizontalScrolling:1;
@@ -151,18 +152,17 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 		unsigned	delegateWillDisplayCell:1;
 		unsigned	delegateWillSelectItem:1;
-        unsigned    delegateWillSelectItemMultiTouch:1;
+		unsigned	delegateWillSelectItemMultiTouch:1;
 		unsigned	delegateWillDeselectItem:1;
 		unsigned	delegateDidSelectItem:1;
-        unsigned    delegateDidSelectItemMultiTouch:1;
+		unsigned	delegateDidSelectItemMultiTouch:1;
 		unsigned	delegateDidDeselectItem:1;
 		unsigned	delegateGestureRecognizerActivated:1;
 		unsigned	delegateAdjustGridCellFrame:1;
-		unsigned    delegateDidEndUpdateAnimation:1;
-
+		unsigned	delegateDidEndUpdateAnimation:1;
 		unsigned	dataSourceGridCellSize:1;
-
-        unsigned int isEditing:1;
+		
+		unsigned	int isEditing:1;
 
 		unsigned	__RESERVED__:1;
 	} _flags;
@@ -212,20 +212,17 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 // Selection
 
-@property (nonatomic) BOOL allowsSelection;	// default is YES
+@property (nonatomic) BOOL selectable;
+@property (nonatomic) BOOL allowsMultipleSelection;
 @property (nonatomic) BOOL requiresSelection;	// if YES, tapping on a selected cell will not de-select it
 
-- (NSUInteger) indexOfSelectedItem;		// returns NSNotFound if no item is selected
+- (NSIndexSet *) selectionIndexes;
 - (void) selectItemAtIndex: (NSUInteger) index animated: (BOOL) animated scrollPosition: (AQGridViewScrollPosition) scrollPosition;
 - (void) deselectItemAtIndex: (NSUInteger) index animated: (BOOL) animated;
 
 // Appearance
 
 @property (nonatomic, assign) BOOL resizesCellWidthToFit;	// default is NO. Set to YES if the view should resize cells to fill all available space in their grid square. Ignored if separatorStyle == AQGridViewCellSeparatorStyleEmptySpace.
-
-// this property is now officially deprecated -- it will instead set the layout direction to horizontal if
-//  this property is set to YES, or to vertical otherwise.
-@property (nonatomic, assign) BOOL clipsContentWidthToBounds __attribute__((deprecated));	// default is YES. If you want to enable horizontal scrolling, set this to NO.
 
 @property (nonatomic, retain) UIView * backgroundView;		// specifies a view to place behind the cells
 @property (nonatomic) BOOL backgroundViewExtendsUp;			// default is NO. If YES, the background view extends upward and is visible during a bounce.
@@ -270,3 +267,5 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 - (CGSize) portraitGridCellSizeForGridView: (AQGridView *) gridView;
 
 @end
+
+#import "AQGridView+Deprecated.h"
