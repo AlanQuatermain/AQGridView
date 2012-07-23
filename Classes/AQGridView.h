@@ -224,10 +224,6 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 @property (nonatomic, assign) BOOL resizesCellWidthToFit;	// default is NO. Set to YES if the view should resize cells to fill all available space in their grid square. Ignored if separatorStyle == AQGridViewCellSeparatorStyleEmptySpace.
 
-// this property is now officially deprecated -- it will instead set the layout direction to horizontal if
-//  this property is set to YES, or to vertical otherwise.
-@property (nonatomic, assign) BOOL clipsContentWidthToBounds __attribute__((deprecated));	// default is YES. If you want to enable horizontal scrolling, set this to NO.
-
 @property (nonatomic, retain) UIView * backgroundView;		// specifies a view to place behind the cells
 @property (nonatomic) BOOL backgroundViewExtendsUp;			// default is NO. If YES, the background view extends upward and is visible during a bounce.
 @property (nonatomic) BOOL backgroundViewExtendsDown;		// default is NO. If YES, the background view extends downward and is visible during a bounce.

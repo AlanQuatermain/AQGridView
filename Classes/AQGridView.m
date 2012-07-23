@@ -294,16 +294,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[self setNeedsLayout];
 }
 
-- (BOOL) clipsContentWidthToBounds
-{
-	return ( self.layoutDirection == AQGridViewLayoutDirectionVertical );
-}
-
-- (void) setClipsContentWidthToBounds: (BOOL) value
-{
-	self.layoutDirection = (value ? AQGridViewLayoutDirectionVertical : AQGridViewLayoutDirectionHorizontal);
-}
-
 - (BOOL) usesPagedHorizontalScrolling
 {
 	return ( _flags.usesPagedHorizontalScrolling );
