@@ -135,8 +135,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	resizesCellWidths:1;
 		unsigned	numColumns:6;
 		unsigned	separatorStyle:3;
-		unsigned	allowsSelection:1;
-		unsigned	multipleSelection:1;
+		unsigned	selectable:1;
+		unsigned	allowsMultipleSelection:1;
 		unsigned	backgroundViewExtendsUp:1;
 		unsigned	backgroundViewExtendsDown:1;
 		unsigned	usesPagedHorizontalScrolling:1;
@@ -212,12 +212,11 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 // Selection
 
-@property (nonatomic) BOOL allowsSelection;	// default is YES
-@property (nonatomic) BOOL multipleSelection; // default is NO
+@property (nonatomic) BOOL selectable;
+@property (nonatomic) BOOL allowsMultipleSelection;
 @property (nonatomic) BOOL requiresSelection;	// if YES, tapping on a selected cell will not de-select it
 
-- (NSUInteger) indexOfSelectedItem;		// returns NSNotFound if no item is selected, returns first item if multiple selection is enabled
-- (NSIndexSet *) indicesOfSelectedItems;
+- (NSIndexSet *) selectionIndexes;
 - (void) selectItemAtIndex: (NSUInteger) index animated: (BOOL) animated scrollPosition: (AQGridViewScrollPosition) scrollPosition;
 - (void) deselectItemAtIndex: (NSUInteger) index animated: (BOOL) animated;
 
@@ -272,3 +271,5 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 - (CGSize) portraitGridCellSizeForGridView: (AQGridView *) gridView;
 
 @end
+
+#import "AQGridView+Deprecated.h"

@@ -116,8 +116,8 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	_flags.resizesCellWidths = 0;
 	_flags.numColumns = [_gridData numberOfItemsPerRow];
 	_flags.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
-	_flags.allowsSelection = 1;
-	_flags.multipleSelection = 0;
+	_flags.selectable = 1;
+	_flags.allowsMultipleSelection = 0;
 	_flags.usesPagedHorizontalScrolling = NO;
 	_flags.contentSizeFillsBounds = 1;
 }
@@ -225,24 +225,28 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	return ( _gridData.numberOfItems / _flags.numColumns );
 }
 
-- (BOOL) allowsSelection
-{
-	return ( _flags.allowsSelection );
+- (BOOL) selectable {
+	
+	return _flags.selectable;
+	
 }
 
-- (void) setAllowsSelection: (BOOL) value
-{
-	_flags.allowsSelection = (value ? 1 : 0);
+- (void) setSelectable:(BOOL)selectable {
+	
+	_flags.selectable = (selectable ? 1 : 0);
+	
 }
 
-- (BOOL) multipleSelection
-{
-	return ( _flags.multipleSelection );
+- (BOOL) allowsMultipleSelection {
+	
+	return _flags.allowsMultipleSelection;
+	
 }
 
-- (void) setMultipleSelection: (BOOL) value
-{
-	_flags.multipleSelection = (value ? 1 : 0);
+- (void) setAllowsMultipleSelection:(BOOL)allowsMultipleSelection {
+	
+	_flags.allowsMultipleSelection = (allowsMultipleSelection ? 1 : 0);
+	
 }
 
 - (BOOL) backgroundViewExtendsDown
@@ -1043,17 +1047,10 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 #pragma mark -
 #pragma mark Selection
 
-- (NSUInteger) indexOfSelectedItem
-{
-    if (_selectedIndices.count == 0) {
-        return NSNotFound;
-    }
-    return _selectedIndices.firstIndex;
-}
-
-- (NSIndexSet *) indicesOfSelectedItems
-{
-    return [_selectedIndices copy];
+- (NSIndexSet *) selectionIndexes {
+	
+	return [_selectedIndices copy];
+	
 }
 
 - (void) highlightItemAtIndex: (NSUInteger) index animated: (BOOL) animated scrollPosition: (AQGridViewScrollPosition) position
@@ -1130,15 +1127,15 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 {
 
 	id<AQGridViewDelegate> const delegate = self.delegate;
-	BOOL const allowsSelection = _flags.allowsSelection;
-	BOOL const allowsMultipleSelection = _flags.multipleSelection;
+	BOOL const selectable = _flags.selectable;
+	BOOL const allowsMultipleSelection = _flags.allowsMultipleSelection;
 	BOOL const itemAlreadySelected = [_selectedIndices containsIndex:index];
 	BOOL const notifiesWillSelect = notifyDelegate && _flags.delegateWillSelectItem;
 	BOOL const notifiesWillSelectMultitouch = notifyDelegate && _flags.delegateWillSelectItemMultiTouch;
 	BOOL const notifiesDidSelect = notifyDelegate && _flags.delegateDidSelectItem;
 	BOOL const notifiesDidSelectMultitouch = notifyDelegate && _flags.delegateDidSelectItemMultiTouch;
 	
-	if (!allowsSelection)
+	if (!selectable)
 		return;
 	
 	if (allowsMultipleSelection && itemAlreadySelected) {
@@ -1378,7 +1375,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			NSUInteger index = [self indexForItemAtPoint: pt];
 			if ( index != NSNotFound )
 			{
-				if ( _flags.allowsSelection == 1 )
+				if ( _flags.selectable == 1 )
 				{
 					_pendingSelectionIndex = index;
 
@@ -1462,7 +1459,7 @@ passToSuper:
 		if ( _pendingSelectionIndex != [self indexForItemAtPoint: pt] )
 			break;
 
-		if ( _flags.allowsSelection == 0 )
+		if ( _flags.selectable == 0 )
 			break;
 
     NSSet *touchEventSet = [event allTouches];
