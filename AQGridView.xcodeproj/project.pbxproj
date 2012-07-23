@@ -76,6 +76,7 @@
 		FFD4E69315BD559C007F8352 /* AQGridView+Deprecated.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AQGridView+Deprecated.m"; sourceTree = "<group>"; };
 		FFD4E69715BD58A0007F8352 /* AQGridView+Hackery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AQGridView+Hackery.h"; sourceTree = "<group>"; };
 		FFD4E69815BD58A0007F8352 /* AQGridView+Hackery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "AQGridView+Hackery.m"; sourceTree = "<group>"; };
+		FFD4E6AD15BD59C3007F8352 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +103,7 @@
 		0867D691FE84028FC02AAC07 /* AQGridView */ = {
 			isa = PBXGroup;
 			children = (
+				FFD4E6AD15BD59C3007F8352 /* LICENSE */,
 				389782A6117A311B00D5CC8F /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				389782CB117A314A00D5CC8F /* Resources */,
