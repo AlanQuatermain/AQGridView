@@ -1128,43 +1128,64 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			 scrollPosition: (AQGridViewScrollPosition) position notifyDelegate: (BOOL) notifyDelegate
        numFingersTouch: (NSUInteger) numFingers
 {
-	if ( [_selectedIndices containsIndex:index] )
-		return;		// already selected this item
 
-	// if we don't allow multiple selections, deselect the previous selection
-    if (!_flags.multipleSelection && _selectedIndices.count > 0)
-		[self _deselectItemAtIndex: _selectedIndices.firstIndex animated: animated notifyDelegate: notifyDelegate];
-
-	if ( _flags.allowsSelection == 0 )
+	id<AQGridViewDelegate> const delegate = self.delegate;
+	BOOL const allowsSelection = _flags.allowsSelection;
+	BOOL const allowsMultipleSelection = _flags.multipleSelection;
+	BOOL const itemAlreadySelected = [_selectedIndices containsIndex:index];
+	BOOL const notifiesWillSelect = notifyDelegate && _flags.delegateWillSelectItem;
+	BOOL const notifiesWillSelectMultitouch = notifyDelegate && _flags.delegateWillSelectItemMultiTouch;
+	BOOL const notifiesDidSelect = notifyDelegate && _flags.delegateDidSelectItem;
+	BOOL const notifiesDidSelectMultitouch = notifyDelegate && _flags.delegateDidSelectItemMultiTouch;
+	
+	if (!allowsSelection)
 		return;
+	
+	if (allowsMultipleSelection && itemAlreadySelected) {
+	
+		[self _deselectItemAtIndex:index animated:animated notifyDelegate:notifyDelegate];
+	
+	} else if (!itemAlreadySelected) {
+	
+		if (!allowsMultipleSelection) {
+		
+			if ([_selectedIndices count]) {
+				
+				NSIndexSet * const selectedIndices = [_selectedIndices copy];
+				[selectedIndices enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+					[self _deselectItemAtIndex:idx animated:animated notifyDelegate:notifyDelegate];
+				}];
+				
+			}
+		
+		}
+		
+		if (notifiesWillSelect)
+			index = [delegate gridView:self willSelectItemAtIndex:index];
+		
+		if (notifiesWillSelectMultitouch)
+			index = [delegate gridView:self willSelectItemAtIndex:index numFingersTouch:numFingers];
+	
+		[_selectedIndices addIndex:index];
+		[[self cellForItemAtIndex:index] setSelected:YES animated:animated];
 
-	if ( notifyDelegate && _flags.delegateWillSelectItem )
-		index = [self.delegate gridView: self willSelectItemAtIndex: index];
+		if (position != AQGridViewScrollPositionNone)
+			[self scrollToItemAtIndex:index atScrollPosition:position animated:animated];
 
-  if ( notifyDelegate && _flags.delegateWillSelectItemMultiTouch )
-		index = [self.delegate gridView: self willSelectItemAtIndex: index
-                    numFingersTouch:numFingers];
+		if (notifyDelegate)
+			[[NSNotificationCenter defaultCenter] postNotificationName:AQGridViewSelectionDidChangeNotification object:self];
+		
+		if (notifiesDidSelect)
+			[delegate gridView:self didSelectItemAtIndex:index];
 
-	[_selectedIndices addIndex:index];
-	[[self cellForItemAtIndex: index] setSelected: YES animated: animated];
-
-	if ( position != AQGridViewScrollPositionNone )
-		[self scrollToItemAtIndex: index atScrollPosition: position animated: animated];
-
-	if ( notifyDelegate )
-	{
-		[[NSNotificationCenter defaultCenter] postNotificationName: AQGridViewSelectionDidChangeNotification
-															object: self];
+		if (notifiesDidSelectMultitouch)
+			[delegate gridView:self didSelectItemAtIndex:index numFingersTouch:numFingers];
+	
 	}
-
-	if ( notifyDelegate && _flags.delegateDidSelectItem )
-		[self.delegate gridView: self didSelectItemAtIndex: index];
-
-  if ( notifyDelegate && _flags.delegateDidSelectItemMultiTouch )
-		[self.delegate gridView: self didSelectItemAtIndex: index numFingersTouch:numFingers];
-
-	// ensure that the selected item is no longer marked as just 'highlighted' (that's an intermediary state)
-	[_highlightedIndices removeIndex: index];
+	
+	//	Ensure that the selected item is no longer marked as just 'highlighted' (that's an intermediary state)
+	[_highlightedIndices removeIndex:index];
+	
 }
 
 - (void) selectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
