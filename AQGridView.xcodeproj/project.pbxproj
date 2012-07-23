@@ -127,15 +127,15 @@
 		389782A6117A311B00D5CC8F /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				389782A7117A311B00D5CC8F /* AQGridView+CellLayout.h */,
-				389782A8117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h */,
 				389782A9117A311B00D5CC8F /* AQGridView.h */,
 				389782AA117A311B00D5CC8F /* AQGridView.m */,
+				389782A7117A311B00D5CC8F /* AQGridView+CellLayout.h */,
+				389782A8117A311B00D5CC8F /* AQGridView+CellLocationDelegation.h */,
 				FFD4E69215BD559C007F8352 /* AQGridView+Deprecated.h */,
 				FFD4E69315BD559C007F8352 /* AQGridView+Deprecated.m */,
-				389782AC117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h */,
 				389782AD117A311B00D5CC8F /* AQGridViewCell.h */,
 				389782AE117A311B00D5CC8F /* AQGridViewCell.m */,
+				389782AC117A311B00D5CC8F /* AQGridViewCell+AQGridViewCellPrivate.h */,
 				389782AF117A311B00D5CC8F /* AQGridViewController.h */,
 				389782B0117A311B00D5CC8F /* AQGridViewController.m */,
 				389782B1117A311B00D5CC8F /* AQGridViewData.h */,
