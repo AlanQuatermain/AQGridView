@@ -454,6 +454,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ExpanderDemo_Prefix.pch;
 				INFOPLIST_FILE = "ExpanderDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = ExpanderDemo;
 				WRAPPER_EXTENSION = app;
 			};
@@ -467,6 +468,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ExpanderDemo_Prefix.pch;
 				INFOPLIST_FILE = "ExpanderDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = ExpanderDemo;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
