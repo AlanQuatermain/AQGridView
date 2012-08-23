@@ -459,6 +459,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 - (void) handleGridViewBoundsChanged: (CGRect) oldBounds toNewBounds: (CGRect) bounds
 {
+    CGPoint oldOffset = self.contentOffset;
 	CGSize oldGridSize = [_gridData sizeForEntireGrid];
 	BOOL wasAtBottom = ((oldGridSize.height != 0.0) && (CGRectGetMaxY(oldBounds) == oldGridSize.height));
 
@@ -477,7 +478,18 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			contentRect.origin.y += (newGridSize.height - oldGridSize.height);
 			self.contentOffset = contentRect.origin;
 		}
-	}
+	} else if (!wasAtBottom && !CGPointEqualToPoint(oldBounds.origin, CGPointZero) && !CGSizeEqualToSize(oldGridSize, CGSizeZero))
+    {
+        // If not at the bottom or top (they are handled above and in updateContentRectWithOldMaxLocation)
+        // and we have data to work with (sometimes we can start with the oldSize == 0),
+        // constentOffset.y needs to be reset to be proportional to the new height. Then snap it to the nearest cell boundry.
+            
+        CGFloat proportionalY = newGridSize.height * (oldOffset.y / oldGridSize.height);
+        CGRect cellRect = [_gridData cellRectForPoint:CGPointMake(self.contentOffset.x, proportionalY)];
+        CGFloat newY = (proportionalY < (cellRect.origin.y + (cellRect.size.height / 2.0f))) ?
+                        cellRect.origin.y : cellRect.origin.y + cellRect.size.height;
+        self.contentOffset = CGPointMake(self.contentOffset.x, newY);
+    }
 
 	[self updateVisibleGridCellsNow];
 	_flags.allCellsNeedLayout = 1;
