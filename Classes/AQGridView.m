@@ -785,15 +785,27 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 			break;
 
 		case AQGridViewScrollPositionTop:
-			targetRect.origin.y = gridRect.origin.y;	// set target y origin to cell's y origin
+			if (self.layoutDirection == AQGridViewLayoutDirectionHorizontal) {
+				targetRect.origin.x = gridRect.origin.x;
+			} else {
+				targetRect.origin.y = gridRect.origin.y; // set target y origin to cell's y origin
+			}
 			break;
 
 		case AQGridViewScrollPositionMiddle:
-			targetRect.origin.y = MAX(gridRect.origin.y - (CGFloat)ceilf((targetRect.size.height - gridRect.size.height) * 0.5), 0.0);
+			if(self.layoutDirection == AQGridViewLayoutDirectionHorizontal ) {
+				targetRect.origin.x = MAX(gridRect.origin.x - (CGFloat)ceilf((targetRect.size.width - gridRect.size.width) * 0.5), 0.0);
+			} else {
+				targetRect.origin.y = MAX(gridRect.origin.y - (CGFloat)ceilf((targetRect.size.height - gridRect.size.height) * 0.5), 0.0);
+			}
 			break;
 
 		case AQGridViewScrollPositionBottom:
-			targetRect.origin.y = MAX((CGFloat)floorf(gridRect.origin.y - (targetRect.size.height - gridRect.size.height)), 0.0);
+			if (self.layoutDirection == AQGridViewLayoutDirectionHorizontal) {
+				targetRect.origin.x = MAX((CGFloat)floorf(gridRect.origin.x - (targetRect.size.width - gridRect.size.width)), 0.0);
+			} else {
+				targetRect.origin.y = MAX((CGFloat)floorf(gridRect.origin.y - (targetRect.size.height - gridRect.size.height)), 0.0);
+			}
 			break;
 	}
 
