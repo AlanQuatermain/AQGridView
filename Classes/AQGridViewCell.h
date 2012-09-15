@@ -82,8 +82,8 @@ typedef enum {
 		unsigned int selected:1;
 		unsigned int highlighted:1;
 		unsigned int becomingHighlighted:1;
-        unsigned int setShadowPath:1;
-        unsigned int editing:1;
+		unsigned int setShadowPath:1;
+		unsigned int editing:1;
 		unsigned int hiddenForAnimation:1;
 		unsigned int __RESERVED__:14;
 	} _cellFlags;
