@@ -81,7 +81,7 @@
 	}
 	
 	NSString * animationDesc = @"<Unknown>";
-	switch ( _animation )
+	switch ( (UITableViewRowAnimation)_animation )
 	{
 		case AQGridViewItemAnimationFade:
 			animationDesc = @"Fade";
@@ -106,6 +106,7 @@
 	}
 	
 	return ( [NSString stringWithFormat: @"%@{index=%u, action=%@, animation=%@, offset=%i}", [super description], (unsigned)_index, actionDesc, animationDesc, _offset] );
+	
 }
 
 - (NSComparisonResult) compare: (AQGridViewUpdateItem *) other
