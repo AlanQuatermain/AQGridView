@@ -565,7 +565,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[super setFrame: newFrame];
 	CGRect newBounds = self.bounds;
 
-	if ( newBounds.size.width != oldBounds.size.width )
+    if ( !CGSizeEqualToSize(newBounds.size, oldBounds.size) )
 		[self handleGridViewBoundsChanged: oldBounds toNewBounds: newBounds];
 }
 
