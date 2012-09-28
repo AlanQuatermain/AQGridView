@@ -122,6 +122,6 @@ typedef enum {
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 // Sorting
-- (NSComparisonResult) compareOriginAgainstCell: (AQGridViewCell *) otherCell;
-
+- (NSComparisonResult) compareOriginAgainstCellVertical: (AQGridViewCell *) otherCell;
+- (NSComparisonResult) compareOriginAgainstCellHorizontal: (AQGridViewCell *) otherCell;
 @end

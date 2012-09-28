@@ -130,6 +130,7 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 	UIView *						_headerView;
 	UIView *						_footerView;
 
+
 	struct
 	{
 		unsigned	resizesCellWidths:1;
@@ -138,7 +139,10 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	allowsSelection:1;
 		unsigned	backgroundViewExtendsUp:1;
 		unsigned	backgroundViewExtendsDown:1;
+        unsigned	backgroundViewExtendsLeft:1;
+		unsigned	backgroundViewExtendsRight:1;
 		unsigned	usesPagedHorizontalScrolling:1;
+        unsigned    layoutChange:1;
 		unsigned	updating:1;				// unused
 		unsigned	ignoreTouchSelect:1;
 		unsigned	needsReload:1;
@@ -230,7 +234,10 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 @property (nonatomic, retain) UIView * backgroundView;		// specifies a view to place behind the cells
 @property (nonatomic) BOOL backgroundViewExtendsUp;			// default is NO. If YES, the background view extends upward and is visible during a bounce.
 @property (nonatomic) BOOL backgroundViewExtendsDown;		// default is NO. If YES, the background view extends downward and is visible during a bounce.
+@property (nonatomic) BOOL backgroundViewExtendsLeft;			// default is NO. If YES, the background view extends left and is visible during a bounce.
+@property (nonatomic) BOOL backgroundViewExtendsRight;		// default is NO. If YES, the background view extends right and is visible during a bounce.
 @property (nonatomic) BOOL usesPagedHorizontalScrolling;	// default is NO, and scrolls verticalls only. Set to YES to have horizontal-only scrolling by page.
+@property (nonatomic) BOOL layoutChange;			
 
 @property (nonatomic) AQGridViewCellSeparatorStyle separatorStyle;	// default is AQGridViewCellSeparatorStyleEmptySpace
 @property (nonatomic, retain) UIColor * separatorColor;		// ignored unless separatorStyle == AQGridViewCellSeparatorStyleSingleLine. Default is standard separator gray.
