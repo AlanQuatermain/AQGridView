@@ -39,125 +39,149 @@
 #import "SpringBoardViewController.h"
 #import "AQGridView.h"
 #import "SpringBoardIconCell.h"
+#import "SpringBoardIcon.h"
+
+
+@interface SpringBoardViewController ()
+
+@property (nonatomic, readwrite, strong) NSArray *icons;
+@property (nonatomic, readwrite, weak) AQGridView *gridView;
+@property (nonatomic, readwrite, assign) NSUInteger emptyCellIndex;
+@property (nonatomic, readwrite, assign) NSUInteger dragOriginIndex;
+@property (nonatomic, readwrite, assign) CGPoint dragOriginCellOrigin;
+@property (nonatomic, readwrite, strong) SpringBoardIconCell *draggingCell;
+
+- (UIView *) newBackgroundView;
+
+@end
+
 
 @implementation SpringBoardViewController
+@synthesize icons = _icons;
+@synthesize gridView = _gridView;
+@synthesize emptyCellIndex = _emptyCellIndex;
+@synthesize dragOriginIndex = _dragOriginIndex;
+@synthesize dragOriginCellOrigin = _dragOriginCellOrigin;
+@synthesize draggingCell = _draggingCell;
 
-// Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
-- (void) viewDidLoad
-{
-    [super viewDidLoad];
-    
-    _emptyCellIndex = NSNotFound;
-    
-    self.view.autoresizesSubviews = YES;
-    
-    // background goes in first
-    UIImageView * background = [[UIImageView alloc] initWithFrame: self.view.bounds];
-    background.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    background.contentMode = UIViewContentModeCenter;
-    background.image = [UIImage imageNamed: @"background.png"];
-    
-    [self.view addSubview: background];
-    
-    // grid view sits on top of the background image
-    _gridView = [[AQGridView alloc] initWithFrame: self.view.bounds];
-    _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-    _gridView.backgroundColor = [UIColor clearColor];
-    _gridView.opaque = NO;
-    _gridView.dataSource = self;
-    _gridView.delegate = self;
-    _gridView.scrollEnabled = NO;
-    
-    if ( UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]) )
-    {
-        // bring 1024 in to 1020 to make a width divisible by five
-        _gridView.leftContentInset = 2.0;
-        _gridView.rightContentInset = 2.0;
-    }
-    
-    [self.view addSubview: _gridView];
-    
-    // add our gesture recognizer to the grid view
-    UILongPressGestureRecognizer * gr = [[UILongPressGestureRecognizer alloc] initWithTarget: self action: @selector(moveActionGestureRecognizerStateChanged:)];
-    gr.minimumPressDuration = 0.5;
-    gr.delegate = self;
-    [_gridView addGestureRecognizer: gr];
-    
-    if ( _icons == nil )
-    {
-        _icons = [[NSMutableArray alloc] initWithCapacity: 20];
-        UIBezierPath * path = [UIBezierPath bezierPathWithRoundedRect: CGRectMake(0.0, 0.0, 72.0, 72.0)
-                                                         cornerRadius: 18.0];
-        
-        CGFloat saturation = 0.6, brightness = 0.7;
-        for ( NSUInteger i = 1; i <= 20; i++ )
-        {
-            UIColor * color = [UIColor colorWithHue: (CGFloat)i/20.0
-                                         saturation: saturation
-                                         brightness: brightness
-                                              alpha: 1.0];
-            
-            UIGraphicsBeginImageContext( CGSizeMake(72.0, 72.0) );
-            
-            // clear background
-            [[UIColor clearColor] set];
-            UIRectFill( CGRectMake(0.0, 0.0, 72.0, 72.0) );
-            
-            // fill the rounded rectangle
-            [color set];
-            [path fill];
-            
-            UIImage * image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            
-            // put the image into our list
-            [_icons addObject: image];
-        }
-    }
-    
-    [_gridView reloadData];
+- (NSArray *) icons {
+
+	if (!_icons) {
+
+		NSUInteger const numberOfColors = 20;
+		NSMutableArray *icons = [NSMutableArray arrayWithCapacity:numberOfColors];
+
+		CGFloat const saturation = 0.6f;
+		CGFloat const brightness = 0.7f;
+		CGFloat const alpha = 1.0f;
+		
+		for (NSUInteger i = 1; i <= 20; i++) {
+		
+			CGFloat const hue = (CGFloat)i/20.0f;
+		
+			UIColor *color = [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:alpha];
+			
+			[icons addObject:[SpringBoardIcon iconWithColor:color]];
+			
+		}
+		
+		_icons = icons;
+	
+	}
+	
+	return _icons;
+
 }
 
-// Override to allow orientations other than the default portrait orientation.
-- (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation
-{
-    return YES;
+- (UIView *) newBackgroundView {
+
+	UIImageView *background = [[UIImageView alloc] initWithFrame: self.view.bounds];
+	background.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+	background.contentMode = UIViewContentModeCenter;
+	background.image = [UIImage imageNamed: @"background.png"];
+	
+	return background;
+
 }
 
-- (void) willRotateToInterfaceOrientation: (UIInterfaceOrientation) toInterfaceOrientation
-                                 duration: (NSTimeInterval) duration
-{
-    if ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) )
-    {
-        // width will be 768, which divides by four nicely already
-        NSLog( @"Setting left+right content insets to zero" );
-        _gridView.leftContentInset = 0.0;
-        _gridView.rightContentInset = 0.0;
-    }
-    else
-    {
-        // width will be 1024, so subtract a little to get a width divisible by five
-        NSLog( @"Setting left+right content insets to 2.0" );
-        _gridView.leftContentInset = 2.0;
-        _gridView.rightContentInset = 2.0;
-    }
-}
+- (void) viewDidLoad {
 
-#pragma mark -
-#pragma mark UIGestureRecognizer Delegate/Actions
-
-- (BOOL) gestureRecognizerShouldBegin: (UIGestureRecognizer *) gestureRecognizer
-{
-    CGPoint location = [gestureRecognizer locationInView: _gridView];
-    if ( [_gridView indexForItemAtPoint: location] < [_icons count] )
-        return ( YES );
+	[super viewDidLoad];
     
-    // touch is outside the bounds of any icon cells, so don't start the gesture
-    return ( NO );
+	_emptyCellIndex = NSNotFound;
+    
+	self.view.autoresizesSubviews = YES;
+  
+	[self.view addSubview:[self newBackgroundView]];
+	[self gridView];
+    
+	UILongPressGestureRecognizer *gr = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(moveActionGestureRecognizerStateChanged:)];
+	gr.minimumPressDuration = 0.5;
+	gr.delegate = self;
+	[_gridView addGestureRecognizer:gr];
+    
+	[self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0.0f];
+	[_gridView reloadData];
+
 }
 
-- (void) moveActionGestureRecognizerStateChanged: (UIGestureRecognizer *) recognizer
-{
+- (AQGridView *) gridView {
+
+	if (!_gridView && [self isViewLoaded]) {
+		
+		AQGridView *gridView = [[AQGridView alloc] initWithFrame:self.view.bounds];
+		gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+		gridView.backgroundColor = [UIColor clearColor];
+		gridView.opaque = NO;
+		gridView.dataSource = self;
+		gridView.delegate = self;
+		gridView.scrollEnabled = NO;
+	
+		[self.view addSubview:gridView];
+		
+		_gridView = gridView;
+	
+	}
+  
+	return _gridView;
+
+}
+
+- (BOOL) shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation {
+	
+	return YES;
+	
+}
+
+- (void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+
+	AQGridView * const gv = self.gridView;
+
+	if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
+		
+		//	width will be 768, which divides by four nicely already
+		gv.leftContentInset = 0.0;
+		gv.rightContentInset = 0.0;
+		
+	} else {
+	
+		// width will be 1024, so subtract a little to get a width divisible by five
+		gv.leftContentInset = 2.0;
+    gv.rightContentInset = 2.0;
+		
+	}
+	
+}
+
+- (BOOL) gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+
+	AQGridView * const gv = self.gridView;
+	CGPoint const location = [gestureRecognizer locationInView:gv];
+	return ([gv indexForItemAtPoint:location] < gv.numberOfItems);
+
+}
+
+- (void) moveActionGestureRecognizerStateChanged: (UIGestureRecognizer *) recognizer {
     switch ( recognizer.state )
     {
         default:
@@ -176,7 +200,7 @@
             }
             
             _emptyCellIndex = _dragOriginIndex;
-            
+						
             // move the cell back to its origin
             [UIView beginAnimations: @"SnapBack" context: NULL];
             [UIView setAnimationCurve: UIViewAnimationCurveEaseOut];
@@ -205,10 +229,11 @@
 				index = [_icons count] - 1;
 			}
             
-            // update the data store
-            id obj = [_icons objectAtIndex: _dragOriginIndex];
-            [_icons removeObjectAtIndex: _dragOriginIndex];
-            [_icons insertObject: obj atIndex: index];
+						SpringBoardIcon *icon = [self.icons objectAtIndex:index];
+						NSMutableArray *toIcons = [self.icons mutableCopy];
+            [toIcons removeObject:icon];
+            [toIcons insertObject:icon atIndex:index];
+						self.icons = toIcons;
             
             if ( index != _emptyCellIndex )
             {
@@ -254,25 +279,27 @@
             // grab some info about the origin of this cell
             _dragOriginCellOrigin = frame.origin;
             _dragOriginIndex = index;
-            
-            [UIView beginAnimations: @"" context: NULL];
-            [UIView setAnimationDuration: 0.2];
-            [UIView setAnimationCurve: UIViewAnimationCurveEaseOut];
-            
-            // transformation-- larger, slightly transparent
-            _draggingCell.transform = CGAffineTransformMakeScale( 1.2, 1.2 );
-            _draggingCell.alpha = 0.7;
-            
-            // also make it center on the touch point
-            _draggingCell.center = [recognizer locationInView: self.view];
-            
-            [UIView commitAnimations];
-            
-            // reload the grid underneath to get the empty cell in place
-            [_gridView reloadItemsAtIndices: [NSIndexSet indexSetWithIndex: index]
-                              withAnimation: AQGridViewItemAnimationNone];
+						
+						[UIView animateWithDuration:0.2f delay:0.0f options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionAllowUserInteraction|UIViewAnimationOptionCurveEaseInOut animations:^{
+							
+							_draggingCell.transform = CGAffineTransformMakeScale( 1.2, 1.2 );
+							_draggingCell.alpha = 0.7;
+							_draggingCell.center = [recognizer locationInView: self.view];
+
+						} completion:^(BOOL finished) {
+						
+							if (!finished)
+								return;
+								
+							//	FIXME
+							
+							[_gridView reloadItemsAtIndices: [NSIndexSet indexSetWithIndex: index]
+																withAnimation: AQGridViewItemAnimationNone];
+							
+						}];
             
             break;
+						
         }
             
         case UIGestureRecognizerStateChanged:
@@ -347,54 +374,35 @@
 #pragma mark -
 #pragma mark GridView Data Source
 
-- (NSUInteger) numberOfItemsInGridView: (AQGridView *) gridView
-{
-    return ( [_icons count] );
+- (NSUInteger) numberOfItemsInGridView:(AQGridView *)gridView {
+	
+	return [self.icons count];
+	
 }
 
-- (AQGridViewCell *) gridView: (AQGridView *) gridView cellForItemAtIndex: (NSUInteger) index
-{
-    static NSString * EmptyIdentifier = @"EmptyIdentifier";
-    static NSString * CellIdentifier = @"CellIdentifier";
-    
-    if ( index == _emptyCellIndex )
-    {
-        NSLog( @"Loading empty cell at index %u", index );
-        AQGridViewCell * hiddenCell = [gridView dequeueReusableCellWithIdentifier: EmptyIdentifier];
-        if ( hiddenCell == nil )
-        {
-            // must be the SAME SIZE AS THE OTHERS
-            // Yes, this is probably a bug. Sigh. Look at -[AQGridView fixCellsFromAnimation] to fix
-            hiddenCell = [[AQGridViewCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 72.0, 72.0)
-                                                reuseIdentifier: EmptyIdentifier];
-        }
-        
-        hiddenCell.hidden = YES;
-        return ( hiddenCell );
-    }
-    
-    SpringBoardIconCell * cell = (SpringBoardIconCell *)[gridView dequeueReusableCellWithIdentifier: CellIdentifier];
-    if ( cell == nil )
-    {
-        cell = [[SpringBoardIconCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 72.0, 72.0) reuseIdentifier: CellIdentifier];
-    }
-    
-    cell.icon = [_icons objectAtIndex: index];
-    
-    return ( cell );
+- (AQGridViewCell *) gridView:(AQGridView *)gridView cellForItemAtIndex:(NSUInteger)index {
+
+	static NSString * const CellIdentifier = @"CellIdentifier";
+
+	SpringBoardIconCell * cell = (SpringBoardIconCell *)[gridView dequeueReusableCellWithIdentifier:CellIdentifier];
+
+	if (!cell) {
+
+		cell = [[SpringBoardIconCell alloc] initWithFrame: CGRectMake(0.0, 0.0, 72.0, 72.0) reuseIdentifier:CellIdentifier];
+
+	}
+
+	cell.icon = [self.icons objectAtIndex:index];
+	cell.alpha = (index == _emptyCellIndex) ? 0.0f : 1.0f;
+	
+	return cell;
+	
 }
 
-- (CGSize) portraitGridCellSizeForGridView: (AQGridView *) gridView
-{
-    return ( CGSizeMake(192.0, 192.0) );
+- (CGSize) portraitGridCellSizeForGridView:(AQGridView *)gridView {
+	
+	return (CGSize){ 192.0f, 192.0f };
+	
 }
-
-- (void) viewDidUnload
-{
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
-     _gridView = nil;
-}
-
 
 @end

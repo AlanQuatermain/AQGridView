@@ -18,6 +18,7 @@
 		38A96F031182A11800DDC861 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38A96F021182A11800DDC861 /* QuartzCore.framework */; };
 		38A96F291182A15700DDC861 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 38A96F281182A15700DDC861 /* background.png */; };
 		FFD4E6DF15BD5B4C007F8352 /* libAQGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFD4E6DC15BD5B40007F8352 /* libAQGridView.a */; };
+		FFDCB03315E00ED600378597 /* SpringBoardIcon.m in Sources */ = {isa = PBXBuildFile; fileRef = FFDCB03215E00ED600378597 /* SpringBoardIcon.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,8 @@
 		38A96F281182A15700DDC861 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* SpringBoard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "SpringBoard-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		FFD4E6D415BD5B40007F8352 /* AQGridView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AQGridView.xcodeproj; path = ../../AQGridView.xcodeproj; sourceTree = "<group>"; };
+		FFDCB03115E00ED600378597 /* SpringBoardIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringBoardIcon.h; sourceTree = "<group>"; };
+		FFDCB03215E00ED600378597 /* SpringBoardIcon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpringBoardIcon.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +83,8 @@
 				1D3623250D0F684500981E51 /* SpringBoardAppDelegate.m */,
 				28D7ACF60DDB3853001CB0EB /* SpringBoardViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* SpringBoardViewController.m */,
+				FFDCB03115E00ED600378597 /* SpringBoardIcon.h */,
+				FFDCB03215E00ED600378597 /* SpringBoardIcon.m */,
 				38A96EB7118272AC00DDC861 /* SpringBoardIconCell.h */,
 				38A96EB8118272AC00DDC861 /* SpringBoardIconCell.m */,
 			);
@@ -230,6 +235,7 @@
 				1D3623260D0F684500981E51 /* SpringBoardAppDelegate.m in Sources */,
 				28D7ACF80DDB3853001CB0EB /* SpringBoardViewController.m in Sources */,
 				38A96EB9118272AC00DDC861 /* SpringBoardIconCell.m in Sources */,
+				FFDCB03315E00ED600378597 /* SpringBoardIcon.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

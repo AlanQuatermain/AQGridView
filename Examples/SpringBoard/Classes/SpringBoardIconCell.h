@@ -39,9 +39,9 @@
 #import <UIKit/UIKit.h>
 #import "AQGridViewCell.h"
 
+@class SpringBoardIcon;
 @interface SpringBoardIconCell : AQGridViewCell
-{
-    UIImageView * _iconView;
-}
-@property (nonatomic, retain) UIImage * icon;
+
+@property (nonatomic, readwrite, strong) SpringBoardIcon *icon;
+
 @end

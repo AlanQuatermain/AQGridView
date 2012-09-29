@@ -1277,9 +1277,12 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	//_pendingSelectionIndex = NSNotFound;
 }
 
-- (void) _userSelectItemAtIndex: (UserSelectItemIndexParams*) params
-{
+- (void) _userSelectItemAtIndex:(UserSelectItemIndexParams *)params {
+	
 	NSUInteger index = params.indexNum;
+	if (index == NSNotFound)
+		return;
+	
   NSUInteger numFingersCount = params.numFingers;
 	[self unhighlightItemAtIndex: index animated: NO];
 	if ( ([[self cellForItemAtIndex: index] isSelected]) && (self.requiresSelection == NO) )

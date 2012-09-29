@@ -42,16 +42,6 @@
 @class SpringBoardIconCell;
 
 @interface SpringBoardViewController : UIViewController <AQGridViewDataSource, AQGridViewDelegate, UIGestureRecognizerDelegate>
-{
-    NSMutableArray * _icons;
-    AQGridView * _gridView;
-    
-    NSUInteger _emptyCellIndex;
-    
-    NSUInteger _dragOriginIndex;
-    CGPoint _dragOriginCellOrigin;
-    
-    SpringBoardIconCell * _draggingCell;
-}
+
 @end
 

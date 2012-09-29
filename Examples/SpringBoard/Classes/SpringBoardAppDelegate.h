@@ -39,14 +39,10 @@
 #import <UIKit/UIKit.h>
 
 @class SpringBoardViewController;
+@interface SpringBoardAppDelegate : NSObject <UIApplicationDelegate>
 
-@interface SpringBoardAppDelegate : NSObject <UIApplicationDelegate> {
-    UIWindow *window;
-    SpringBoardViewController *viewController;
-}
-
-@property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet SpringBoardViewController *viewController;
+@property (nonatomic, readwrite, retain) IBOutlet UIWindow *window;
+@property (nonatomic, readwrite, strong) IBOutlet SpringBoardViewController *viewController;
 
 @end
 
