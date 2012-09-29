@@ -908,64 +908,75 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	[_updateInfoStack addObject: info];
 }
 
-- (void) endUpdateAnimations
-{
-	NSAssert([_updateInfoStack lastObject] != nil, @"_updateInfoStack should not be empty at this point" );
+- (void) endUpdateAnimations {
+	
+	NSAssert([_updateInfoStack count], @"_updateInfoStack should not be empty at this point" );
     
-	__block AQGridViewUpdateInfo * info = [_updateInfoStack lastObject];
-
-	if ( info.numberOfUpdates == 0 )
-	{
-		[_updateInfoStack removeObject: info];
+	AQGridViewUpdateInfo *info = [_updateInfoStack lastObject];
+	if (!info.numberOfUpdates) {
+		[_updateInfoStack removeObject:info];
 		_reloadingSuspendedCount--;
 		return;
 	}
 
 	NSUInteger expectedItemCount = [info numberOfItemsAfterUpdates];
-	NSUInteger actualItemCount = [_dataSource numberOfItemsInGridView: self];
-	if ( expectedItemCount != actualItemCount )
-	{
+	NSUInteger actualItemCount = [_dataSource numberOfItemsInGridView:self];
+	
+	if (expectedItemCount != actualItemCount) {
+		
 		NSUInteger numAdded = [[info sortedInsertItems] count];
 		NSUInteger numDeleted = [[info sortedDeleteItems] count];
 
-		[_updateInfoStack removeObject: info];
+		[_updateInfoStack removeObject:info];
 		_reloadingSuspendedCount--;
-
+		
 		[NSException raise: NSInternalInconsistencyException format: @"Invalid number of items in AQGridView: Started with %u, added %u, deleted %u. Expected %u items after changes, but got %u", (unsigned)_gridData.numberOfItems, (unsigned)numAdded, (unsigned)numDeleted, (unsigned)expectedItemCount, (unsigned)actualItemCount];
+		
 	}
 
 	[info cleanupUpdateItems];
 	_animationCount++;
-	//NSAssert(_animationCount == 1, @"Stacked animations occurring!!");
-    
-    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut
-                     animations:^(void) {
-                         self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
-                         
-                         
-                         _gridData = [info newGridViewData];
-                         NSMutableIndexSet *newIndices = [[NSMutableIndexSet alloc] init];
-                         [_selectedIndices enumerateIndexesUsingBlock:
-                          ^(NSUInteger idx, BOOL *stop) {
-                              [newIndices addIndex:[info newIndexForOldIndex: idx]];
-                          }];
-                         _selectedIndices = newIndices;
-                         
-                         _reloadingSuspendedCount--;
-                     }
-                     completion:^(BOOL finished) {
-                         // if nothing was animated, we don't have to do anything at all
-                         //	if ( self.animatingCells.count != 0 )
-                         [self fixCellsFromAnimation];
-                         
-                         // NB: info becomes invalid at this point
-                         [_updateInfoStack removeObject: info];
-                         _animationCount--;
-                         
-                         //_reloadingSuspendedCount--;
-                         if ( _flags.delegateDidEndUpdateAnimation == 1 )
-                             [self.delegate gridViewDidEndUpdateAnimation: self];
-                     }];
+	
+	//	TBD: Investigate
+	//	NSAssert(_animationCount == 1, @"Stacked animations occurring!!");
+	
+	[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+
+		self.animatingCells = [info animateCellUpdatesUsingVisibleContentRect: [self gridViewVisibleBounds]];
+
+		_gridData = [info newGridViewData];
+		
+		NSMutableIndexSet *newIndices = [[NSMutableIndexSet alloc] init];
+		
+		[_selectedIndices enumerateIndexesUsingBlock: ^(NSUInteger idx, BOOL *stop) {
+			
+			NSUInteger newIndex = [info newIndexForOldIndex:idx];
+			if (newIndex != NSNotFound) {
+				[newIndices addIndex:newIndex];
+			}
+			
+		}];
+		
+		_selectedIndices = newIndices;
+		_reloadingSuspendedCount--;
+
+	} completion:^(BOOL finished) {
+		
+		//	if nothing was animated, we don't have to do anything at all
+		//	if ( self.animatingCells.count != 0 )
+		[self fixCellsFromAnimation];
+
+		//	NB: info becomes invalid at this point
+		[_updateInfoStack removeObject:info];
+		_animationCount--;
+
+		//	_reloadingSuspendedCount--;
+		if (_flags.delegateDidEndUpdateAnimation) {
+			[self.delegate gridViewDidEndUpdateAnimation:self];
+		}
+		
+	}];
+	
 }
 
 - (void) beginUpdates
@@ -1110,10 +1121,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	}
 }
 
-- (void) _selectItemAtIndex: (NSUInteger) index animated: (BOOL) animated
-			 scrollPosition: (AQGridViewScrollPosition) position notifyDelegate: (BOOL) notifyDelegate
-       numFingersTouch: (NSUInteger) numFingers
-{
+- (void) _selectItemAtIndex:(NSUInteger)index animated:(BOOL)animated scrollPosition:(AQGridViewScrollPosition)position notifyDelegate:(BOOL)notifyDelegate numFingersTouch:(NSUInteger)numFingers {
 
 	id<AQGridViewDelegate> const delegate = self.delegate;
 	BOOL const selectable = _flags.selectable;
@@ -1125,6 +1133,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	BOOL const notifiesDidSelectMultitouch = notifyDelegate && _flags.delegateDidSelectItemMultiTouch;
 	
 	if (!selectable)
+		return;
+	
+	if (index == NSNotFound)
 		return;
 	
 	if (allowsMultipleSelection && itemAlreadySelected) {
