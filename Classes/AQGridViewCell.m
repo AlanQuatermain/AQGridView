@@ -34,70 +34,79 @@
  *
  */
 
+#import <objc/runtime.h>
+#import <QuartzCore/QuartzCore.h>
 #import "AQGridViewCell.h"
 #import "AQGridViewCell+AQGridViewCellPrivate.h"
 #import "UIColor+AQGridView.h"
-#import <QuartzCore/QuartzCore.h>
-#import <objc/runtime.h>
-
-#ifdef BUILTIN_IMAGES
-#import "AQGridViewCell_png.h"
-#endif
 
 @interface AQGridViewCell ()
-@property (nonatomic, retain) UIView * contentView;
-@property (nonatomic, copy) NSString * reuseIdentifier;
-- (void) flipHighlightTimerFired: (NSTimer *) timer;
+
+@property (nonatomic, readwrite, retain) UIView *contentView;
+@property (nonatomic, readwrite, copy) NSString *reuseIdentifier;
+
+- (void) commonInit;
+- (void) flipHighlightTimerFired:(NSTimer *)timer;
+
 @end
 
 @implementation AQGridViewCell
 
-@synthesize contentView=_contentView, backgroundView=_backgroundView, selectedBackgroundView=_selectedBackgroundView;
-@synthesize reuseIdentifier=_reuseIdentifier, selectionGlowColor=_selectionGlowColor;
-@synthesize selectionGlowShadowRadius=_selectionGlowShadowRadius;
+@synthesize contentView = _contentView;
+@synthesize backgroundView = _backgroundView;
+@synthesize selectedBackgroundView = _selectedBackgroundView;
+@synthesize reuseIdentifier = _reuseIdentifier;
+@synthesize selectionGlowColor = _selectionGlowColor;
+@synthesize selectionGlowShadowRadius = _selectionGlowShadowRadius;
 
-- (id) initWithFrame: (CGRect) frame reuseIdentifier: (NSString *) reuseIdentifier
-{
-	self = [super initWithFrame: frame];
-	if ( self == nil )
-		return ( nil );
+- (id) initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier {
 	
-	self.reuseIdentifier = reuseIdentifier;
+	self = [super initWithFrame:frame];
+	if (!self)
+		return nil;
+	
+	_reuseIdentifier = [reuseIdentifier copy];
+	
+	
+	[self commonInit];
+	
+	return self;
+
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder {
+
+	self = [super initWithCoder:aDecoder];
+	if (!self)
+		return nil;
+	
+	[self commonInit];
+	
+	return self;
+
+}
+
+- (void) commonInit {
+
 	_cellFlags.usingDefaultSelectedBackgroundView = 1;
 	_cellFlags.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
-	
-	if ( [CALayer instancesRespondToSelector: @selector(shadowPath)] )
-		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGlow;
-	else
-		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGray;
-    _cellFlags.setShadowPath = 0;
-	_selectionColorInfo = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,  &kCFTypeDictionaryValueCallBacks );
-	self.backgroundColor = [UIColor whiteColor];
+	_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGray;
 	
 	_selectionGlowShadowRadius = 12.0f;
+	_cellFlags.setShadowPath = 0;
 	
-	return ( self );
-}
-
-- (void) awakeFromNib
-{
-	[super awakeFromNib];
-	
-	_cellFlags.usingDefaultSelectedBackgroundView = 1;
-	_cellFlags.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
-	
-	if ( [CALayer instancesRespondToSelector: @selector(shadowPath)] )
-		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGlow;
-	else
-		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGray;
 	_selectionColorInfo = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,  &kCFTypeDictionaryValueCallBacks );
+	
 	self.backgroundColor = [UIColor whiteColor];
+	self.autoresizesSubviews = YES;
+	
 }
 
-- (void) dealloc
-{
-	if ( _selectionColorInfo != NULL )
-		CFRelease( _selectionColorInfo );
+- (void) dealloc {
+	
+	if (_selectionColorInfo)
+		CFRelease(_selectionColorInfo);
+	
 }
 
 - (NSComparisonResult) compareOriginAgainstCell: (AQGridViewCell *) otherCell
@@ -118,19 +127,23 @@
 	return ( NSOrderedSame );
 }
 
-- (UIView *) contentView
-{
-	if ( _contentView == nil )
-    {
+- (UIView *) contentView {
+	
+	if (!_contentView) {
+
 		_contentView = [[UIView alloc] initWithFrame: self.bounds];
-        _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        _contentView.autoresizesSubviews = YES;
-        self.autoresizesSubviews = YES;
-        _contentView.backgroundColor = [UIColor whiteColor];
+		_contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+		_contentView.autoresizesSubviews = YES;
+		_contentView.backgroundColor = [UIColor whiteColor];
+		
 		[_contentView.layer setValue: [NSNumber numberWithBool: YES] forKey: @"KoboHackInterestingLayer"];
-        [self addSubview: _contentView];
-    }
-	return ( _contentView );
+		
+		[self addSubview:_contentView];
+	
+	}
+	
+	return _contentView;
+	
 }
 
 - (CALayer *) glowSelectionLayer
@@ -291,36 +304,6 @@
 	if ( (_cellFlags.usingDefaultSelectedBackgroundView == 1) && (_selectedBackgroundView == nil) )
 	{
         NSString *imageName = nil;
-#ifdef BUILTIN_IMAGES
-		unsigned char * pngBytes = AQGridSelection_png;
-		NSUInteger pngLength = AQGridSelection_png_len;
-
-		switch ( _cellFlags.selectionStyle )
-		{
-			case AQGridViewCellSelectionStyleBlue:
-			default:
-				break;
-				
-			case AQGridViewCellSelectionStyleGray:
-				imageName = @"AQGridSelectionGray.png";
-				break;
-				
-			case AQGridViewCellSelectionStyleBlueGray:
-				imageName = @"AQGridSelectionGrayBlue.png";
-				break;
-				
-			case AQGridViewCellSelectionStyleGreen:
-				imageName = @"AQGridSelectionGreen.png";
-				break;
-				
-			case AQGridViewCellSelectionStyleRed:
-				imageName = @"AQGridSelectionRed.png";
-				break;
-		}
-		
-		NSData *pngData = [NSData dataWithBytesNoCopy: pngBytes length: pngLength freeWhenDone: NO];
-		_selectedBackgroundView = [[UIImageView alloc] initWithImage: [UIImage imageWithData: pngData]];
-#else
 	        imageName = @"AQGridSelection.png";
 		switch ( _cellFlags.selectionStyle )
 		{
@@ -346,7 +329,7 @@
 		}
 		
 		_selectedBackgroundView = [[UIImageView alloc] initWithImage: [UIImage imageNamed: imageName]];
-#endif
+		
 		_selectedBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
 		_selectedBackgroundView.contentMode = UIViewContentModeScaleToFill;
 	}

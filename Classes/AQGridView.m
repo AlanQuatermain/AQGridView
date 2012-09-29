@@ -543,24 +543,26 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	}
 }
 
-- (void) setFrame: (CGRect) newFrame
-{
-	CGRect oldBounds = self.bounds;
-	[super setFrame: newFrame];
-	CGRect newBounds = self.bounds;
-
-	if ( newBounds.size.width != oldBounds.size.width )
-		[self handleGridViewBoundsChanged: oldBounds toNewBounds: newBounds];
+- (void) setFrame:(CGRect)frame {
+	
+	CGRect fromBounds = self.bounds;
+	[super setFrame:frame];
+	CGRect toBounds = self.bounds;
+	
+	if (!CGSizeEqualToSize(fromBounds.size, toBounds.size))
+		[self handleGridViewBoundsChanged:fromBounds toNewBounds:toBounds];
+	
 }
 
-- (void) setBounds: (CGRect) bounds
-{
-	CGRect oldBounds = self.bounds;
-	[super setBounds: bounds];
-	bounds = self.bounds;		// in case it was modified
-
-	if ( !CGSizeEqualToSize(bounds.size, oldBounds.size) )
-		[self handleGridViewBoundsChanged: oldBounds toNewBounds: bounds];
+- (void) setBounds:(CGRect)bounds {
+	
+	CGRect fromBounds = self.bounds;
+	[super setBounds:bounds];
+	CGRect toBounds = self.bounds;
+	
+	if (!CGSizeEqualToSize(fromBounds.size, toBounds.size))
+		[self handleGridViewBoundsChanged:fromBounds toNewBounds:toBounds];
+	
 }
 
 - (BOOL) isEditing
