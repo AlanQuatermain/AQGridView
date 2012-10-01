@@ -1,4 +1,4 @@
-pod do |s|
+Pod::Spec.new do |s|
   s.name     = 'AQGridView'
   s.version  = '1.4'
   s.license  = 'BSD'
