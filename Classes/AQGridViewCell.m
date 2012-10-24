@@ -98,6 +98,7 @@
 {
 	if ( _selectionColorInfo != NULL )
 		CFRelease( _selectionColorInfo );
+  [super dealloc];
 }
 
 - (NSComparisonResult) compareOriginAgainstCell: (AQGridViewCell *) otherCell
