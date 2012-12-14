@@ -80,6 +80,8 @@ typedef enum {
 - (void) gridView: (AQGridView *) gridView didSelectItemAtIndex: (NSUInteger) index numFingersTouch:(NSUInteger)numFingers;
 - (void) gridView: (AQGridView *) gridView didDeselectItemAtIndex: (NSUInteger) index;
 
+- (void) gridView: (AQGridView *) gridView didTapItemAtIndex: (NSUInteger) index;
+
 // Called after animated updates finished
 - (void) gridViewDidEndUpdateAnimation:(AQGridView *) gridView;
 
@@ -159,6 +161,8 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 		unsigned	delegateGestureRecognizerActivated:1;
 		unsigned	delegateAdjustGridCellFrame:1;
 		unsigned    delegateDidEndUpdateAnimation:1;
+
+		unsigned    delegateDidTapItem:1;
 
 		unsigned	dataSourceGridCellSize:1;
 
