@@ -47,7 +47,7 @@
 	BOOL _popoverShowing;
 }
 
-@property (nonatomic, retain) AQGridView * gridView;
+@property (nonatomic, strong) AQGridView * gridView;
 @property (nonatomic) BOOL clearsSelectionOnViewWillAppear;
 
 @end

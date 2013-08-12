@@ -908,7 +908,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 {
 	NSAssert([_updateInfoStack lastObject] != nil, @"_updateInfoStack should not be empty at this point" );
     
-	__block AQGridViewUpdateInfo * info = [_updateInfoStack lastObject];
+	__weak AQGridViewUpdateInfo * info = [_updateInfoStack lastObject];
 
 	if ( info.numberOfUpdates == 0 )
 	{
