@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>568D903B-7ACF-4F91-B116-529E03E33EE1</string>
+	<key>IDESourceControlProjectName</key>
+	<string>AQGridView</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>73FA1EF6-6F4B-4A28-937E-B321E5F74B3B</key>
+		<string>https://github.com/choefele/AQGridView.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>AQGridView.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>73FA1EF6-6F4B-4A28-937E-B321E5F74B3B</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/choefele/AQGridView.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>73FA1EF6-6F4B-4A28-937E-B321E5F74B3B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>73FA1EF6-6F4B-4A28-937E-B321E5F74B3B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>AQGridView</string>
+		</dict>
+	</array>
+</dict>
+</plist>
