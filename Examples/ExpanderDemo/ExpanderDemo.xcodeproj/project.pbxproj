@@ -47,13 +47,13 @@
 		38D6F07B12197E62006909B6 /* ExpanderDemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F07A12197E62006909B6 /* ExpanderDemoAppDelegate.m */; };
 		38D6F07E12197E62006909B6 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 38D6F07C12197E62006909B6 /* MainWindow.xib */; };
 		38D6F08112197E62006909B6 /* ExpanderDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F08012197E62006909B6 /* ExpanderDemoViewController.m */; };
-		38D6F12A121982CC006909B6 /* AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F114121982CC006909B6 /* AQGridView.m */; };
-		38D6F12B121982CC006909B6 /* AQGridViewAnimatorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F118121982CC006909B6 /* AQGridViewAnimatorItem.m */; };
-		38D6F12C121982CC006909B6 /* AQGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F11A121982CC006909B6 /* AQGridViewCell.m */; };
-		38D6F12D121982CC006909B6 /* AQGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F11D121982CC006909B6 /* AQGridViewController.m */; };
-		38D6F12E121982CC006909B6 /* AQGridViewData.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F11F121982CC006909B6 /* AQGridViewData.m */; };
-		38D6F12F121982CC006909B6 /* AQGridViewUpdateInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F121121982CC006909B6 /* AQGridViewUpdateInfo.m */; };
-		38D6F130121982CC006909B6 /* AQGridViewUpdateItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F123121982CC006909B6 /* AQGridViewUpdateItem.m */; };
+		38D6F12A121982CC006909B6 /* AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F114121982CC006909B6 /* AQGridView.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		38D6F12B121982CC006909B6 /* AQGridViewAnimatorItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F118121982CC006909B6 /* AQGridViewAnimatorItem.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		38D6F12C121982CC006909B6 /* AQGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F11A121982CC006909B6 /* AQGridViewCell.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		38D6F12D121982CC006909B6 /* AQGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F11D121982CC006909B6 /* AQGridViewController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		38D6F12E121982CC006909B6 /* AQGridViewData.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F11F121982CC006909B6 /* AQGridViewData.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		38D6F12F121982CC006909B6 /* AQGridViewUpdateInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F121121982CC006909B6 /* AQGridViewUpdateInfo.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		38D6F130121982CC006909B6 /* AQGridViewUpdateItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F123121982CC006909B6 /* AQGridViewUpdateItem.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		38D6F131121982CC006909B6 /* NSIndexSet+AQIndexesOutsideSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F125121982CC006909B6 /* NSIndexSet+AQIndexesOutsideSet.m */; };
 		38D6F132121982CC006909B6 /* NSIndexSet+AQIsSetContiguous.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F127121982CC006909B6 /* NSIndexSet+AQIsSetContiguous.m */; };
 		38D6F133121982CC006909B6 /* UIColor+AQGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D6F129121982CC006909B6 /* UIColor+AQGridView.m */; };
@@ -319,7 +319,7 @@
 		38D6F05C12197E62006909B6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Kobo Inc.";
 			};
 			buildConfigurationList = 38D6F05F12197E62006909B6 /* Build configuration list for PBXProject "ExpanderDemo" */;
@@ -429,13 +429,13 @@
 		38D6F08512197E62006909B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
@@ -444,7 +444,6 @@
 		38D6F08612197E62006909B6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
