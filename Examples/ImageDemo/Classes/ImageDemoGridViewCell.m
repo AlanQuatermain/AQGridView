@@ -80,6 +80,7 @@
     if ( (imageSize.width <= bounds.size.width) &&
          (imageSize.height <= bounds.size.height) )
     {
+        _imageView.frame = CGRectMake(0.0, 0.0, imageSize.width, imageSize.height);
         return;
     }
     
