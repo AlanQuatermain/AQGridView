@@ -302,19 +302,23 @@
 				break;
 				
 			case AQGridViewCellSelectionStyleGray:
-				imageName = @"AQGridSelectionGray.png";
+				pngBytes = AQGridSelectionGray_png;
+				pngLength = AQGridSelectionGray_png_len;
 				break;
 				
 			case AQGridViewCellSelectionStyleBlueGray:
-				imageName = @"AQGridSelectionGrayBlue.png";
+				pngBytes = AQGridSelectionGrayBlue_png;
+				pngLength = AQGridSelectionGrayBlue_png_len;
 				break;
 				
 			case AQGridViewCellSelectionStyleGreen:
-				imageName = @"AQGridSelectionGreen.png";
+				pngBytes = AQGridSelectionGreen_png;
+				pngLength = AQGridSelectionGreen_png_len;
 				break;
 				
 			case AQGridViewCellSelectionStyleRed:
-				imageName = @"AQGridSelectionRed.png";
+				pngBytes = AQGridSelectionRed_png;
+				pngLength = AQGridSelectionRed_png_len;
 				break;
 		}
 		
