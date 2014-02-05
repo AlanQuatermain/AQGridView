@@ -92,13 +92,13 @@ typedef enum {
 - (id) initWithFrame: (CGRect) frame reuseIdentifier: (NSString *) reuseIdentifier;
 
 // If you want to customize cells by simply adding additional views, you should add them to the content view so they will be positioned appropriately as the cell transitions into and out of editing mode.
-@property (nonatomic, readonly, retain) UIView * contentView;
+@property (nonatomic, readonly, strong) UIView * contentView;
 
 // default is nil. The background view will be added as a subview behind all other views
-@property (nonatomic, retain) UIView * backgroundView;
+@property (nonatomic, strong) UIView * backgroundView;
 
 // The 'selectedBackgroundView' will be added as a subview directly above the backgroundView if not nil, or behind all other views. It is added as a subview only when the cell is selected. Calling -setSelected:animated: will cause the 'selectedBackgroundView' to animate in and out with an alpha fade.
-@property (nonatomic, retain) UIView * selectedBackgroundView;
+@property (nonatomic, strong) UIView * selectedBackgroundView;
 
 @property (nonatomic, readonly, copy) NSString * reuseIdentifier;
 - (void) prepareForReuse;		// if the cell is reusable (has a reuse identifier), this is called just before the cell is returned from the grid view method dequeueReusableCellWithIdentifier:.  If you override, you MUST call super.
@@ -106,12 +106,12 @@ typedef enum {
 @property (nonatomic) AQGridViewCellSelectionStyle selectionStyle;		// default is AQGridViewCellSelectionStyleGlow
 @property (nonatomic, getter=isSelected) BOOL selected;					// default is NO
 @property (nonatomic, getter=isHighlighted) BOOL highlighted;			// default is NO
-@property (nonatomic, retain) UIColor * selectionGlowColor;				// default is dark grey, ignored if selectionStyle != AQGridViewCellSelectionStyleGlow
+@property (nonatomic, strong) UIColor * selectionGlowColor;				// default is dark grey, ignored if selectionStyle != AQGridViewCellSelectionStyleGlow
 @property (nonatomic) CGFloat selectionGlowShadowRadius;				// default is 12.0, ignored if selectionStyle != AQGridViewCellSelectionStyleGlow
 
 // this can be overridden by subclasses to return a subview's layer to which to add the glow
 // the default implementation returns the contentView's layer
-@property (nonatomic, readonly) CALayer * glowSelectionLayer;
+@property (weak, nonatomic, readonly) CALayer * glowSelectionLayer;
 
 - (void) setSelected: (BOOL) selected animated: (BOOL) animated;
 - (void) setHighlighted: (BOOL) highlighted animated: (BOOL) animated;
