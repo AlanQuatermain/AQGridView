@@ -1223,9 +1223,51 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	// UIScrollView implements _defaultHitTest:withEvent: for this, but we can't call that due to it
 	//  being a private API.
 	// Instead, we have to manufacture a call to our super-super class here, grr
+
+	// XCode 6 - callimg imp(...) is throwing a compiler error 'too many arguments to function call (4, expected 0)'
+    /*
 	Method method = class_getInstanceMethod( [UIView class], @selector(hitTest:withEvent:) );
 	IMP imp = method_getImplementation( method );
 	return ( (UIView *)imp(self, @selector(hitTest:withEvent:), point, event) ); // -[UIView hitTest:withEvent:]
+	*/
+
+
+    // Use NSInvocation to do this instead
+    SEL hitSelector = @selector(hitTest:withEvent:);
+    NSMethodSignature * signature = [self methodSignatureForSelector:hitSelector];
+    NSInvocation * invocation = [NSInvocation invocationWithMethodSignature:signature];
+    
+    
+    [invocation setTarget: self];
+    [invocation setSelector:hitSelector];
+    
+    [invocation setArgument:&point atIndex:2];
+    [invocation setArgument:&event atIndex:3];
+
+    // Invoke!
+    [invocation invoke];
+    
+    // Get return value
+    NSValue    * ret_val  = nil;
+    NSUInteger   ret_size = [signature methodReturnLength];
+    
+    if(  ret_size > 0 ) {
+        
+        void * ret_buffer = malloc( ret_size );
+        
+        [invocation getReturnValue:ret_buffer];
+        
+        ret_val = [NSValue valueWithBytes:ret_buffer
+                                 objCType:[signature methodReturnType]];
+        
+        free(ret_buffer);
+    }
+    
+    // Copy the value into our UIView object
+    UIView * returnedView = nil;
+    [ret_val getValue:&returnedView];
+    
+    return returnedView;
 }
 
 - (BOOL) _canSelectItemContainingHitView: (UIView *) hitView
