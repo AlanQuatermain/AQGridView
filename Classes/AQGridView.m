@@ -45,11 +45,9 @@
 #import "NSIndexSet+AQIndexesOutsideSet.h"
 
 #import <libkern/OSAtomic.h>
-
 // see _basicHitTest:withEvent: below
 #import <objc/objc.h>
 #import <objc/runtime.h>
-
 
 // Lightweight object class for touch selection parameters
 @interface UserSelectItemIndexParams : NSObject
@@ -1227,11 +1225,6 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	// Instead, we have to manufacture a call to our super-super class here, grr
 	Method method = class_getInstanceMethod( [UIView class], @selector(hitTest:withEvent:) );
 	IMP imp = method_getImplementation( method );
-
-
-
-
-		
 
 	return ((UIView*(*)(id, SEL, CGPoint, id))imp)(self, @selector(hitTest:withEvent:), point, event);
 
