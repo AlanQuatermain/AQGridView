@@ -49,6 +49,8 @@
 // see _basicHitTest:withEvent: below
 #import <objc/objc.h>
 #import <objc/runtime.h>
+#import <objc/NSObjCRuntime.h>
+#import <objc/message.h>
 
 // Lightweight object class for touch selection parameters
 @interface UserSelectItemIndexParams : NSObject
@@ -1214,6 +1216,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 #pragma mark -
 #pragma mark Touch Events
 
+
 - (UIView *) _basicHitTest: (CGPoint) point withEvent: (UIEvent *) event
 {
 	// STUPID STUPID RAT CREATURES
@@ -1225,7 +1228,15 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	// Instead, we have to manufacture a call to our super-super class here, grr
 	Method method = class_getInstanceMethod( [UIView class], @selector(hitTest:withEvent:) );
 	IMP imp = method_getImplementation( method );
-	return ( (UIView *)imp(self, @selector(hitTest:withEvent:), point, event) ); // -[UIView hitTest:withEvent:]
+
+
+
+
+		
+
+	return ((UIView*(*)(id, SEL, CGPoint, id))imp)(self, @selector(hitTest:withEvent:), point, event);
+
+
 }
 
 - (BOOL) _canSelectItemContainingHitView: (UIView *) hitView
