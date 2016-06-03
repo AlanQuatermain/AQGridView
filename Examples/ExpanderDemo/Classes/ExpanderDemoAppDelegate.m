@@ -53,7 +53,7 @@
 	// Override point for customization after application launch.
 	viewController.view.frame = [[UIScreen mainScreen] applicationFrame];
 	 
-	[window addSubview:viewController.view];
+	[window setRootViewController:viewController];
 	[window makeKeyAndVisible];
     return YES;
 }
