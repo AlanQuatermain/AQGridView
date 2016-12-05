@@ -163,14 +163,16 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 
 	_flags.delegateWillDisplayCell = [obj respondsToSelector: @selector(gridView:willDisplayCell:forItemAtIndex:)];
 	_flags.delegateWillSelectItem = [obj respondsToSelector: @selector(gridView:willSelectItemAtIndex:)];
-  _flags.delegateWillSelectItemMultiTouch = [obj respondsToSelector: @selector(gridView:willSelectItemAtIndex:numFingersTouch:)];
+    _flags.delegateWillSelectItemMultiTouch = [obj respondsToSelector: @selector(gridView:willSelectItemAtIndex:numFingersTouch:)];
 	_flags.delegateWillDeselectItem = [obj respondsToSelector: @selector(gridView:willDeselectItemAtIndex:)];
 	_flags.delegateDidSelectItem = [obj respondsToSelector: @selector(gridView:didSelectItemAtIndex:)];
-  _flags.delegateDidSelectItemMultiTouch = [obj respondsToSelector: @selector(gridView:didSelectItemAtIndex:numFingersTouch:)];
+    _flags.delegateDidSelectItemMultiTouch = [obj respondsToSelector: @selector(gridView:didSelectItemAtIndex:numFingersTouch:)];
 	_flags.delegateDidDeselectItem = [obj respondsToSelector: @selector(gridView:didDeselectItemAtIndex:)];
 	_flags.delegateGestureRecognizerActivated = [obj respondsToSelector: @selector(gridView:gestureRecognizer:activatedForItemAtIndex:)];
 	_flags.delegateAdjustGridCellFrame = [obj respondsToSelector: @selector(gridView:adjustCellFrame:withinGridCellFrame:)];
 	_flags.delegateDidEndUpdateAnimation = [obj respondsToSelector:@selector(gridViewDidEndUpdateAnimation:)];
+
+	_flags.delegateDidTapItem = [obj respondsToSelector: @selector(gridView:didTapItemAtIndex:)];
 }
 
 - (id<AQGridViewDelegate>) delegate
@@ -1265,7 +1267,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 - (void) _userSelectItemAtIndex: (UserSelectItemIndexParams*) params
 {
 	NSUInteger index = params.indexNum;
-  NSUInteger numFingersCount = params.numFingers;
+    NSUInteger numFingersCount = params.numFingers;
 	[self unhighlightItemAtIndex: index animated: NO];
 	if ( ([[self cellForItemAtIndex: index] isSelected]) && (self.requiresSelection == NO) )
 		[self _deselectItemAtIndex: index animated: NO notifyDelegate: YES];
@@ -1273,6 +1275,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 		[self _selectItemAtIndex: index animated: NO scrollPosition: AQGridViewScrollPositionNone notifyDelegate: YES
              numFingersTouch: numFingersCount];
 	_pendingSelectionIndex = NSNotFound;
+
+    if ( _flags.delegateDidTapItem )
+        [self.delegate gridView: self didTapItemAtIndex: index];
 }
 
 - (BOOL) _gestureRecognizerIsHandlingTouches: (NSSet *) touches
