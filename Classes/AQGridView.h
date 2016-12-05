@@ -210,6 +210,9 @@ extern NSString * const AQGridViewSelectionDidChangeNotification;
 
 - (void) moveItemAtIndex: (NSUInteger) index toIndex: (NSUInteger) newIndex withAnimation: (AQGridViewItemAnimation) animation;
 
+/* Added a swap method for 2 items in the grid */
+- (void) swapItemAtIndex:(NSUInteger) index withIndex:(NSUInteger) secondIndex withAnimation:(AQGridViewItemAnimation) animation;
+
 // Selection
 
 @property (nonatomic) BOOL allowsSelection;	// default is YES
