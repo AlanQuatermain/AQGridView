@@ -100,7 +100,8 @@
 		CFRelease( _selectionColorInfo );
 }
 
-- (NSComparisonResult) compareOriginAgainstCell: (AQGridViewCell *) otherCell
+
+- (NSComparisonResult) compareOriginAgainstCellVertical: (AQGridViewCell *) otherCell
 {
 	CGPoint myOrigin = self.frame.origin;
 	CGPoint theirOrigin = otherCell.frame.origin;
@@ -117,6 +118,25 @@
 	
 	return ( NSOrderedSame );
 }
+
+- (NSComparisonResult) compareOriginAgainstCellHorizontal: (AQGridViewCell *) otherCell
+{
+	CGPoint myOrigin = self.frame.origin;
+	CGPoint theirOrigin = otherCell.frame.origin;
+	
+	if ( myOrigin.x > theirOrigin.x )
+		return ( NSOrderedDescending );
+	else if ( myOrigin.x < theirOrigin.x )
+		return ( NSOrderedAscending );
+    
+    if ( myOrigin.y > theirOrigin.y )
+		return ( NSOrderedDescending );
+	else if ( myOrigin.y < theirOrigin.y )
+		return ( NSOrderedAscending );
+	
+	return ( NSOrderedSame );
+}
+
 
 - (UIView *) contentView
 {
