@@ -126,7 +126,7 @@
         _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         _contentView.autoresizesSubviews = YES;
         self.autoresizesSubviews = YES;
-        _contentView.backgroundColor = [UIColor whiteColor];
+        _contentView.backgroundColor = self.backgroundColor;
 		[_contentView.layer setValue: [NSNumber numberWithBool: YES] forKey: @"KoboHackInterestingLayer"];
         [self addSubview: _contentView];
     }
